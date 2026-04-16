@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0f172a">
+<title>GestActas — Gestión Inteligente de Juntas</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-deep: #0a0e1a;
+  --bg-primary: #0f172a;
+  --bg-card: #1a2340;
+  --bg-card-hover: #1e2a4a;
+  --bg-input: #162035;
+  --border: #293555;
+  --text-primary: #f0f4fa;
+  --text-secondary: #7ecbf5;
+  --text-muted: #a0b4d0;
+  --text-location: #6dd4a8;
+  --text-date: #e8a87c;
+  --text-detail: #b8a0e8;
+  --text-info: #82c8e6;
+  --accent: #3b82f6;
+  --accent-glow: rgba(59, 130, 246, 0.15);
+  --accent-hover: #2563eb;
+  --success: #10b981;
+  --success-bg: rgba(16, 185, 129, 0.1);
+  --warning: #f59e0b;
+  --warning-bg: rgba(245, 158, 11, 0.1);
+  --danger: #ef4444;
+  --danger-bg: rgba(239, 68, 68, 0.1);
+  --recording-glow: rgba(239, 68, 68, 0.3);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-lg: 16px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.3);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.4);
+  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg-deep);color:var(--text-primary);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;touch-action:pan-y}
+.app-container{max-width:480px;margin:0 auto;min-height:100vh;background:var(--bg-primary);position:relative;display:flex;flex-direction:column;box-shadow:-1px 0 0 var(--border),1px 0 0 var(--border);overflow:hidden}
+.app-header{padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;background:var(--bg-primary);border-bottom:1px solid var(--border)}
+.header-brand{display:flex;align-items:center;gap:10px}
+.header-logo{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),#6366f1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff;box-shadow:0 2px 12px rgba(59,130,246,0.3)}
+.header-title{font-size:20px;font-weight:700;letter-spacing:-0.3px}
+.header-subtitle{font-size:11px;color:var(--text-muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:-1px}
+.header-btn{width:36px;height:36px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);transition:var(--transition)}
+.header-btn:hover{background:var(--bg-card-hover);color:var(--text-primary)}
+.app-content{flex:1;padding:16px 20px 100px;overflow-y:auto;overflow-x:hidden}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--bg-primary);border-top:1px solid var(--border);display:flex;padding:8px 12px calc(8px + env(safe-area-inset-bottom));z-index:100}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;cursor:pointer;border-radius:var(--radius-sm);transition:var(--transition);border:none;background:none;color:var(--text-muted);font-family:inherit;position:relative}
+.nav-item.active{color:var(--accent)}
+.nav-item.active::before{content:'';position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:20px;height:2px;background:var(--accent);border-radius:2px}
+.nav-icon{font-size:22px;line-height:1}
+.nav-label{font-size:10px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase}
+.screen{display:none;animation:fadeSlide 0.25s ease}
+.screen.active{display:block}
+@keyframes fadeSlide{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;transition:var(--transition);cursor:pointer}
+.card:hover{border-color:var(--accent);background:var(--bg-card-hover)}
+.card:active{transform:scale(0.98)}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.card-title{font-size:17px;font-weight:600}
+.card-badge{font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;letter-spacing:0.3px;text-transform:uppercase}
+.badge-success{background:var(--success-bg);color:var(--success)}
+.badge-warning{background:var(--warning-bg);color:var(--warning)}
+.badge-danger{background:var(--danger-bg);color:var(--danger)}
+.badge-accent{background:var(--accent-glow);color:var(--accent)}
+.card-meta{display:flex;gap:12px;font-size:14px;flex-wrap:wrap}
+.meta-date{color:var(--text-date)}.meta-time{color:var(--text-detail)}.meta-people{color:var(--text-info)}.meta-location{color:var(--text-location)}.meta-type{color:var(--text-secondary)}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;margin-top:8px}
+.section-title{font-size:14px;font-weight:600;color:var(--text-secondary);letter-spacing:1px;text-transform:uppercase}
+.section-action{font-size:14px;color:var(--accent);cursor:pointer;font-weight:500;border:none;background:none;font-family:inherit}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;cursor:pointer;transition:var(--transition);position:relative;overflow:hidden}
+.stat-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow)}
+.stat-card:active{transform:scale(0.96)}
+.stat-card::after{content:'→';position:absolute;bottom:6px;right:10px;font-size:12px;color:var(--text-muted);opacity:0.5}
+.stat-number{font-size:28px;font-weight:700;letter-spacing:-1px;line-height:1;margin-bottom:4px}
+.stat-number.blue{color:var(--accent)}.stat-number.green{color:var(--success)}.stat-number.orange{color:var(--warning)}.stat-number.red{color:var(--danger)}
+.stat-label{font-size:12px;color:var(--text-muted);font-weight:500;text-transform:uppercase;letter-spacing:0.5px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:var(--radius-sm);font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;transition:var(--transition);border:none;width:100%}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 2px 12px rgba(59,130,246,0.3)}
+.btn-primary:hover{background:var(--accent-hover);transform:translateY(-1px)}
+.btn-primary:active{transform:scale(0.98)}
+.btn-secondary{background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--accent)}
+.btn-danger{background:var(--danger);color:#fff}
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px}
+.form-input,.form-select,.form-textarea{width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-primary);font-family:inherit;font-size:15px;transition:var(--transition);outline:none}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+.form-textarea{resize:vertical;min-height:80px}
+.form-select{appearance:none;cursor:pointer}
+.data-table{width:100%;border-collapse:collapse;font-size:14px}
+.data-table th{text-align:left;padding:8px 10px;font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border)}
+.data-table td{padding:10px;border-bottom:1px solid rgba(41,53,85,0.5);color:var(--text-muted)}
+.data-table tr:hover td{color:var(--text-primary)}
+.recorder-container{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;text-align:center}
+.waveform{height:80px;background:var(--bg-input);border-radius:var(--radius-sm);margin:16px 0;display:flex;align-items:center;justify-content:center;gap:3px;overflow:hidden;padding:0 12px}
+.wave-bar{width:3px;border-radius:2px;background:var(--accent);opacity:0.4;transition:height 0.15s}
+.wave-bar.active{opacity:1;animation:waveAnim 0.8s ease-in-out infinite alternate}
+@keyframes waveAnim{0%{height:8px}100%{height:60px}}
+.rec-time{font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:500;letter-spacing:2px;margin:8px 0}
+.rec-controls{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:16px}
+.rec-btn{width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;transition:var(--transition)}
+.rec-btn-main{width:72px;height:72px;background:var(--danger);color:#fff;box-shadow:0 4px 24px var(--recording-glow);font-size:26px}
+.rec-btn-main.recording{animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 4px 24px var(--recording-glow)}50%{box-shadow:0 4px 40px var(--recording-glow),0 0 60px var(--recording-glow)}}
+.rec-btn-sec{background:var(--bg-input);border:1px solid var(--border);color:var(--text-muted)}
+.rec-btn-sec:hover{border-color:var(--accent);color:var(--text-primary)}
+.marker-item{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg-input);border-radius:var(--radius-sm);margin-bottom:6px;font-size:14px;color:var(--text-muted)}
+.marker-time{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-date);min-width:55px}
+.transcript-block{background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;font-size:14px;line-height:1.7;color:var(--text-muted);max-height:300px;overflow-y:auto}
+.transcript-timestamp{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-date);margin-right:6px}
+.transcript-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.option-card{background:var(--bg-card);border:2px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;text-align:center;transition:var(--transition)}
+.option-card.selected{border-color:var(--accent);background:var(--accent-glow)}
+.option-card:hover{border-color:var(--accent)}
+.option-card:active{transform:scale(0.97)}
+.option-icon{font-size:28px;margin-bottom:8px}
+.option-title{font-size:14px;font-weight:600;margin-bottom:4px}
+.option-desc{font-size:12px;color:var(--text-muted)}
+.option-price{font-size:13px;color:var(--warning);font-weight:600;margin-top:6px}
+.acta-preview{background:#fff;color:#1a1a1a;border-radius:var(--radius);padding:24px 20px;font-size:13px;line-height:1.7;max-height:400px;overflow-y:auto;box-shadow:var(--shadow-lg)}
+.acta-preview h2{font-size:14px;text-align:center;margin-bottom:16px;text-transform:uppercase;letter-spacing:1px}
+.acta-preview h3{font-size:12px;margin:14px 0 6px;text-transform:uppercase;border-bottom:1px solid #ddd;padding-bottom:4px}
+.acta-preview table{width:100%;border-collapse:collapse;margin:8px 0;font-size:12px}
+.acta-preview th,.acta-preview td{border:1px solid #ccc;padding:4px 8px;text-align:left}
+.acta-preview th{background:#f0f0f0;font-weight:600}
+.progress-steps{display:flex;align-items:center;justify-content:center;margin-bottom:20px;padding:0 10px}
+.step-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2px solid var(--border);color:var(--text-muted);background:var(--bg-card);flex-shrink:0}
+.step-dot.done{background:var(--success);border-color:var(--success);color:#fff}
+.step-dot.current{border-color:var(--accent);color:var(--accent);box-shadow:0 0 0 4px var(--accent-glow)}
+.step-line{width:30px;height:2px;background:var(--border);flex-shrink:0}
+.step-line.done{background:var(--success)}
+.checkbox-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg-input);border-radius:var(--radius-sm);margin-bottom:6px;cursor:pointer;transition:var(--transition)}
+.checkbox-row:hover{background:var(--bg-card-hover)}
+.checkbox{width:20px;height:20px;border:2px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent;transition:var(--transition);flex-shrink:0}
+.checkbox.checked{background:var(--accent);border-color:var(--accent);color:#fff}
+.checkbox-name{font-size:15px;font-weight:500}
+.checkbox-detail{font-size:13px;color:var(--text-detail)}
+.config-item{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;cursor:pointer;transition:var(--transition)}
+.config-item:hover{border-color:var(--accent)}
+.config-item:active{transform:scale(0.98)}
+.config-left{display:flex;align-items:center;gap:12px}
+.config-icon{font-size:20px}
+.config-label{font-size:15px;font-weight:500}
+.config-desc{font-size:13px;color:var(--text-muted)}
+.config-arrow{color:var(--text-muted);font-size:14px}
+.search-bar{display:flex;align-items:center;gap:8px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px}
+.search-bar input{flex:1;background:none;border:none;color:var(--text-primary);font-family:inherit;font-size:15px;outline:none}
+.search-bar input::placeholder{color:var(--text-muted)}
+.tabs{display:flex;gap:4px;background:var(--bg-card);border-radius:var(--radius-sm);padding:3px;margin-bottom:16px}
+.tab{flex:1;padding:8px;text-align:center;font-size:13px;font-weight:600;color:var(--text-muted);border-radius:6px;cursor:pointer;transition:var(--transition);border:none;background:none;font-family:inherit}
+.tab.active{background:var(--accent);color:#fff}
+.sub-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.back-btn{width:34px;height:34px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);font-size:16px;transition:var(--transition)}
+.back-btn:hover{color:var(--text-primary);border-color:var(--accent)}
+.back-btn:active{transform:scale(0.92)}
+.sub-title{font-size:18px;font-weight:600}
+.orden-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--bg-input);border-radius:var(--radius-sm);margin-bottom:6px}
+.orden-num{width:24px;height:24px;background:var(--accent-glow);color:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.orden-text{font-size:14px;color:var(--text-muted);line-height:1.5;padding-top:2px}
+.api-key-display{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);letter-spacing:1px}
+.swipe-hint{display:flex;justify-content:center;gap:6px;margin-bottom:12px}
+.swipe-dot{width:6px;height:6px;border-radius:50%;background:var(--border);transition:var(--transition)}
+.swipe-dot.active{background:var(--accent);width:18px;border-radius:3px}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+@media(min-width:768px){.app-container{border-radius:20px;margin:20px auto;min-height:calc(100vh - 40px);overflow:hidden}}
+</style>
+</head>
+<body>
+<div class="app-container">
+  <header class="app-header">
+    <div class="header-brand">
+      <div class="header-logo">GA</div>
+      <div><div class="header-title">GestActas</div><div class="header-subtitle">Gestión de Juntas</div></div>
+    </div>
+    <div class="header-actions"><button class="header-btn" onclick="showScreen('config')">⚙️</button></div>
+  </header>
+
+  <div class="app-content" id="appContent">
+
+    <!-- ══════ DASHBOARD ══════ -->
+    <div id="screen-dashboard" class="screen active" data-nav="nav-dashboard">
+      <div class="swipe-hint">
+        <div class="swipe-dot active" data-dot="nav-dashboard"></div>
+        <div class="swipe-dot" data-dot="nav-comunidades"></div>
+        <div class="swipe-dot" data-dot="nav-juntas"></div>
+        <div class="swipe-dot" data-dot="nav-historico"></div>
+        <div class="swipe-dot" data-dot="nav-config"></div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card" onclick="showScreen('comunidades')"><div class="stat-number blue">3</div><div class="stat-label">Comunidades</div></div>
+        <div class="stat-card" onclick="showScreen('juntas')"><div class="stat-number green">12</div><div class="stat-label">Juntas</div></div>
+        <div class="stat-card" onclick="showScreen('historico')"><div class="stat-number orange">8</div><div class="stat-label">Actas generadas</div></div>
+        <div class="stat-card" onclick="showScreen('historico')"><div class="stat-number red">2</div><div class="stat-label">Pendientes</div></div>
+      </div>
+      <div class="section-header"><span class="section-title">Próximas juntas</span><button class="section-action" onclick="showScreen('juntas')">Ver todas →</button></div>
+      <div class="card" onclick="showScreen('junta-detail')">
+        <div class="card-header"><span class="card-title">Edificio Astur</span><span class="card-badge badge-warning">Próxima</span></div>
+        <div class="card-meta"><span class="card-meta-item meta-date">📅 25/04/2026</span><span class="card-meta-item meta-time">🕐 18:30h</span><span class="card-meta-item meta-people">👥 5 prop.</span></div>
+      </div>
+      <div class="card" onclick="showScreen('juntas')">
+        <div class="card-header"><span class="card-title">Residencial El Parque</span><span class="card-badge badge-accent">Programada</span></div>
+        <div class="card-meta"><span class="card-meta-item meta-date">📅 03/05/2026</span><span class="card-meta-item meta-time">🕐 19:00h</span><span class="card-meta-item meta-people">👥 12 prop.</span></div>
+      </div>
+      <div class="section-header" style="margin-top:20px"><span class="section-title">Actividad reciente</span></div>
+      <div class="card" onclick="showScreen('acta-preview')">
+        <div class="card-header"><span class="card-title">Acta — Edificio Astur</span><span class="card-badge badge-success">Completada</span></div>
+        <div class="card-meta"><span class="card-meta-item meta-date">📅 11/04/2025</span><span class="card-meta-item meta-type">📝 Junta ordinaria</span></div>
+      </div>
+      <div class="card" onclick="showScreen('historico')">
+        <div class="card-header"><span class="card-title">Acta — Torres del Nora</span><span class="card-badge badge-success">Completada</span></div>
+        <div class="card-meta"><span class="card-meta-item meta-date">📅 28/03/2025</span><span class="card-meta-item meta-type">📝 Junta extraordinaria</span></div>
+      </div>
+    </div>
+
+    <!-- ══════ COMUNIDADES ══════ -->
+    <div id="screen-comunidades" class="screen" data-nav="nav-comunidades">
+      <div class="sub-header"><button class="back-btn" onclick="goBack()">←</button><span class="sub-title">Comunidades</span><button class="section-action" style="margin-left:auto" onclick="showScreen('comunidad-nueva')">+ Nueva</button></div>
+      <div class="search-bar"><span>🔍</span><input type="text" placeholder="Buscar comunidad..."></div>
+      <div class="card" onclick="showScreen('comunidad-detail')">
+        <div class="card-header"><span class="card-title">🏢 Edificio Astur</span><span class="card-badge badge-accent">5 prop.</span></div>
+        <div class="card-meta"><span class="card-meta-item meta-location">📍 Lugones - Siero</span><span class="card-meta-item meta-type">📋 3 juntas</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">🏢 Residencial El Parque</span><span class="card-badge badge-accent">12 prop.</span></div>
+        <div class="card-meta"><span class="card-meta-item meta-location">📍 Lugones - Siero</span><span class="card-meta-item meta-type">📋 5 juntas</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">🏢 Torres del Nora</span><span class="card-badge badge-accent">8 prop.</span></div>
+        <div class="card-meta"><span class="card-meta-item meta-location">📍 Lugones - Siero</span><span class="card-meta-item meta-type">📋 4 juntas</span></div>
+      </div>
+      <button class="btn btn-primary" style="margin-top:12px" onclick="showScreen('comunidad-nueva')">+ Añadir comunidad</button>
+    </div>
+
+    <!-- ══════ DETALLE COMUNIDAD ══════ -->
+    <div id="screen-comunidad-detail" class="screen">
+      <div class="sub-header"><button class="back-btn" onclick="goBack()">←</button><span class="sub-title">Edificio Astur</span></div>
+      <div class="card" style="cursor:default">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <div style="width:48px;height:48px;background:var(--accent-glow);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px">🏢</div>
+          <div><div style="font-size:16px;font-weight:600">Edificio Astur</div><div style="font-size:14px;color:var(--text-location)">Lugones - Siero (Asturias)</div></div>
+        </div>
+        <div style="font-size:14px;display:flex;flex-wrap:wrap;gap:12px">
+          <span style="color:var(--text-muted)">🏛️ CIF: B-33XXXXXX</span>
+          <span style="color:var(--text-detail)">👤 Adm: Carigan S.L.</span>
+          <span style="color:var(--text-info)">👥 5 propietarios</span>
+        </div>
+      </div>
+      <div class="section-header"><span class="section-title">Propietarios</span><button class="section-action">+ Añadir</button></div>
+      <div style="overflow-x:auto">
+        <table class="data-table">
+          <thead><tr><th>Propietario</th><th>Piso</th><th>Cuota</th><th>Cargo</th></tr></thead>
+          <tbody>
+            <tr><td>Mª Luisa Ardisana López</td><td style="color:var(--text-info)">1º A</td><td style="color:var(--text-date)">10,77%</td><td style="color:var(--warning)">Presidenta</td></tr>
+            <tr><td>Fernando García Prado</td><td style="color:var(--text-info)">2º A</td><td style="color:var(--text-date)">10,77%</td><td>Propietario</td></tr>
+            <tr><td>Mª Teresa Álvarez Fernández</td><td style="color:var(--text-info)">2º B</td><td style="color:var(--text-date)">8,42%</td><td>Propietaria</td></tr>
+            <tr><td>José M. Álvarez Iglesias</td><td style="color:var(--text-info)">3º A</td><td style="color:var(--text-date)">14,99%</td><td>Propietario</td></tr>
+            <tr><td>Lorenzo Santiago Iglesias</td><td style="color:var(--text-info)">3º B</td><td style="color:var(--text-date)">12,09%</td><td>Propietario</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="section-header" style="margin-top:20px"><span class="section-title">Historial de juntas</span></div>
+      <div class="card" onclick="showScreen('junta-detail')">
+        <div class="card-header"><span class="card-title">Junta Ordinaria 2025</span><span class="card-badge badge-success">Acta lista</span></div>
+        <div class="card-meta"><span class="card-meta-item meta-date">📅 11/04/2025</span><span class="card-meta-item meta-time">🕐 19:00h</span></div>
+      </div>
+    </div>
+
+    <!-- ══════ NUEVA COMUNIDAD ══════ -->
+    <div id="screen-comunidad-nueva" class="screen">
+      <div class="sub-header"><button class="back-btn" onclick="goBack()">←</button><span class="sub-title">Nueva comunidad</span></div>
+      <div class="form-group"><label class="form-label">Nombre de la comunidad</label><input class="form-input" type="text" placeholder="Ej: Edificio Las Palmeras"></div>
+
+      <!-- Dirección desglosada -->
+      <div style="display:grid;grid-template-columns:1fr 2fr;gap:10px">
+        <div class="form-group"><label class="form-label">Tipo de vía</label><select class="form-select"><option selected>Calle</option><option>Avenida</option><option>Plaza</option><option>Paseo</option><option>Travesía</option><option>Camino</option></select></div>
+        <div class="form-group"><label class="form-label">Nombre de la vía</label><input class="form-input" type="text" placeholder="Ej: La Fresneda"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div class="form-group"><label class="form-label">N.º Portal</label><input class="form-input" type="text" placeholder="12"></div>
+        <div class="form-group"><label class="form-label">C. Postal</label><input class="form-input" type="text" placeholder="33420"></div>
+        <div class="form-group"><label class="form-label">Provincia</label><input class="form-input" type="text" value="Asturias"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="form-group"><label class="form-label">Localidad</label><input class="form-input" type="text" value="Lugones"></div>
+        <div class="form-group"><label class="form-label">Municipio</label><input class="form-input" type="text" value="Siero"></div>
+      </div>
+      <div class="form-group"><label class="form-label">CIF</label><input class="form-input" type="text" placeholder="B-XXXXXXXX"></div>
+
+      <!-- Propietarios -->
+      <div style="margin-bottom:14px;padding:16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="font-size:14px;font-weight:600">👥 Propietarios</div>
+          <button class="section-action" style="font-size:12px">+ Añadir</button>
+        </div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Nombre, propiedad y cuota. Se usarán en asistencia, cargos y acta.</div>
+        <div style="padding:10px 12px;background:var(--bg-input);border-radius:var(--radius-sm);margin-bottom:6px">
+          <div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:14px;font-weight:500">Mª Luisa Ardisana López</div><span style="font-size:11px;color:var(--warning);font-weight:600">Presidenta</span></div>
+          <div style="font-size:12px;color:var(--text-info);margin-top:2px">1º A · Cuota: 10,77%</div>
+        </div>
+        <div style="padding:10px 12px;background:var(--bg-input);border-radius:var(--radius-sm);margin-bottom:6px">
+          <div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:14px;font-weight:500">Fernando García Prado</div><span style="font-size:11px;color:var(--text-muted)">Propietario</span></div>
+          <div style="font-size:12px;color:var(--text-info);margin-top:2px">2º A · Cuota: 10,77%</div>
+        </div>
+        <div style="padding:10px 12px;background:var(--bg-input);border-radius:var(--radius-sm);margin-bottom:6px">
+          <div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:14px;font-weight:500">Mª Teresa Álvarez Fernández</div><span style="font-size:11px;color:var(--text-muted)">Propietaria</span></div>
+          <div style="font-size:12px;color:var(--text-info);margin-top:2px">2º B · Cuota: 8,42%</div>
+        </div>
+        <div style="text-align:center;padding:8px;font-size:12px;color:var(--text-muted)">+2 propietarios más</div>
+      </div>
+
+      <!-- Cargos: solo presidente y secretario -->
+      <div style="margin-bottom:14px;padding:16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius)">
+        <div style="font-size:14px;font-weight:600;margin-bottom:4px">🏛️ Cargos</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">Se volcará automáticamente a la plantilla del acta.</div>
+        <div class="form-group">
+          <label class="form-label" style="color:var(--warning)">Presidente/a</label>
+          <select class="form-select"><option>Seleccionar propietario...</option><option selected>Mª Luisa Ardisana López — 1º A</option><option>Fernando García Prado — 2º A</option><option>Mª Teresa Álvarez Fernández — 2º B</option><option>José Manuel Álvarez Iglesias — 3º A</option><option>Lorenzo Santiago Iglesias — 3º B</option></select>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label" style="color:var(--text-info)">Secretario/a - Administrador</label>
+          <select class="form-select"><option selected>Administrador (Agencia Carigan)</option><option>Mª Luisa Ardisana López — 1º A</option><option>Fernando García Prado — 2º A</option><option>Mª Teresa Álvarez Fernández — 2º B</option><option>José Manuel Álvarez Iglesias — 3º A</option><option>Lorenzo Santiago Iglesias — 3º B</option></select>
+        </div>
+      </div>
+
+      <!-- Administrador fijo -->
+      <div class="form-group"><label class="form-label">Administrador</label><input class="form-input" type="text" value="Agencia Carigan — Carigan Servicios Integrados S.L."></div>
+
+      <!-- Info vinculación -->
+      <div style="padding:12px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:var(--radius-sm);margin-bottom:14px;font-size:12px;color:var(--text-secondary);line-height:1.5;text-align:center">
+        ℹ️ Todos estos datos se vincularán automáticamente a los campos <span style="color:var(--text-location);font-weight:600">FIJO</span> de la plantilla del acta
+      </div>
+
+      <!-- Plantilla de acta -->
+      <div style="margin-bottom:16px;padding:16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius)">
+        <div style="font-size:14px;font-weight:600;margin-bottom:4px">📄 Plantilla de acta</div>
+        <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;line-height:1.5">Sube el acta modelo (.docx). La IA la analizará y te mostrará una vista previa para que marques qué campos rellena la IA.</div>
+        <div id="uploadArea" style="border:2px dashed var(--border);border-radius:var(--radius-sm);padding:24px 16px;text-align:center;cursor:pointer" onclick="document.getElementById('fileInput').click()">
+          <div style="font-size:32px;margin-bottom:8px;opacity:0.6">📤</div>
+          <div style="font-size:14px;color:var(--text-secondary);font-weight:500">Pulsa para subir documento</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:4px">.docx — Formato Word</div>
+          <input type="file" id="fileInput" accept=".docx,.doc" style="display:none" onchange="simulateUpload()">
+        </div>
+      </div>
+
+      <!-- Vista previa del documento analizado -->
+      <div id="uploadedDoc" style="display:none;margin-bottom:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--bg-card);border:1px solid var(--success);border-radius:var(--radius) var(--radius) 0 0">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:20px">📄</span>
+            <div><div style="font-size:13px;font-weight:600">Acta_Modelo_EdifAstur.docx</div><div style="font-size:11px;color:var(--text-location)">✅ Analizado · 3 campos IA detectados</div></div>
+          </div>
+          <span style="font-size:14px;color:var(--danger);cursor:pointer;padding:4px" onclick="removeUpload()">✕</span>
+        </div>
+        <!-- Vista previa tipo documento con campos resaltados -->
+        <div style="background:#fff;color:#1a1a1a;border-radius:0 0 var(--radius) var(--radius);padding:20px 16px;font-size:12px;line-height:1.8;max-height:500px;overflow-y:auto;box-shadow:var(--shadow)">
+          <div style="text-align:center;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Acta de la Junta General Ordinaria<br><span style="background:rgba(109,212,168,0.2);padding:1px 6px;border-radius:4px;border:1px dashed #6dd4a8">Comunidad de Propietarios «Edificio Astur»</span></div>
+          <p>En <span style="background:rgba(109,212,168,0.2);padding:1px 4px;border-radius:3px;border:1px dashed #6dd4a8">LUGONES-SIERO</span>, siendo las <span style="background:rgba(245,158,11,0.2);padding:1px 4px;border-radius:3px;border:1px dashed #f59e0b">______ horas</span> del día <span style="background:rgba(245,158,11,0.2);padding:1px 4px;border-radius:3px;border:1px dashed #f59e0b">__ de _____ de 20__</span>, en <span style="background:rgba(245,158,11,0.2);padding:1px 4px;border-radius:3px;border:1px dashed #f59e0b">__ª convocatoria</span>, se reúne la Junta General.</p>
+          <p>Preside <span style="background:rgba(109,212,168,0.2);padding:1px 4px;border-radius:3px;border:1px dashed #6dd4a8">D.ª Mª Luisa Ardisana López</span>. Actúa como Secretario-Administrador <span style="background:rgba(109,212,168,0.2);padding:1px 4px;border-radius:3px;border:1px dashed #6dd4a8">CARIGAN SERVICIOS INTEGRADOS S.L.</span></p>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;border-bottom:1px solid #ccc;padding-bottom:3px;margin:10px 0 6px">Orden del día</div>
+          <p><span style="background:rgba(245,158,11,0.2);padding:1px 4px;border-radius:3px;border:1px dashed #f59e0b">1.º — ________________________<br>2.º — ________________________<br>3.º — ________________________</span></p>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;border-bottom:1px solid #ccc;padding-bottom:3px;margin:10px 0 6px">Asistentes</div>
+          <p><span style="background:rgba(109,212,168,0.2);padding:1px 4px;border-radius:3px;border:1px dashed #6dd4a8">[Tabla de propietarios con cuotas]</span></p>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;border-bottom:1px solid #ccc;padding-bottom:3px;margin:10px 0 6px">Primero. — Cuentas y presupuesto</div>
+          <div style="position:relative;background:rgba(59,130,246,0.1);padding:8px 10px;border-radius:6px;border:1px dashed #3b82f6;margin:6px 0"><div style="position:absolute;top:-8px;right:8px;font-size:9px;padding:1px 6px;background:#3b82f6;color:#fff;border-radius:8px;cursor:pointer;font-weight:600" onclick="this.textContent=this.textContent.includes('IA')?'✏️ MANUAL':'🤖 IA';this.style.background=this.textContent.includes('IA')?'#3b82f6':'#f59e0b'">🤖 IA</div><span style="color:#666;font-style:italic;font-size:11px">La IA generará el desarrollo de este punto a partir de la grabación...</span></div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;border-bottom:1px solid #ccc;padding-bottom:3px;margin:10px 0 6px">Segundo. — Renovación de cargos</div>
+          <div style="position:relative;background:rgba(59,130,246,0.1);padding:8px 10px;border-radius:6px;border:1px dashed #3b82f6;margin:6px 0"><div style="position:absolute;top:-8px;right:8px;font-size:9px;padding:1px 6px;background:#3b82f6;color:#fff;border-radius:8px;cursor:pointer;font-weight:600" onclick="this.textContent=this.textContent.includes('IA')?'✏️ MANUAL':'🤖 IA';this.style.background=this.textContent.includes('IA')?'#3b82f6':'#f59e0b'">🤖 IA</div><span style="color:#666;font-style:italic;font-size:11px">La IA generará el desarrollo de este punto a partir de la grabación...</span></div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;border-bottom:1px solid #ccc;padding-bottom:3px;margin:10px 0 6px">Tercero. — Ruegos y preguntas</div>
+          <div style="position:relative;background:rgba(59,130,246,0.1);padding:8px 10px;border-radius:6px;border:1px dashed #3b82f6;margin:6px 0"><div style="position:absolute;top:-8px;right:8px;font-size:9px;padding:1px 6px;background:#3b82f6;color:#fff;border-radius:8px;cursor:pointer;font-weight:600" onclick="this.textContent=this.textContent.includes('IA')?'✏️ MANUAL':'🤖 IA';this.style.background=this.textContent.includes('IA')?'#3b82f6':'#f59e0b'">🤖 IA</div><span style="color:#666;font-style:italic;font-size:11px">La IA generará el desarrollo de este punto a partir de la grabación...</span></div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;border-bottom:1px solid #ccc;padding-bottom:3px;margin:10px 0 6px">Cierre</div>
+          <p>Sin más asuntos, se levanta la sesión a las <span style="background:rgba(59,130,246,0.1);padding:1px 4px;border-radius:3px;border:1px dashed #3b82f6;font-size:10px">🤖 hora IA</span>.</p>
+          <p style="text-align:center;margin-top:12px"><b>La Presidenta</b><br><br><span style="background:rgba(109,212,168,0.2);padding:1px 4px;border-radius:3px;border:1px dashed #6dd4a8">Mª Luisa Ardisana López</span><br><br><b>El Secretario-Administrador</b><br><br><span style="background:rgba(109,212,168,0.2);padding:1px 4px;border-radius:3px;border:1px dashed #6dd4a8">Carigan Servicios Integrados S.L.</span></p>
+        </div>
+        <!-- Leyenda -->
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;padding:10px;font-size:11px;margin-top:8px">
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;background:rgba(109,212,168,0.3);border:1px dashed #6dd4a8;border-radius:2px;display:inline-block"></span><span style="color:var(--text-location)">Datos fijos</span></span>
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;background:rgba(245,158,11,0.3);border:1px dashed #f59e0b;border-radius:2px;display:inline-block"></span><span style="color:var(--text-date)">Datos junta</span></span>
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;background:rgba(59,130,246,0.2);border:1px dashed #3b82f6;border-radius:2px;display:inline-block"></span><span style="color:var(--accent)">Rellena IA</span></span>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:2px">Pulsa <span style="color:var(--accent)">🤖 IA</span> sobre el documento para cambiar a <span style="color:var(--warning)">✏️ MANUAL</span></div>
+      </div>
+
+      <button class="btn btn-primary" onclick="goBack()">💾 Guardar comunidad</button>
+    </div>
+
+    <!-- ══════ JUNTAS ══════ -->
+    <div id="screen-juntas" class="screen" data-nav="nav-juntas">
+      <div class="sub-header"><button class="back-btn" onclick="goBack()">←</button><span class="sub-title">Juntas</span><button class="section-action" style="margin-left:auto" onclick="showScreen('junta-nueva')">+ Nueva</button></div>
+      <div class="tabs"><button class="tab active">Próximas</button><button class="tab">En curso</button><button class="tab">Finalizadas</button></div>
+      <div class="card" onclick="showScreen('junta-detail')">
+        <div class="card-header"><span class="card-title">Edificio Astur</span><span class="card-badge badge-warning">25 Abr</span></div>
+        <div class="card-meta"><span class="card-meta-item meta-time">🕐 18:30h</span><span class="card-meta-item meta-location">📍 Portal edificio</span><span class="card-meta-item meta-type">📋 3 puntos</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Residencial El Parque</span><span class="card-badge badge-accent">03 May</span></div>
+        <div class="card-meta"><span class="card-meta-item meta-time">🕐 19:00h</span><span class="card-meta-item meta-location">📍 Salón comunal</span><span class="card-meta-item meta-type">📋 4 puntos</span></div>
+      </div>
+      <button class="btn btn-primary" style="margin-top:12px" onclick="showScreen('junta-nueva')">+ Crear junta</button>
+    </div>
+
+    <!-- ══════ DETALLE JUNTA ══════ -->
+    <div id="screen-junta-detail" class="screen">
+      <div class="sub-header"><button class="back-btn" onclick="goBack()">←</button><span class="sub-title">Junta — Edificio Astur</span></div>
+      <div class="progress-steps">
+        <div class="step-dot done">✓</div><div class="step-line done"></div>
+        <div class="step-dot done">✓</div><div class="step-line"></div>
+        <div class="step-dot current">3</div><div class="step-line"></div>
+        <div class="step-dot">4</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-bottom:20px;padding:0 6px"><span>Preparar</span><span>Grabar</span><span>Transcribir</span><span>Acta</span></div>
+      <div class="card" style="cursor:default">
+        <div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="font-weight:600">Junta Ordinaria</span><span class="card-badge badge-warning">Preparada</span></div>
+        <div style="font-size:14px;display:flex;flex-direction:column;gap:6px">
+          <span style="color:var(--text-date)">📅 25 de abril de 2026</span>
+          <span style="color:var(--text-detail)">🕐 18:30h — 2.ª convocatoria</span>
+          <span style="color:var(--text-location)">📍 Portal del edificio, Lugones</span>
+          <span style="color:var(--text-info)">👤 Preside: Mª Luisa Ardisana López</span>
+          <span style="color:var(--text-muted)">📝 Secretario: Carigan Servicios Integrados S.L.</span>
+        </div>
+      </div>
+      <div class="section-header"><span class="section-title">Orden del día</span></div>
+      <div class="orden-item"><span class="orden-num">1</span><span class="orden-text">Aprobación de cuentas del ejercicio 2025 y presupuesto 2026</span></div>
+      <div class="orden-item"><span class="orden-num">2</span><span class="orden-text">Renovación de cargos de la Junta de Gobierno</span></div>
+      <div class="orden-item"><span class="orden-num">3</span><span class="orden-text">Ruegos y preguntas</span></div>
+      <div class="section-header" style="margin-top:16px"><span class="section-title">Asistentes (3/5)</span></div>
+      <div class="checkbox-row"><div class="checkbox checked">✓</div><div class="checkbox-info"><div class="checkbox-name">Mª Luisa Ardisana López</div><div class="checkbox-detail">1º A · 10,77% · Presidenta</div></div></div>
+      <div class="checkbox-row"><div class="checkbox checked">✓</div><div class="checkbox-info"><div class="checkbox-name">Fernando García Prado</div><div class="checkbox-detail">2º A · 10,77% · Propietario</div></div></div>
+      <div class="checkbox-row"><div class="checkbox"></div><div class="checkbox-info"><div class="checkbox-name">Mª Teresa Álvarez Fernández</div><div class="checkbox-detail">2º B · 8,42% · Propietaria</div></div></div>
+      <div class="checkbox-row"><div class="checkbox checked">✓</div><div class="checkbox-info"><div class="checkbox-name">José M. Álvarez Iglesias</div><div class="checkbox-detail">3º A · 14,99% · Propietario</div></div></div>
+      <div class="checkbox-row"><div class="checkbox"></div><div class="checkbox-info"><div class="checkbox-name">Lorenzo Santiago Iglesias</div><div class="checkbox-detail">3º B · 12,09% · Propietario</div></div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px">
+        <button class="btn btn-secondary" onclick="showScreen('grabacion')">🎙️ Grabar</button>
+        <button class="btn btn-primary" onclick="showScreen('transcripcion')">📝 Transcribir</button>
+      </div>
+    </div>
+
+    <!-- ══════ NUEVA JUNTA ══════ -->
+    <div id="screen-junta-nueva" class="screen">
+      <div class="sub-header"><button class="back-btn" onclick="goBack()">←</button><span class="sub-title">Nueva junta</span></div>
+      <div class="form-group"><label class="form-label">Comunidad</label><select class="form-select"><option>Seleccionar comunidad...</option><option selected>Edificio Astur</option><option>Residencial El Parque</option><option>Torres del Nora</option></select></div>
+      <div class="form-group"><label class="form-label">Tipo de junta</label><select class="form-select"><option selected>Ordinaria</option><option>Extraordinaria</option></select></div>
+      <div class="form-group"><label class="form-label">Fecha</label><input class="form-input" type="date" value="2026-04-25"></div>
+
+      <!-- Doble convocatoria -->
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:14px">
+        <div style="font-size:13px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px">Convocatorias</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div>
+            <div style="font-size:12px;color:var(--text-date);font-weight:600;margin-bottom:4px">1.ª CONVOCATORIA</div>
+            <input class="form-input" type="time" value="18:00" id="hora1conv" oninput="autoSecondConv()">
+          </div>
+          <div>
+            <div style="font-size:12px;color:var(--text-location);font-weight:600;margin-bottom:4px">2.ª CONVOCATORIA</div>
+            <input class="form-input" type="time" value="18:30" id="hora2conv">
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:8px;text-align:center">La 2.ª convocatoria se ajusta automáticamente a +30 min</div>
+      </div>
+
+      <div class="form-group"><label class="form-label">Lugar</label><input class="form-input" type="text" value="Portal del edificio, Lugones"></div>
+      <div class="form-group"><label class="form-label">Orden del día</label><textarea class="form-textarea" rows="4">1. Aprobación de cuentas del ejercicio 2025 y presupuesto 2026
+2. Renovación de cargos de la Junta de Gobierno
+3. Ruegos y preguntas</textarea></div>
+      <button class="btn btn-primary" onclick="showScreen('junta-detail')">✅ Crear junta</button>
+    </div>
+
+    <!-- ══════ GRABACIÓN ══════ -->
+    <div id="screen-grabacion" class="screen">
+      <div class="sub-header"><button class="back-btn" onclick="goBack()">←</button><span class="sub-title">Grabación</span></div>
+      <div style="text-align:center;margin-bottom:6px"><span class="card-badge badge-warning" style="font-size:13px">Edificio Astur — 25/04/2026</span></div>
+      <div class="recorder-container">
+        <div class="rec-time" id="recTime">00:00:00</div>
+        <div class="waveform" id="waveform"></div>
+        <div class="rec-controls">
+          <button class="rec-btn rec-btn-sec" onclick="addMarker()">🔖</button>
+          <button class="rec-btn rec-btn-main" id="recBtn" onclick="toggleRecording()">⏺</button>
+          <button class="rec-btn rec-btn-sec">⏸</button>
+        </div>
+        <div style="margin-top:14px;font-size:13px;color:var(--text-muted)">Pulsa <b style="color:var(--danger)">●</b> para iniciar · <b>🔖</b> marcador manual</div>
+      </div>
+
+      <!-- Detección automática de temas -->
+      <div class="section-header" style="margin-top:16px">
+        <span class="section-title">Temas detectados (IA)</span>
+        <span style="font-size:11px;color:var(--success);font-weight:600">● En vivo</span>
+      </div>
+      <div id="autoMarkersList">
+        <div class="marker-item" style="border-left:3px solid var(--success)">
+          <span class="marker-time">00:00:42</span>
+          <div style="flex:1">
+            <div style="font-size:13px;color:var(--text-primary)">Apertura de la sesión</div>
+            <div style="font-size:11px;color:var(--text-muted)">Comprobación asistentes, quórum</div>
+          </div>
+          <span style="font-size:10px;padding:2px 6px;background:var(--success-bg);color:var(--success);border-radius:10px">AUTO</span>
+        </div>
+        <div class="marker-item" style="border-left:3px solid var(--success)">
+          <span class="marker-time">00:05:23</span>
+          <div style="flex:1">
+            <div style="font-size:13px;color:var(--text-primary)">Punto 1 — Cuentas ejercicio 2024</div>
+            <div style="font-size:11px;color:var(--text-muted)">Ingresos, gastos ordinarios, resultado</div>
+          </div>
+          <span style="font-size:10px;padding:2px 6px;background:var(--success-bg);color:var(--success);border-radius:10px">AUTO</span>
+        </div>
+        <div class="marker-item" style="border-left:3px solid var(--warning)">
+          <span class="marker-time">00:12:08</span>
+          <div style="flex:1">
+            <div style="font-size:13px;color:var(--text-primary)">Gastos extraordinarios</div>
+            <div style="font-size:11px;color:var(--text-muted)">Electricidad, ascensor, cerrajería</div>
+          </div>
+          <span style="font-size:10px;padding:2px 6px;background:var(--success-bg);color:var(--success);border-radius:10px">AUTO</span>
+        </div>
+        <div class="marker-item" style="border-left:3px solid var(--accent)">
+          <span class="marker-time">00:18:47</span>
+          <div style="flex:1">
+            <div style="font-size:13px;color:var(--text-primary)">Votación — Aprobación cuentas</div>
+            <div style="font-size:11px;color:var(--text-date)">🗳️ Detectada votación: unanimidad</div>
+          </div>
+          <span style="font-size:10px;padding:2px 6px;background:var(--accent-glow);color:var(--accent);border-radius:10px">VOTO</span>
+        </div>
+        <div class="marker-item" style="border-left:3px solid var(--success)">
+          <span class="marker-time">00:22:15</span>
+          <div style="flex:1">
+            <div style="font-size:13px;color:var(--text-primary)">Punto 2 — Presupuesto 2026</div>
+            <div style="font-size:11px;color:var(--text-muted)">Suficiencia cuotas, nuevos importes</div>
+          </div>
+          <span style="font-size:10px;padding:2px 6px;background:var(--success-bg);color:var(--success);border-radius:10px">AUTO</span>
+        </div>
+        <div class="marker-item" style="border-left:3px solid var(--success)">
+          <span class="marker-time">00:31:12</span>
+          <div style="flex:1">
+            <div style="font-size:13px;color:var(--text-primary)">Punto 3 — Renovación de cargos</div>
+            <div style="font-size:11px;color:var(--text-muted)">Cese y nombramiento cargos</div>
+          </div>
+          <span style="font-size:10px;padding:2px 6px;background:var(--success-bg);color:var(--success);border-radius:10px">AUTO</span>
+        </div>
+        <div class="marker-item" style="border-left:3px solid var(--text-detail);opacity:0.7">
+          <span class="marker-time">00:38:50</span>
+          <div style="flex:1">
+            <div style="font-size:13px;color:var(--text-primary)">Punto 4 — Ruegos y preguntas</div>
+            <div style="font-size:11px;color:var(--text-muted)">Sumideros, iluminación, canalones...</div>
+          </div>
+          <span style="font-size:10px;padding:2px 6px;background:var(--success-bg);color:var(--success);border-radius:10px">AUTO</span>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-top:16px">
+        <span class="section-title">Marcadores manuales</span>
+      </div>
+      <div id="markersList">
+        <div class="marker-item" style="border-left:3px solid var(--warning)">
+          <span class="marker-time">00:15:30</span>
+          <div style="flex:1"><div style="font-size:13px">Reclamación recibos impagados</div></div>
+          <span style="font-size:10px;padding:2px 6px;background:var(--warning-bg);color:var(--warning);border-radius:10px">MANUAL</span>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" style="margin-top:16px" onclick="showScreen('transcripcion')">Finalizar y transcribir →</button>
+    </div>
+
+    <!-- ══════ TRANSCRIPCIÓN ══════ -->
+    <div id="screen-transcripcion" class="screen">
+      <div class="sub-header"><button class="back-btn" onclick="goBack()">←</button><span class="sub-title">Transcripción</span></div>
+      <div class="section-header"><span class="section-title">Método de transcripción</span></div>
+      <div class="transcript-options">
+        <div class="option-card selected"><div class="option-icon">☁️</div><div class="option-title">Whisper (Nube)</div><div class="option-desc">OpenAI — 95% precisión</div><div class="option-price">~0,36 €/hora</div></div>
+        <div class="option-card"><div class="option-icon">📱</div><div class="option-title">Local (Gratis)</div><div class="option-desc">Web Speech API — 60-70%</div><div class="option-price" style="color:var(--success)">0,00 €</div></div>
+      </div>
+      <button class="btn btn-primary" style="margin-bottom:16px">🚀 Iniciar transcripción</button>
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="font-size:14px;font-weight:500">Transcribiendo...</span><span style="font-size:14px;color:var(--accent);font-family:'JetBrains Mono',monospace">78%</span></div>
+        <div style="height:6px;background:var(--bg-input);border-radius:3px;overflow:hidden"><div style="width:78%;height:100%;background:linear-gradient(90deg,var(--accent),#6366f1);border-radius:3px"></div></div>
+        <div style="font-size:13px;color:var(--text-detail);margin-top:6px">Procesando audio... 35:22 de 45:18</div>
+      </div>
+      <div class="section-header"><span class="section-title">Resultado</span></div>
+      <div class="transcript-block">
+        <p><span class="transcript-timestamp">[00:00:12]</span> Buenas tardes a todos. Siendo las dieciocho horas y treinta minutos, en segunda convocatoria, damos comienzo a la junta ordinaria de la comunidad de propietarios del Edificio Astur.</p><br>
+        <p><span class="transcript-timestamp">[00:01:45]</span> Como primer punto del orden del día, procedemos a la lectura y aprobación de las cuentas del ejercicio 2024...</p><br>
+        <p><span class="transcript-timestamp">[00:05:23]</span> Los gastos ordinarios fueron de seis mil novecientos treinta y tres euros, resultando un superávit de doscientos cuarenta y seis euros...</p><br>
+        <p><span class="transcript-timestamp">[00:18:47]</span> Se aprueban las cuentas por unanimidad de los presentes.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px">
+        <button class="btn btn-secondary">✏️ Editar texto</button>
+        <button class="btn btn-primary" onclick="showScreen('generar-acta')">Generar acta →</button>
+      </div>
+    </div>
+
+    <!-- ══════ GENERAR ACTA ══════ -->
+    <div id="screen-generar-acta" class="screen">
+      <div class="sub-header"><button class="back-btn" onclick="goBack()">←</button><span class="sub-title">Generar acta</span></div>
+      <div class="progress-steps">
+        <div class="step-dot done">✓</div><div class="step-line done"></div>
+        <div class="step-dot done">✓</div><div class="step-line done"></div>
+        <div class="step-dot done">✓</div><div class="step-line done"></div>
+        <div class="step-dot current">4</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:20px;padding:0 6px">
+        <span style="color:var(--success)">Preparar ✓</span><span style="color:var(--success)">Grabar ✓</span><span style="color:var(--success)">Transcribir ✓</span><span style="color:var(--accent);font-weight:600">Acta</span>
+      </div>
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px;text-align:center">
+        <div style="font-size:32px;margin-bottom:8px">🤖</div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:4px">Claude generará el acta</div>
+        <div style="font-size:14px;color:var(--text-muted);line-height:1.6">Usando la transcripción + datos de la comunidad + asistentes para crear el acta en formato legal estándar</div>
+        <div style="font-size:13px;color:var(--text-detail);margin-top:8px">Coste estimado: ~0,03 €</div>
+      </div>
+      <button class="btn btn-primary" style="margin-bottom:16px" onclick="showScreen('acta-preview')">🤖 Generar con Claude</button>
+      <div class="section-header"><span class="section-title">Datos incluidos</span></div>
+      <div style="font-size:14px;display:flex;flex-direction:column;gap:6px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:14px">
+        <span style="color:var(--text-location)">✅ Comunidad: Edificio Astur</span>
+        <span style="color:var(--text-date)">✅ Fecha: 25/04/2026 — 18:30h — 2.ª conv.</span>
+        <span style="color:var(--text-info)">✅ Asistentes: 3 de 5 (36,53% cuota)</span>
+        <span style="color:var(--text-detail)">✅ Orden del día: 3 puntos</span>
+        <span style="color:var(--text-secondary)">✅ Transcripción: 45:18 min (Whisper)</span>
+        <span style="color:var(--text-muted)">✅ Marcadores: 3 puntos clave</span>
+      </div>
+    </div>
+
+    <!-- ══════ PREVIEW ACTA ══════ -->
+    <div id="screen-acta-preview" class="screen">
+      <div class="sub-header"><button class="back-btn" onclick="goBack()">←</button><span class="sub-title">Acta generada</span></div>
+      <div class="acta-preview">
+        <h2>Acta de la Junta General Ordinaria<br>Comunidad de Propietarios «Edificio Astur»</h2>
+        <p>En <b>LUGONES-SIERO</b>, siendo las <b>18:30 horas</b> del día <b>25 de abril de 2026</b>, en segunda convocatoria, se reúne la Junta General Ordinaria.</p>
+        <p>Preside <b>D.ª Mª Luisa Ardisana López</b>. Secretario-Administrador: <b>CARIGAN SERVICIOS INTEGRADOS S.L.</b></p>
+        <h3>Orden del día</h3>
+        <p>1.º — Aprobación de cuentas 2025 y presupuesto 2026<br>2.º — Renovación de cargos<br>3.º — Ruegos y preguntas</p>
+        <h3>Asistentes</h3>
+        <table><tr><th>Propietario</th><th>Prop.</th><th>Cuota</th><th>Cargo</th></tr>
+        <tr><td>Mª Luisa Ardisana</td><td>1ºA</td><td>10,77%</td><td>Presidenta</td></tr>
+        <tr><td>Fernando García</td><td>2ºA</td><td>10,77%</td><td>Propietario</td></tr>
+        <tr><td>José M. Álvarez</td><td>3ºA</td><td>14,99%</td><td>Propietario</td></tr></table>
+        <p><i>Total cuota: 36,53%</i></p>
+        <h3>Primero. — Cuentas y presupuesto</h3>
+        <p>Ingresos: 7.179,89 € · Gastos: 6.933,30 € · Resultado: +246,59 €<br>Recibos ptes: -627,00 € · Déficit: -380,41 € · Saldo: 944,16 €</p>
+        <p><b>Se aprueban por UNANIMIDAD.</b></p>
+        <h3>Segundo. — Renovación de cargos</h3><p>Se procede a la renovación...</p>
+        <h3>Tercero. — Ruegos y preguntas</h3><p>Sumideros, iluminación portal, canalones...</p>
+        <h3>Cierre</h3><p>Se levanta la sesión a las <b>19:45 horas</b>.</p>
+        <p style="text-align:center"><br><b>La Presidenta</b><br><br>Mª Luisa Ardisana López<br><br><b>El Secretario-Administrador</b><br><br>Carigan Servicios Integrados S.L.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px">
+        <button class="btn btn-secondary">✏️ Editar acta</button>
+        <button class="btn btn-primary">📥 Exportar .docx</button>
+      </div>
+      <button class="btn btn-secondary" style="margin-top:8px">🔄 Regenerar con Claude</button>
+    </div>
+
+    <!-- ══════ HISTÓRICO ══════ -->
+    <div id="screen-historico" class="screen" data-nav="nav-historico">
+      <div class="sub-header"><button class="back-btn" onclick="goBack()">←</button><span class="sub-title">Histórico</span></div>
+      <div class="search-bar"><span>🔍</span><input type="text" placeholder="Buscar en actas y transcripciones..."></div>
+      <div class="tabs"><button class="tab active">Todas</button><button class="tab">Con acta</button><button class="tab">Pendientes</button></div>
+      <div class="card" onclick="showScreen('acta-preview')">
+        <div class="card-header"><span class="card-title">Edificio Astur</span><span class="card-badge badge-success">Acta ✓</span></div>
+        <div class="card-meta"><span class="card-meta-item meta-date">📅 11/04/2025</span><span class="card-meta-item" style="color:var(--text-detail)">🎙️ 45:18 min</span><span class="card-meta-item meta-type">📝 Ordinaria</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Torres del Nora</span><span class="card-badge badge-success">Acta ✓</span></div>
+        <div class="card-meta"><span class="card-meta-item meta-date">📅 28/03/2025</span><span class="card-meta-item" style="color:var(--text-detail)">🎙️ 38:42 min</span><span class="card-meta-item meta-type">📝 Extraordinaria</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Residencial El Parque</span><span class="card-badge badge-warning">Pendiente</span></div>
+        <div class="card-meta"><span class="card-meta-item meta-date">📅 15/03/2025</span><span class="card-meta-item" style="color:var(--text-detail)">🎙️ 52:10 min</span><span class="card-meta-item meta-type">📝 Ordinaria</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Edificio Astur</span><span class="card-badge badge-success">Acta ✓</span></div>
+        <div class="card-meta"><span class="card-meta-item meta-date">📅 08/04/2024</span><span class="card-meta-item" style="color:var(--text-detail)">🎙️ 41:05 min</span><span class="card-meta-item meta-type">📝 Ordinaria</span></div>
+      </div>
+    </div>
+
+    <!-- ══════ CONFIGURACIÓN ══════ -->
+    <div id="screen-config" class="screen" data-nav="nav-config">
+      <div class="sub-header"><button class="back-btn" onclick="goBack()">←</button><span class="sub-title">Configuración</span></div>
+      <div class="section-header"><span class="section-title">Claves API</span></div>
+      <div class="config-item"><div class="config-left"><span class="config-icon">☁️</span><div><div class="config-label">OpenAI (Whisper)</div><div class="config-desc api-key-display">sk-••••••••••••••Xk3B</div></div></div><span class="config-arrow">→</span></div>
+      <div class="config-item"><div class="config-left"><span class="config-icon">🤖</span><div><div class="config-label">Anthropic (Claude)</div><div class="config-desc api-key-display">sk-ant-••••••••••Yw9p</div></div></div><span class="config-arrow">→</span></div>
+      <div class="section-header" style="margin-top:20px"><span class="section-title">Transcripción</span></div>
+      <div class="config-item"><div class="config-left"><span class="config-icon">🎯</span><div><div class="config-label">Método por defecto</div><div class="config-desc" style="color:var(--text-info)">Whisper (Nube)</div></div></div><span class="config-arrow">→</span></div>
+      <div class="config-item"><div class="config-left"><span class="config-icon">🌍</span><div><div class="config-label">Idioma</div><div class="config-desc" style="color:var(--text-location)">Español (es)</div></div></div><span class="config-arrow">→</span></div>
+      <div class="section-header" style="margin-top:20px"><span class="section-title">Datos</span></div>
+      <div class="config-item"><div class="config-left"><span class="config-icon">💾</span><div><div class="config-label">Exportar backup</div><div class="config-desc">Comunidades, juntas, actas, audios</div></div></div><span class="config-arrow">→</span></div>
+      <div class="config-item"><div class="config-left"><span class="config-icon">📂</span><div><div class="config-label">Importar backup</div><div class="config-desc">Restaurar desde archivo</div></div></div><span class="config-arrow">→</span></div>
+      <div class="config-item" style="border-color:var(--danger);opacity:0.8"><div class="config-left"><span class="config-icon">🗑️</span><div><div class="config-label" style="color:var(--danger)">Borrar todos los datos</div><div class="config-desc">Eliminar IndexedDB completa</div></div></div><span class="config-arrow" style="color:var(--danger)">→</span></div>
+      <div style="text-align:center;margin-top:24px;font-size:13px;color:var(--text-muted)">GestActas v1.0 — Abril 2026<br>PWA · Sin servidor · Datos locales</div>
+    </div>
+
+  </div>
+
+  <nav class="bottom-nav">
+    <button class="nav-item active" id="nav-dashboard" onclick="showScreen('dashboard')"><span class="nav-icon">🏠</span><span class="nav-label">Inicio</span></button>
+    <button class="nav-item" id="nav-comunidades" onclick="showScreen('comunidades')"><span class="nav-icon">🏢</span><span class="nav-label">Comunidades</span></button>
+    <button class="nav-item" id="nav-juntas" onclick="showScreen('juntas')"><span class="nav-icon">📋</span><span class="nav-label">Juntas</span></button>
+    <button class="nav-item" id="nav-historico" onclick="showScreen('historico')"><span class="nav-icon">📚</span><span class="nav-label">Histórico</span></button>
+    <button class="nav-item" id="nav-config" onclick="showScreen('config')"><span class="nav-icon">⚙️</span><span class="nav-label">Ajustes</span></button>
+  </nav>
+</div>
+
+<script>
+const mainTabs=['dashboard','comunidades','juntas','historico','config'];
+const navMap={'dashboard':'nav-dashboard','comunidades':'nav-comunidades','comunidad-detail':'nav-comunidades','comunidad-nueva':'nav-comunidades','juntas':'nav-juntas','junta-detail':'nav-juntas','junta-nueva':'nav-juntas','grabacion':'nav-juntas','transcripcion':'nav-juntas','generar-acta':'nav-juntas','acta-preview':'nav-juntas','historico':'nav-historico','config':'nav-config'};
+let screenHistory=['dashboard'],currentScreen='dashboard';
+
+function showScreen(id){
+  if(id===currentScreen)return;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const navId=navMap[id];if(navId)document.getElementById(navId).classList.add('active');
+  document.querySelectorAll('.swipe-dot').forEach(d=>d.classList.remove('active'));
+  const dot=document.querySelector('[data-dot="'+navId+'"]');if(dot)dot.classList.add('active');
+  screenHistory.push(id);currentScreen=id;
+  document.querySelector('.app-content').scrollTop=0;
+}
+
+function goBack(){
+  if(screenHistory.length>1){
+    screenHistory.pop();
+    const prev=screenHistory[screenHistory.length-1];
+    currentScreen='__back__';
+    showScreen(prev);
+    screenHistory.pop();
+  }else{showScreen('dashboard')}
+}
+
+// Swipe
+let tx=0,ty=0;
+const ac=document.getElementById('appContent');
+ac.addEventListener('touchstart',e=>{tx=e.changedTouches[0].clientX;ty=e.changedTouches[0].clientY},{passive:true});
+ac.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;
+  if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5){
+    const cn=navMap[currentScreen];
+    const ct=Object.keys(navMap).find(k=>navMap[k]===cn&&mainTabs.includes(k))||currentScreen;
+    const ci=mainTabs.indexOf(ct);if(ci===-1)return;
+    if(dx<0&&ci<mainTabs.length-1)showScreen(mainTabs[ci+1]);
+    else if(dx>0&&ci>0)showScreen(mainTabs[ci-1]);
+  }
+},{passive:true});
+
+// Waveform
+(function(){const w=document.getElementById('waveform');for(let i=0;i<60;i++){const b=document.createElement('div');b.className='wave-bar';b.style.height=(Math.random()*20+8)+'px';w.appendChild(b)}})();
+
+// Recording
+let isRec=false,recS=0,recI,wI;
+function toggleRecording(){
+  const b=document.getElementById('recBtn');
+  if(!isRec){isRec=true;b.classList.add('recording');b.textContent='⏹';
+    recI=setInterval(()=>{recS++;document.getElementById('recTime').textContent=
+      String(Math.floor(recS/3600)).padStart(2,'0')+':'+String(Math.floor((recS%3600)/60)).padStart(2,'0')+':'+String(recS%60).padStart(2,'0')},1000);
+    const bars=document.querySelectorAll('.wave-bar');
+    wI=setInterval(()=>{bars.forEach(b=>{b.style.height=(Math.random()*55+5)+'px';b.classList.add('active');b.style.opacity=(Math.random()*0.6+0.4)})},150);
+  }else{isRec=false;b.classList.remove('recording');b.textContent='⏺';clearInterval(recI);clearInterval(wI);
+    document.querySelectorAll('.wave-bar').forEach(b=>{b.classList.remove('active');b.style.height=(Math.random()*20+8)+'px';b.style.opacity='0.4'});
+  }
+}
+function addMarker(){
+  const t=String(Math.floor(recS/3600)).padStart(2,'0')+':'+String(Math.floor((recS%3600)/60)).padStart(2,'0')+':'+String(recS%60).padStart(2,'0');
+  const d=document.createElement('div');d.className='marker-item';
+  d.innerHTML='<span class="marker-time">'+t+'</span><span>Punto clave</span>';
+  document.getElementById('markersList').appendChild(d);
+}
+
+// Tabs, checkboxes, options
+document.querySelectorAll('.tabs').forEach(g=>{g.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{g.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active')})})});
+document.querySelectorAll('.checkbox-row').forEach(r=>{r.addEventListener('click',()=>{const c=r.querySelector('.checkbox');c.classList.toggle('checked');c.textContent=c.classList.contains('checked')?'✓':''})});
+document.querySelectorAll('.option-card').forEach(c=>{c.addEventListener('click',()=>{document.querySelectorAll('.option-card').forEach(x=>x.classList.remove('selected'));c.classList.add('selected')})});
+
+// Auto 2nd convocation +30min
+function autoSecondConv(){
+  const h1=document.getElementById('hora1conv');
+  const h2=document.getElementById('hora2conv');
+  if(h1.value){
+    const[hh,mm]=h1.value.split(':').map(Number);
+    let nm=mm+30,nh=hh;
+    if(nm>=60){nm-=60;nh++}
+    if(nh>=24)nh=0;
+    h2.value=String(nh).padStart(2,'0')+':'+String(nm).padStart(2,'0');
+  }
+}
+
+// Upload simulation
+function simulateUpload(){
+  document.getElementById('uploadArea').parentElement.style.display='none';
+  document.getElementById('uploadedDoc').style.display='block';
+}
+function removeUpload(){
+  document.getElementById('uploadedDoc').style.display='none';
+  document.getElementById('uploadArea').parentElement.style.display='block';
+}
+
+// Toggle IA <-> Manual on field badges
+document.querySelectorAll('[title="Pulsa para cambiar"]').forEach(badge=>{
+  badge.addEventListener('click',function(e){
+    e.stopPropagation();
+    toggleFieldBadge(this);
+  });
+});
+// Also for all 🤖 IA badges
+document.addEventListener('click',function(e){
+  const badge=e.target.closest('[style*="cursor:pointer"]');
+  if(badge && (badge.textContent.includes('IA') || badge.textContent.includes('MANUAL'))){
+    toggleFieldBadge(badge);
+  }
+});
+function toggleFieldBadge(el){
+  if(el.textContent.includes('IA')){
+    el.textContent='✏️ MANUAL';
+    el.style.background='var(--warning-bg)';
+    el.style.color='var(--warning)';
+    el.closest('[style*="background:rgba(59"]').style.background='var(--bg-input)';
+    el.closest('[style*="border:1px"]') && (el.closest('[style*="border:1px"]').style.border='none');
+  }else if(el.textContent.includes('MANUAL') && !el.textContent.includes('🔖')){
+    el.innerHTML='🤖 IA';
+    el.style.background='var(--accent-glow)';
+    el.style.color='var(--accent)';
+  }
+}
+</script>
+</body>
+</html>
