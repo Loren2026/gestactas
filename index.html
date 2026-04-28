@@ -23,11 +23,7 @@
             --light-text: #ecf0f1;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -181,195 +177,152 @@
             padding: 0.25rem 0.75rem;
             border-radius: 20px;
             font-size: 0.8rem;
-            font-weight: bold;
+            font-weight: 600;
         }
 
-        .status.pendiente {
+        .status-pending {
             background: #fff3cd;
             color: #856404;
         }
 
-        .status.completada {
+        .status-completed {
             background: #d4edda;
             color: #155724;
         }
 
-        .status.cancelada {
-            background: #f8d7da;
-            color: #721c24;
+        .status-upcoming {
+            background: #d1ecf1;
+            color: #0c5460;
         }
 
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 5px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            margin: 0.25rem;
+        .meeting-item .details {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #dee2e6;
         }
 
-        .btn-primary {
-            background: var(--secondary-color);
-            border: none;
-            color: white;
+        .meeting-item .details p {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
         }
 
-        .btn-primary:hover {
-            background: #2980b9;
-            transform: translateY(-2px);
-        }
-
-        .btn-success {
-            background: var(--success-color);
-            border: none;
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #229954;
-            transform: translateY(-2px);
-        }
-
-        .btn-danger {
-            background: var(--accent-color);
-            border: none;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #c0392b;
-            transform: translateY(-2px);
-        }
-
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
+        .meeting-item .details p strong {
+            color: var(--primary-color);
         }
 
         .action-btn {
-            background: white;
-            padding: 2rem 1rem;
-            border-radius: 10px;
-            text-align: center;
-            border: 2px solid transparent;
-            transition: all 0.3s ease;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
             cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
         }
 
         .action-btn:hover {
-            border-color: var(--secondary-color);
-            transform: translateY(-3px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
 
-        .action-btn .icon {
-            font-size: 2rem;
+        .action-btn:active {
+            transform: translateY(0);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .stat-box {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-box .number {
+            font-size: 1.5rem;
+            font-weight: bold;
             color: var(--secondary-color);
-            margin-bottom: 1rem;
         }
 
-        .action-btn p {
-            color: var(--primary-color);
-            font-weight: bold;
-            margin: 0;
-        }
-
-        .progress-section {
-            margin-top: 2rem;
-        }
-
-        .progress-item {
-            margin-bottom: 1.5rem;
-        }
-
-        .progress-item h6 {
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-            font-weight: bold;
+        .stat-box .label {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            text-transform: uppercase;
         }
 
         .progress {
-            height: 25px;
-            background: #e9ecef;
-            border-radius: 12.5px;
-            overflow: hidden;
+            height: 10px;
+            margin-bottom: 1rem;
         }
 
         .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--secondary-color), var(--success-color));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 0.8rem;
-            transition: width 0.5s ease;
+            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+        }
+
+        .progress-item {
+            margin-bottom: 1rem;
+        }
+
+        .progress-item h6 {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .upcoming-deadlines {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .upcoming-deadlines h4 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .deadline-item {
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .deadline-item .date {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-bottom: 0.5rem;
+        }
+
+        .deadline-item .title {
+            font-weight: 600;
+            color: var(--primary-color);
         }
 
         .footer {
             background: var(--primary-color);
-            color: white;
-            text-align: center;
+            color: var(--light-text);
             padding: 2rem 0;
             margin-top: 3rem;
         }
 
         .footer p {
-            margin: 0;
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
         }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-
-            .header-section h1 {
-                font-size: 2rem;
-            }
-
-            .stat-card h3 {
-                font-size: 2rem;
-            }
+        .footer a {
+            color: var(--light-text);
+            text-decoration: none;
         }
 
-        /* Animations */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate-fade-in {
-            animation: fadeIn 0.6s ease-out;
-        }
-
-        .badge {
-            padding: 0.35rem 0.65rem;
-            border-radius: 0.25rem;
-            font-weight: bold;
-            font-size: 0.75rem;
-        }
-
-        .badge-primary {
-            background: var(--secondary-color);
-            color: white;
-        }
-
-        .badge-warning {
-            background: var(--warning-color);
-            color: white;
-        }
-
-        .badge-success {
-            background: var(--success-color);
-            color: white;
+        .footer a:hover {
+            color: var(--secondary-color);
         }
 
         /* Especificaciones Técnicas Styles */
@@ -514,6 +467,21 @@
             font-size: 0.85rem;
             color: #7f8c8d;
         }
+
+        .badge-primary {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .badge-warning {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .badge-success {
+            background: var(--success-color);
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -523,229 +491,162 @@
             <a class="navbar-brand" href="#">
                 <i class="fas fa-clipboard-list"></i> GestActas
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#inicio">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#reuniones">Reuniones</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#actas">Actas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#progreso">Progreso</a>
-                    </li>
-                </ul>
+            <div class="ms-auto">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-cog"></i> Configuración
+                </a>
             </div>
         </div>
     </nav>
 
-    <!-- Main Container -->
-    <div class="container" id="inicio">
-        <!-- Header Section -->
-        <div class="header-section animate-fade-in">
-            <h1>Sistema de Gestión de Juntas</h1>
-            <p>Plataforma integral para Carlos - Gestión eficiente de reuniones y actas</p>
-        </div>
+    <!-- Header -->
+    <div class="header-section">
+        <h1>Gestión de Juntas de Propietarios</h1>
+        <p>Sistema inteligente de gestión de actas para Carlos</p>
+    </div>
 
+    <!-- Main Content -->
+    <div class="container">
         <!-- Stats Cards -->
-        <div class="stats-cards animate-fade-in">
+        <div class="stats-cards">
             <div class="stat-card">
-                <div class="icon">
-                    <i class="fas fa-calendar-alt"></i>
-                </div>
-                <h3>12</h3>
-                <p>Reuniones este mes</p>
+                <div class="icon"><i class="fas fa-building"></i></div>
+                <h3>5</h3>
+                <p>Comunidades</p>
             </div>
             <div class="stat-card">
-                <div class="icon">
-                    <i class="fas fa-file-alt"></i>
-                </div>
-                <h3>45</h3>
+                <div class="icon"><i class="fas fa-users"></i></div>
+                <h3>47</h3>
+                <p>Propietarios</p>
+            </div>
+            <div class="stat-card">
+                <div class="icon"><i class="fas fa-calendar-alt"></i></div>
+                <h3>12</h3>
+                <p>Juntas este año</p>
+            </div>
+            <div class="stat-card">
+                <div class="icon"><i class="fas fa-file-alt"></i></div>
+                <h3>8</h3>
                 <p>Actas generadas</p>
             </div>
-            <div class="stat-card">
-                <div class="icon">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <h3>38</h3>
-                <p>Acciones completadas</p>
-            </div>
-            <div class="stat-card">
-                <div class="icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <h3>8</h3>
-                <p>Participantes activos</p>
-            </div>
         </div>
 
-        <!-- Main Content -->
-        <div class="main-content animate-fade-in">
-            <!-- Meetings Section -->
-            <div class="content-section" id="reuniones">
+        <!-- Main Content Grid -->
+        <div class="main-content">
+            <!-- Left Column -->
+            <div class="left-column">
+                <!-- Upcoming Meetings -->
                 <div class="card">
                     <div class="card-header">
-                        <h4><i class="fas fa-calendar-alt"></i> Próximas Reuniones</h4>
+                        <h4><i class="fas fa-calendar-alt"></i> Próximas Juntas</h4>
                     </div>
                     <div class="card-body">
                         <div class="meeting-item">
-                            <h5>Revisión de Proyecto Trimestral</h5>
-                            <div class="date">
-                                <i class="fas fa-clock"></i> 28 de abril de 2026 - 10:00 AM
+                            <div class="date">📅 En 2 días - 25 de abril de 2026</div>
+                            <h5>Junta General Ordinaria - Edificio Astur</h5>
+                            <div class="status status-upcoming">En preparación</div>
+                            <div class="details">
+                                <p><strong>⏰ Hora:</strong> 18:30h</p>
+                                <p><strong>📍 Lugar:</strong> Sala de juntas del edificio</p>
+                                <p><strong>🎯 Orden del día:</strong></p>
+                                <ul style="margin-left: 20px; margin-bottom: 0;">
+                                    <li>Aprobación de cuentas 2025</li>
+                                    <li>Presupuesto 2026</li>
+                                    <li>Renovación de cargos</li>
+                                </ul>
                             </div>
-                            <p>Revisión general del progreso del trimestre actual y planificación del siguiente.</p>
-                            <div>
-                                <span class="status pendiente">Pendiente</span>
-                                <span class="badge badge-primary">Prioridad Alta</span>
-                            </div>
-                            <div class="mt-3">
-                                <button class="btn btn-primary btn-sm">Ver Detalles</button>
-                                <button class="btn btn-success btn-sm">Iniciar Reunión</button>
-                            </div>
+                            <button class="action-btn" style="margin-top: 1rem;">
+                                <i class="fas fa-plus"></i> Crear Junta
+                            </button>
                         </div>
 
                         <div class="meeting-item">
-                            <h5>Actualización de Actas Anteriores</h5>
-                            <div class="date">
-                                <i class="fas fa-clock"></i> 30 de abril de 2026 - 3:00 PM
+                            <div class="date">📅 En 1 semana - 2 de mayo de 2026</div>
+                            <h5>Junta Extraordinaria - Edificio Centro</h5>
+                            <div class="status status-pending">Pendiente</div>
+                            <div class="details">
+                                <p><strong>⏰ Hora:</strong> 19:00h</p>
+                                <p><strong>📍 Lugar:</strong> Sala de juntas del edificio</p>
+                                <p><strong>🎯 Orden del día:</strong></p>
+                                <ul style="margin-left: 20px; margin-bottom: 0;">
+                                    <li>Renovación de tejado</li>
+                                    <li>Presupuesto extraordinario</li>
+                                </ul>
                             </div>
-                            <p>Seguimiento de acciones pendientes de reuniones anteriores.</p>
-                            <div>
-                                <span class="status pendiente">Pendiente</span>
-                                <span class="badge badge-warning">Prioridad Media</span>
-                            </div>
-                            <div class="mt-3">
-                                <button class="btn btn-primary btn-sm">Ver Detalles</button>
-                                <button class="btn btn-success btn-sm">Iniciar Reunión</button>
-                            </div>
-                        </div>
-
-                        <div class="meeting-item">
-                            <h5>Planificación Estratégica Q2</h5>
-                            <div class="date">
-                                <i class="fas fa-clock"></i> 15 de mayo de 2026 - 9:00 AM
-                            </div>
-                            <p>Planificación de objetivos y estrategias para el segundo trimestre.</p>
-                            <div>
-                                <span class="status pendiente">Pendiente</span>
-                                <span class="badge badge-primary">Prioridad Alta</span>
-                            </div>
-                            <div class="mt-3">
-                                <button class="btn btn-primary btn-sm">Ver Detalles</button>
-                                <button class="btn btn-success btn-sm">Iniciar Reunión</button>
-                            </div>
+                            <button class="action-btn" style="margin-top: 1rem;">
+                                <i class="fas fa-plus"></i> Crear Junta
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Recent Activities -->
-                <div class="card" id="actas">
+                <!-- Completed Meetings -->
+                <div class="card">
                     <div class="card-header">
-                        <h4><i class="fas fa-history"></i> Actividades Recientes</h4>
+                        <h4><i class="fas fa-check-circle"></i> Juntas Completadas</h4>
                     </div>
                     <div class="card-body">
                         <div class="meeting-item">
-                            <h5>Reunión de Coordinación Semanal</h5>
-                            <div class="date">
-                                <i class="fas fa-calendar-check"></i> 22 de abril de 2026 - Completada
+                            <div class="date">📅 15 de abril de 2026</div>
+                            <h5>Junta General Ordinaria - Edificio Norte</h5>
+                            <div class="status status-completed">Completada</div>
+                            <div class="details">
+                                <p><strong>⏰ Hora:</strong> 18:00h</p>
+                                <p><strong>📍 Lugar:</strong> Sala de juntas</p>
+                                <p><strong>📊 Asistentes:</strong> 8 de 12 (66,7%)</p>
+                                <p><strong>📄 Acta:</strong> <a href="#" style="color: var(--secondary-color);">Ver acta</a></p>
                             </div>
-                            <p>Revisión de tareas pendientes y asignación de nuevas responsabilidades.</p>
-                            <div>
-                                <span class="status completada">Completada</span>
-                            </div>
-                            <div class="mt-3">
-                                <button class="btn btn-primary btn-sm">Ver Acta</button>
-                                <button class="btn btn-success btn-sm">Descargar PDF</button>
-                            </div>
+                            <button class="action-btn" style="margin-top: 1rem;">
+                                <i class="fas fa-file-alt"></i> Ver Acta
+                            </button>
                         </div>
 
                         <div class="meeting-item">
-                            <h5>Seguimiento de Proyecto Alpha</h5>
-                            <div class="date">
-                                <i class="fas fa-calendar-check"></i> 18 de abril de 2026 - Completada
+                            <div class="date">📅 8 de abril de 2026</div>
+                            <h5>Junta Extraordinaria - Edificio Sur</h5>
+                            <div class="status status-completed">Completada</div>
+                            <div class="details">
+                                <p><strong>⏰ Hora:</strong> 19:30h</p>
+                                <p><strong>📍 Lugar:</strong> Sala de juntas</p>
+                                <p><strong>📊 Asistentes:</strong> 5 de 6 (83,3%)</p>
+                                <p><strong>📄 Acta:</strong> <a href="#" style="color: var(--secondary-color);">Ver acta</a></p>
                             </div>
-                            <p>Análisis de progresos y corrección de rumbo del proyecto Alpha.</p>
-                            <div>
-                                <span class="status completada">Completada</span>
-                            </div>
-                            <div class="mt-3">
-                                <button class="btn btn-primary btn-sm">Ver Acta</button>
-                                <button class="btn btn-success btn-sm">Descargar PDF</button>
-                            </div>
+                            <button class="action-btn" style="margin-top: 1rem;">
+                                <i class="fas fa-file-alt"></i> Ver Acta
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Sidebar -->
-            <div class="sidebar">
-                <!-- Quick Actions -->
+            <!-- Right Column -->
+            <div class="right-column">
+                <!-- Stats Summary -->
                 <div class="card">
                     <div class="card-header">
-                        <h4><i class="fas fa-bolt"></i> Acciones Rápidas</h4>
+                        <h4><i class="fas fa-chart-bar"></i> Resumen</h4>
                     </div>
                     <div class="card-body">
-                        <div class="quick-actions">
-                            <div class="action-btn">
-                                <div class="icon">
-                                    <i class="fas fa-plus-circle"></i>
-                                </div>
-                                <p>Nueva Reunión</p>
+                        <div class="stats-grid">
+                            <div class="stat-box">
+                                <div class="number">85%</div>
+                                <div class="label">Objetivos Cumplidos</div>
                             </div>
-                            <div class="action-btn">
-                                <div class="icon">
-                                    <i class="fas fa-file-plus"></i>
-                                </div>
-                                <p>Crear Acta</p>
-                            </div>
-                            <div class="action-btn">
-                                <div class="icon">
-                                    <i class="fas fa-users-cog"></i>
-                                </div>
-                                <p>Gestionar</p>
-                            </div>
-                            <div class="action-btn">
-                                <div class="icon">
-                                    <i class="fas fa-chart-bar"></i>
-                                </div>
-                                <p>Reportes</p>
+                            <div class="stat-box">
+                                <div class="number">45%</div>
+                                <div class="label">Juntas Completadas</div>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Progress Section -->
-                <div class="card" id="progreso">
-                    <div class="card-header">
-                        <h4><i class="fas fa-tasks"></i> Progreso Global</h4>
-                    </div>
-                    <div class="card-body progress-section">
                         <div class="progress-item">
-                            <h6>Reuniones Programadas</h6>
-                            <div class="progress">
-                                <div class="progress-bar" style="width: 75%;">75%</div>
-                            </div>
-                        </div>
-                        <div class="progress-item">
-                            <h6>Actas Completadas</h6>
-                            <div class="progress">
-                                <div class="progress-bar" style="width: 60%;">60%</div>
-                            </div>
-                        </div>
-                        <div class="progress-item">
-                            <h6>Acciones Ejecutadas</h6>
+                            <h6>Objetivos Cumplidos</h6>
                             <div class="progress">
                                 <div class="progress-bar" style="width: 85%;">85%</div>
                             </div>
                         </div>
+
                         <div class="progress-item">
-                            <h6>Objetivos Cumplidos</h6>
+                            <h6>Juntas Completadas</h6>
                             <div class="progress">
                                 <div class="progress-bar" style="width: 45%;">45%</div>
                             </div>
@@ -759,26 +660,24 @@
                         <h4><i class="fas fa-clock"></i> Próximas Fechas</h4>
                     </div>
                     <div class="card-body">
-                        <div class="meeting-item" style="padding: 1rem;">
-                            <small style="color: #7f8c8d;">En 2 días</small>
-                            <h6 style="margin: 0.25rem 0;">Entrega de acta Q1</h6>
+                        <div class="deadline-item">
+                            <div class="date">En 2 días</div>
+                            <div class="title">Entrega de acta Q1</div>
                         </div>
-                        <div class="meeting-item" style="padding: 1rem;">
-                            <small style="color: #7f8c8d;">En 5 días</small>
-                            <h6 style="margin: 0.25rem 0;">Revisión anual</h6>
+                        <div class="deadline-item">
+                            <div class="date">En 5 días</div>
+                            <div class="title">Revisión anual</div>
                         </div>
-                        <div class="meeting-item" style="padding: 1rem;">
-                            <small style="color: #7f8c8d;">En 1 semana</small>
-                            <h6 style="margin: 0.25rem 0;">Planificación Q2</h6>
+                        <div class="deadline-item">
+                            <div class="date">En 1 semana</div>
+                            <div class="title">Planificación Q2</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Technical Specifications Section -->
-    <div class="container" style="margin-top: 4rem;">
+        <!-- Technical Specifications Section -->
         <div class="card">
             <div class="card-header bg-primary text-white">
                 <h4><i class="fas fa-code"></i> Especificaciones Técnicas del MVP</h4>
@@ -787,7 +686,7 @@
                 <div class="alert alert-info">
                     <i class="fas fa-info-circle"></i> <strong>Borrador v1.0</strong> — 27 de abril de 2026
                 </div>
-                
+
                 <div class="spec-section">
                     <h5><i class="fas fa-cog"></i> Arquitectura del MVP</h5>
                     <div class="spec-grid">
@@ -1089,4 +988,3 @@
     </script>
 </body>
 </html>
-
