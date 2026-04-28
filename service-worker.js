@@ -1,4 +1,4 @@
-const CACHE_NAME = 'loren-apps-v1';
+const CACHE_NAME = 'loren-apps-v2';
 const urlsToCache = [
   '/',
   '/index.html',
