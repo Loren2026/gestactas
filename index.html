@@ -371,6 +371,149 @@
             background: var(--success-color);
             color: white;
         }
+
+        /* Especificaciones Técnicas Styles */
+        .spec-section { margin-bottom: 2rem; }
+        .spec-section h5 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .spec-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--secondary-color);
+        }
+        .spec-item strong {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        .workflow-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .workflow-step {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: transform 0.3s ease;
+        }
+        .workflow-step:hover {
+            transform: translateY(-3px);
+        }
+        .step-number {
+            background: white;
+            color: var(--primary-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        .step-content {
+            flex: 1;
+        }
+        .step-content strong {
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+        .step-content p {
+            margin: 0;
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+        .db-stores {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+        .db-store {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f8f9fa;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+        }
+        .cost-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+        .cost-option {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .cost-header {
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .cost-header strong {
+            flex: 1;
+        }
+        .cost-body {
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .cost-body h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 2rem;
+            font-weight: 800;
+        }
+        .roadmap-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .roadmap-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: #f8f9fa;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+        }
+        .roadmap-badge {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .roadmap-content {
+            flex: 1;
+        }
+        .roadmap-content strong {
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+        .roadmap-content p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: #7f8c8d;
+        }
     </style>
 </head>
 <body>
@@ -634,11 +777,246 @@
         </div>
     </div>
 
+    <!-- Technical Specifications Section -->
+    <div class="container" style="margin-top: 4rem;">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4><i class="fas fa-code"></i> Especificaciones Técnicas del MVP</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> <strong>Borrador v1.0</strong> — 27 de abril de 2026
+                </div>
+                
+                <div class="spec-section">
+                    <h5><i class="fas fa-cog"></i> Arquitectura del MVP</h5>
+                    <div class="spec-grid">
+                        <div class="spec-item">
+                            <strong>Frontend:</strong>
+                            <p>React PWA + Vite + PWA Plugin</p>
+                        </div>
+                        <div class="spec-item">
+                            <strong>Almacenamiento:</strong>
+                            <p>IndexedDB (Sin servidor, datos privados)</p>
+                        </div>
+                        <div class="spec-item">
+                            <strong>Transcripción:</strong>
+                            <p>OpenAI Whisper (0,36€/h) o Web Speech API (gratis)</p>
+                        </div>
+                        <div class="spec-item">
+                            <strong>Generación Actas:</strong>
+                            <p>Anthropic Claude API (0,03€/acta)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="spec-section">
+                    <h5><i class="fas fa-tasks"></i> Flujo de Trabajo (6 pasos)</h5>
+                    <div class="workflow-steps">
+                        <div class="workflow-step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <strong>Crear Comunidad</strong>
+                                <p class="text-muted small mb-0">Formulario con dirección, propietarios, plantilla</p>
+                            </div>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <strong>Crear Junta</strong>
+                                <p class="text-muted small mb-0">Doble convocatoria +30 min, asistentes, orden del día</p>
+                            </div>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <strong>Grabar Junta</strong>
+                                <p class="text-muted small mb-0">MediaRecorder API, waveform, marcadores</p>
+                            </div>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <strong>Transcribir</strong>
+                                <p class="text-muted small mb-0">Whisper (nube) o Web Speech (local)</p>
+                            </div>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">5</div>
+                            <div class="step-content">
+                                <strong>Generar Acta con IA</strong>
+                                <p class="text-muted small mb-0">Claude API genera acta legal</p>
+                            </div>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">6</div>
+                            <div class="step-content">
+                                <strong>Exportar a Word</strong>
+                                <p class="text-muted small mb-0">docx-js genera .docx en navegador</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="spec-section">
+                    <h5><i class="fas fa-database"></i> Base de Datos IndexedDB</h5>
+                    <div class="db-stores">
+                        <div class="db-store">
+                            <span class="badge bg-primary">comunidades</span>
+                            <span class="text-muted small">Nombre, dirección, CIF, propietarios, plantilla</span>
+                        </div>
+                        <div class="db-store">
+                            <span class="badge bg-secondary">propietarios</span>
+                            <span class="text-muted small">Datos personales, contacto, propiedad, cargo</span>
+                        </div>
+                        <div class="db-store">
+                            <span class="badge bg-success">juntas</span>
+                            <span class="text-muted small">Tipo, fecha, hora, asistentes, orden del día</span>
+                        </div>
+                        <div class="db-store">
+                            <span class="badge bg-info">grabaciones</span>
+                            <span class="text-muted small">Archivo de audio, duración, fecha</span>
+                        </div>
+                        <div class="db-store">
+                            <span class="badge bg-warning text-dark">transcripciones</span>
+                            <span class="text-muted small">Texto, método, idioma, marcas, fecha</span>
+                        </div>
+                        <div class="db-store">
+                            <span class="badge bg-danger">actas</span>
+                            <span class="text-muted small">Contenido, .docx, generada por, fecha</span>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="spec-section">
+                    <h5><i class="fas fa-money-bill-wave"></i> Costes Operativos</h5>
+                    <div class="cost-comparison">
+                        <div class="cost-option">
+                            <div class="cost-header bg-primary text-white">
+                                <strong>Opción Completa</strong>
+                            </div>
+                            <div class="cost-body">
+                                <h3 class="text-primary">19,50€/año</h3>
+                                <p class="text-muted small mb-0">Whisper + Claude (50 actas) = 0,39€/acta</p>
+                            </div>
+                        </div>
+                        <div class="cost-option">
+                            <div class="cost-header bg-success text-white">
+                                <strong>Opción Económica</strong>
+                            </div>
+                            <div class="cost-body">
+                                <h3 class="text-success">1,50€/año</h3>
+                                <p class="text-muted small mb-0">Web Speech + Claude (50 actas) = 0,03€/acta</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="spec-section">
+                    <h5><i class="fas fa-road"></i> Roadmap de Desarrollo (10 fases)</h5>
+                    <div class="roadmap-timeline">
+                        <div class="roadmap-item">
+                            <div class="roadmap-badge bg-primary">1</div>
+                            <div class="roadmap-content">
+                                <strong>Setup y configuración</strong>
+                                <p class="text-muted small mb-0">1-2 semanas</p>
+                            </div>
+                        </div>
+                        <div class="roadmap-item">
+                            <div class="roadmap-badge bg-secondary">2</div>
+                            <div class="roadmap-content">
+                                <strong>Frontend básico</strong>
+                                <p class="text-muted small mb-0">2-3 semanas</p>
+                            </div>
+                        </div>
+                        <div class="roadmap-item">
+                            <div class="roadmap-badge bg-success">3</div>
+                            <div class="roadmap-content">
+                                <strong>Gestión de Comunidades</strong>
+                                <p class="text-muted small mb-0">2 semanas</p>
+                            </div>
+                        </div>
+                        <div class="roadmap-item">
+                            <div class="roadmap-badge bg-info">4</div>
+                            <div class="roadmap-content">
+                                <strong>Gestión de Juntas</strong>
+                                <p class="text-muted small mb-0">2 semanas</p>
+                            </div>
+                        </div>
+                        <div class="roadmap-item">
+                            <div class="roadmap-badge bg-warning text-dark">5</div>
+                            <div class="roadmap-content">
+                                <strong>Grabación de Audio</strong>
+                                <p class="text-muted small mb-0">1-2 semanas</p>
+                            </div>
+                        </div>
+                        <div class="roadmap-item">
+                            <div class="roadmap-badge bg-danger">6</div>
+                            <div class="roadmap-content">
+                                <strong>Transcripción</strong>
+                                <p class="text-muted small mb-0">2 semanas</p>
+                            </div>
+                        </div>
+                        <div class="roadmap-item">
+                            <div class="roadmap-badge bg-dark">7</div>
+                            <div class="roadmap-content">
+                                <strong>Generación de Actas</strong>
+                                <p class="text-muted small mb-0">2 semanas</p>
+                            </div>
+                        </div>
+                        <div class="roadmap-item">
+                            <div class="roadmap-badge bg-secondary">8</div>
+                            <div class="roadmap-content">
+                                <strong>Exportación</strong>
+                                <p class="text-muted small mb-0">1 semana</p>
+                            </div>
+                        </div>
+                        <div class="roadmap-item">
+                            <div class="roadmap-badge bg-primary">9</div>
+                            <div class="roadmap-content">
+                                <strong>PWA completa</strong>
+                                <p class="text-muted small mb-0">1 semana</p>
+                            </div>
+                        </div>
+                        <div class="roadmap-item">
+                            <div class="roadmap-badge bg-success">10</div>
+                            <div class="roadmap-content">
+                                <strong>Testing y refinamiento</strong>
+                                <p class="text-muted small mb-0">1-2 semanas</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-success mt-3">
+                        <i class="fas fa-clock"></i> <strong>Tiempo total estimado:</strong> 14-18 semanas
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="spec-section">
+                    <h5><i class="fas fa-external-link-alt"></i> Documentación Completa</h5>
+                    <p class="text-muted mb-3">Especificaciones técnicas detalladas disponibles en el repositorio:</p>
+                    <a href="https://github.com/Loren2026/gestactas/blob/main/ESPECIFICACIONES.md" target="_blank" class="btn btn-primary">
+                        <i class="fab fa-github"></i> Ver ESPECIFICACIONES.md en GitHub
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <div class="footer">
         <div class="container">
             <p>&copy; 2026 GestActas - Sistema de Gestión de Juntas para Carlos</p>
-            <p><small>Desarrollado con <i class="fas fa-heart" style="color: #e74c3c;"></i> para una gestión eficiente</small></p>
+            <p><small>Desarrollado con <i class="fas fa-heart" style="color: #e74c3c;"></i> para una gestión eficiente | <a href="#especificaciones" class="text-white">Especificaciones Técnicas</a></small></p>
         </div>
     </div>
 
@@ -711,3 +1089,4 @@
     </script>
 </body>
 </html>
+
