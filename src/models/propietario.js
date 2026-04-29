@@ -1,0 +1,27 @@
+export function createEmptyPropietario() {
+  return {
+    id: null,
+    comunidad_id: null,
+    nombre: '',
+    dni: '',
+    telefono1: '',
+    telefono2: '',
+    email: '',
+    tipo_propiedad: '',
+    identificador: '',
+    cuota: 0,
+    cuota_decimal: 0,
+    cargo: 'Propietario',
+    estado_pagos: 'Pagado',
+    direccion_notificaciones: '',
+    representante: '',
+    observaciones: '',
+    created_at: null,
+    updated_at: null,
+    deleted_at: null,
+    version: 1,
+    device_id: null,
+    owner_user_id: null,
+    sync_status: 'local_only',
+  };
+}
