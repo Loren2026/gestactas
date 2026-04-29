@@ -1,0 +1,28 @@
+export function createEmptyComunidad() {
+  return {
+    id: null,
+    nombre: '',
+    tipo_via: '',
+    nombre_via: '',
+    numero: '',
+    codigo_postal: '',
+    localidad: '',
+    municipio: '',
+    provincia: 'Asturias',
+    cif: '',
+    administrador_nombre: 'Agencia Carigan',
+    administrador_entidad: 'Carigan Servicios Integrados S.L.',
+    presidente_propietario_id: null,
+    secretario_propietario_id: null,
+    plantilla_acta_file_name: null,
+    plantilla_acta_blob: null,
+    plantilla_acta_mime: null,
+    created_at: null,
+    updated_at: null,
+    deleted_at: null,
+    version: 1,
+    device_id: null,
+    owner_user_id: null,
+    sync_status: 'local_only',
+  };
+}
