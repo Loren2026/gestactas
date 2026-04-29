@@ -1,5 +1,5 @@
 export const DB_NAME = 'gestactas_db';
-export const DB_VERSION = 1;
+export const DB_VERSION = 2;
 
 export const STORES = {
   meta: 'meta',
@@ -45,6 +45,7 @@ export const STORE_SCHEMAS = {
       { name: 'by_comunidad_id', keyPath: 'comunidad_id', options: { unique: false } },
       { name: 'by_fecha', keyPath: 'fecha', options: { unique: false } },
       { name: 'by_estado', keyPath: 'estado', options: { unique: false } },
+      { name: 'by_tipo', keyPath: 'tipo', options: { unique: false } },
       { name: 'by_updated_at', keyPath: 'updated_at', options: { unique: false } },
     ],
   },
