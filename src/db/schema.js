@@ -1,5 +1,5 @@
 export const DB_NAME = 'gestactas_db';
-export const DB_VERSION = 2;
+export const DB_VERSION = 5;
 
 export const STORES = {
   meta: 'meta',
@@ -55,13 +55,17 @@ export const STORE_SCHEMAS = {
       { name: 'by_junta_id', keyPath: 'junta_id', options: { unique: false } },
       { name: 'by_estado', keyPath: 'estado', options: { unique: false } },
       { name: 'by_updated_at', keyPath: 'updated_at', options: { unique: false } },
+      { name: 'by_created_at', keyPath: 'created_at', options: { unique: false } },
+      { name: 'by_tamano_bytes', keyPath: 'tamano_bytes', options: { unique: false } },
     ],
   },
   [STORES.transcripciones]: {
     keyPath: 'id',
     indexes: [
       { name: 'by_junta_id', keyPath: 'junta_id', options: { unique: false } },
+      { name: 'by_grabacion_id', keyPath: 'grabacion_id', options: { unique: false } },
       { name: 'by_metodo', keyPath: 'metodo', options: { unique: false } },
+      { name: 'by_estado', keyPath: 'estado', options: { unique: false } },
       { name: 'by_updated_at', keyPath: 'updated_at', options: { unique: false } },
     ],
   },
@@ -69,6 +73,7 @@ export const STORE_SCHEMAS = {
     keyPath: 'id',
     indexes: [
       { name: 'by_junta_id', keyPath: 'junta_id', options: { unique: false } },
+      { name: 'by_transcripcion_id', keyPath: 'transcripcion_id', options: { unique: false } },
       { name: 'by_estado', keyPath: 'estado', options: { unique: false } },
       { name: 'by_updated_at', keyPath: 'updated_at', options: { unique: false } },
     ],

@@ -63,7 +63,7 @@ function createStoredZip(files) {
 
   files.forEach((file) => {
     const nameBytes = encoder.encode(file.name);
-    const dataBytes = encoder.encode(file.content);
+    const dataBytes = typeof file.content === 'string' ? encoder.encode(file.content) : file.content;
     const crc = crc32(dataBytes);
 
     const localHeader = new Uint8Array([
@@ -122,7 +122,18 @@ function createStoredZip(files) {
   return concatUint8Arrays([localDirectory, centralDirectory, endRecord]);
 }
 
-function buildDocumentXml({ comunidadNombre, fecha, hora, lugar, ordenDia }) {
+function stripMarkdown(markdown = '') {
+  return String(markdown)
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/\*(.*?)\*/g, '$1')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/^>\s?/gm, '')
+    .replace(/\|/g, ' ')
+    .trim();
+}
+
+function buildConvocatoriaDocumentXml({ comunidadNombre, fecha, hora, lugar, ordenDia }) {
   const points = Array.isArray(ordenDia) ? ordenDia.filter(Boolean) : [];
   const agendaParagraphs = (points.length ? points : ['Sin puntos definidos']).map((point, index) => `
     <w:p><w:r><w:t>${xmlEscape(`${index + 1}. ${point}`)}</w:t></w:r></w:p>`).join('');
@@ -143,7 +154,29 @@ function buildDocumentXml({ comunidadNombre, fecha, hora, lugar, ordenDia }) {
   </w:document>`;
 }
 
-export function buildConvocatoriaDocx({ comunidadNombre, fecha, hora, lugar, ordenDia }) {
+function buildActaDocumentXml({ titulo, markdown, estructura }) {
+  const agreements = (estructura?.acuerdos || []).map((item) => `<w:p><w:r><w:t>${xmlEscape(`• ${item}`)}</w:t></w:r></w:p>`).join('');
+  const pending = (estructura?.pendientes || []).map((item) => `<w:p><w:r><w:t>${xmlEscape(`• ${item.tarea || ''} · Responsable: ${item.responsable || 'Pendiente'} · Fecha límite: ${item.fecha_limite || 'Pendiente'}`)}</w:t></w:r></w:p>`).join('');
+  const voting = (estructura?.votaciones || []).map((item) => `<w:p><w:r><w:t>${xmlEscape(`${item.asunto}: a favor ${item.a_favor}, en contra ${item.en_contra}, abstenciones ${item.abstenciones}. Resultado: ${item.resultado}`)}</w:t></w:r></w:p>`).join('');
+  const bodyText = stripMarkdown(markdown || '');
+
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+    <w:body>
+      <w:p><w:r><w:t>${xmlEscape(titulo || 'Acta de junta')}</w:t></w:r></w:p>
+      <w:p>${textToRuns(bodyText)}</w:p>
+      <w:p><w:r><w:t>Acuerdos adoptados</w:t></w:r></w:p>
+      ${agreements || '<w:p><w:r><w:t>Sin acuerdos definidos</w:t></w:r></w:p>'}
+      <w:p><w:r><w:t>Tareas pendientes</w:t></w:r></w:p>
+      ${pending || '<w:p><w:r><w:t>Sin tareas pendientes</w:t></w:r></w:p>'}
+      <w:p><w:r><w:t>Votaciones</w:t></w:r></w:p>
+      ${voting || '<w:p><w:r><w:t>Sin votaciones registradas</w:t></w:r></w:p>'}
+      <w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="708" w:footer="708" w:gutter="0"/></w:sectPr>
+    </w:body>
+  </w:document>`;
+}
+
+function createBasicDocxBlob(documentXml) {
   const files = [
     {
       name: '[Content_Types].xml',
@@ -163,9 +196,80 @@ export function buildConvocatoriaDocx({ comunidadNombre, fecha, hora, lugar, ord
     },
     {
       name: 'word/document.xml',
-      content: buildDocumentXml({ comunidadNombre, fecha, hora, lugar, ordenDia }),
+      content: documentXml,
     },
   ];
+
+  return new Blob([createStoredZip(files)], {
+    type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  });
+}
+
+function ownerTableText(owners = []) {
+  if (!owners.length) return 'Sin propietarios disponibles';
+  return owners.map((owner, index) => `${index + 1}. ${owner.nombre} | DNI: ${owner.dni || 'No consta'} | Coeficiente: ${owner.coeficiente || ''} | Propiedad: ${owner.propiedad || ''}`).join('\n');
+}
+
+async function inflateRaw(bytes) {
+  if (typeof DecompressionStream === 'undefined') return bytes;
+  const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+  const buffer = await new Response(stream).arrayBuffer();
+  return new Uint8Array(buffer);
+}
+
+async function parseZipEntries(blob) {
+  const bytes = new Uint8Array(await blob.arrayBuffer());
+  const entries = [];
+  let offset = 0;
+
+  while (offset + 30 < bytes.length && bytes[offset] === 0x50 && bytes[offset + 1] === 0x4b && bytes[offset + 2] === 0x03 && bytes[offset + 3] === 0x04) {
+    const compression = bytes[offset + 8] | (bytes[offset + 9] << 8);
+    const compressedSize = bytes[offset + 18] | (bytes[offset + 19] << 8) | (bytes[offset + 20] << 16) | (bytes[offset + 21] << 24);
+    const fileNameLength = bytes[offset + 26] | (bytes[offset + 27] << 8);
+    const extraLength = bytes[offset + 28] | (bytes[offset + 29] << 8);
+    const nameStart = offset + 30;
+    const dataStart = nameStart + fileNameLength + extraLength;
+    const nameBytes = bytes.slice(nameStart, nameStart + fileNameLength);
+    const name = new TextDecoder().decode(nameBytes);
+    const compressed = bytes.slice(dataStart, dataStart + compressedSize);
+    const content = compression === 0 ? compressed : await inflateRaw(compressed);
+    entries.push({ name, content });
+    offset = dataStart + compressedSize;
+  }
+
+  return entries;
+}
+
+export function buildConvocatoriaDocx({ comunidadNombre, fecha, hora, lugar, ordenDia }) {
+  return createBasicDocxBlob(buildConvocatoriaDocumentXml({ comunidadNombre, fecha, hora, lugar, ordenDia }));
+}
+
+export function buildActaDocx({ titulo, markdown, estructura }) {
+  return createBasicDocxBlob(buildActaDocumentXml({ titulo, markdown, estructura }));
+}
+
+export async function buildCustomTemplateDocx({ templateBlob, replacements = {}, owners = [] }) {
+  const entries = await parseZipEntries(templateBlob);
+  const textDecoder = new TextDecoder();
+  const textEncoder = new TextEncoder();
+  const ownerText = ownerTableText(owners);
+
+  const files = entries.map((entry) => {
+    if (entry.name !== 'word/document.xml') return entry;
+    let xml = textDecoder.decode(entry.content);
+    const merged = {
+      ...replacements,
+      PROPIETARIOS_TABLA: ownerText,
+    };
+    Object.entries(merged).forEach(([key, value]) => {
+      const token = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
+      xml = xml.replace(token, xmlEscape(String(value || '')));
+    });
+    if (!xml.includes(ownerText)) {
+      xml = xml.replace('</w:body>', `<w:p>${textToRuns(`Relación de propietarios\n${ownerText}`)}</w:p></w:body>`);
+    }
+    return { name: entry.name, content: textEncoder.encode(xml) };
+  });
 
   return new Blob([createStoredZip(files)], {
     type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',

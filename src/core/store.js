@@ -4,6 +4,14 @@ const state = {
   currentScreen: 'dashboard',
   selectedComunidadId: null,
   selectedPropietarioId: null,
+  selectedJuntaId: null,
+  selectedGrabacionId: null,
+  selectedTranscripcionId: null,
+  selectedTranscriptionMethod: 'whisper_api',
+  selectedActaId: null,
+  selectedActaVersionId: null,
+  actaTemplateMode: 'oficial',
+  actaTemplateName: 'junta_ordinaria',
   isBootstrapped: false,
 };
 

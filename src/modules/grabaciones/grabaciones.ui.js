@@ -1,4 +1,4 @@
-import { getState } from '../../core/store.js';
+import { getState, setState } from '../../core/store.js';
 
 function formatDuration(totalSeconds) {
   const safe = Math.max(0, Math.round(totalSeconds || 0));
@@ -102,13 +102,15 @@ export function bindGrabacionesUi({ router, legacyUi, grabacionesService, juntas
     const junta = await getActiveJunta();
     if (!junta) throw new Error('No hay junta seleccionada para asociar la grabación.');
 
-    await grabacionesService.saveRecording({
+    const saved = await grabacionesService.saveRecording({
       juntaId: junta.id,
       blob: payload.blob,
       durationSeconds: payload.durationSeconds,
       markerCount: payload.markerCount,
       nombre: `Grabación ${junta.comunidad?.nombre || ''} ${junta.fecha || ''}`.trim(),
     });
+
+    setState({ selectedGrabacionId: saved.id });
 
     await refresh();
   }
