@@ -1,569 +1,522 @@
-# GestActas — Propuesta técnica Bloque 5
+# GestActas — Propuesta técnica Bloque 6
 
 ## Paso en curso
-Bloque 5 propuesto: generación automática del acta de junta con Claude API, edición posterior, versionado e integración con transcripciones.
+Bloque 6 propuesto: exportación final del acta a Word (.docx) profesional, lista para imprimir y enviar a propietarios.
 
 ## Estado actual
 - Bloque 1 completado y mantenido como base estable.
 - Bloque 2 completado: juntas, convocatoria, asistentes, quórum y documento Word de convocatoria.
 - Bloque 3 completado: grabación real, gestión de audio y almacenamiento local.
 - Bloque 4 completado: transcripción con Whisper y Web Speech API, persistencia local y edición de transcripciones.
+- Bloque 5 completado: generación de actas con Claude, validación, tareas pendientes, exportación base y plantillas.
 
-## Objetivo general del Bloque 5
-Implementar en GestActas la generación automática del acta de junta usando Claude API a partir de la transcripción disponible, permitiendo revisar, editar, regenerar, versionar y exportar el acta final en distintos formatos.
+## Objetivo general del Bloque 6
+Implementar la exportación final del acta de junta a formato Word (.docx) profesional, utilizando los datos ya estructurados en GestActas para producir un documento formal, imprimible y apto para envío a los propietarios de la comunidad.
 
 ## Objetivos funcionales
-1. Generar automáticamente un borrador de acta a partir de la transcripción.
-2. Estructurar el contenido según el formato de junta esperado.
-3. Permitir edición manual del acta generada.
-4. Guardar versiones de borrador y versión final.
-5. Exportar a PDF, Word y texto plano.
-6. Mantener vínculo entre acta, junta y transcripción origen.
-7. Permitir regenerar el acta cuando el resultado no sea satisfactorio.
-8. Mostrar navegación rápida entre transcripción y acta.
+1. Generar un archivo Word (.docx) profesional desde un acta ya creada.
+2. Incluir formato jurídico y presentación formal.
+3. Reutilizar todos los datos ya capturados en GestActas.
+4. Permitir vista previa y descarga directa.
+5. Validar que el documento contiene todos los campos obligatorios.
+6. Mantener compatibilidad con plantillas oficiales y personalización por comunidad.
 
-## Alcance del Bloque 5
+## Alcance del Bloque 6
 
-### 1. Generación del acta con Claude API
-Se integrará Claude API como motor de generación textual para transformar una transcripción de junta en un borrador estructurado de acta.
-
-La generación deberá apoyarse en:
-- datos de la junta,
-- datos de comunidad,
-- asistentes,
+### 1. Exportación a Word (.docx) profesional
+La exportación final debe producir un documento Word estructurado con formato formal y jurídico, incluyendo al menos:
+- cabecera institucional de la comunidad,
+- título principal: "ACTA DE JUNTA DE PROPIETARIOS",
+- tipo y número de convocatoria,
+- fecha, hora y lugar,
+- asistentes con datos completos,
+- quórum,
 - orden del día,
-- transcripción activa,
-- metadatos necesarios para estructurar el resultado.
-
-La salida esperada no debe ser texto libre sin control, sino un acta organizada en bloques reconocibles y editables.
-
-### 2. Edición del acta generada
-El borrador generado no se considerará definitivo. El usuario podrá:
-- revisar el contenido,
-- corregirlo,
-- completar datos que falten,
-- guardar cambios,
-- marcar una versión como final,
-- regenerar una nueva versión sin perder la anterior.
-
-La interfaz puede apoyarse inicialmente en un editor tipo textarea enriquecido o Markdown estructurado, sin necesidad de incorporar todavía un editor complejo pesado.
-
-### 3. Estructura del acta
-La propuesta debe producir actas con esta estructura mínima:
-- cabecera con datos de la junta,
-- identificación de comunidad,
-- asistencia,
-- orden del día,
-- desarrollo resumido por puntos,
+- desarrollo,
+- votaciones detalladas,
 - acuerdos adoptados,
-- pendientes y responsables,
-- cierre o próxima convocatoria si aplica.
+- tareas o pendientes,
+- bloque final de firma de presidente y secretario,
+- lugar y fecha de firma.
 
-### 4. Exportación del acta
-Se preparará la arquitectura para exportar el acta a:
-- PDF,
-- Word (.docx),
-- texto plano,
-- impresión directa desde la app.
+### 2. Reutilización de datos existentes
+El módulo debe aprovechar datos ya existentes en la app:
+- datos de junta,
+- datos de comunidad,
+- propietarios,
+- coeficientes,
+- asistentes,
+- quórum,
+- votaciones,
+- acuerdos,
+- tareas pendientes,
+- texto del acta generado en Bloque 5,
+- datos derivados de la transcripción y de Claude.
 
-La exportación puede apoyarse en una representación intermedia común para no duplicar lógica por formato.
+### 3. Plantillas profesionales
+Se propondrá una capa de plantilla Word profesional con:
+- márgenes y espaciado de impresión,
+- tipografía legible,
+- encabezado institucional,
+- jerarquía visual clara,
+- bloques de firma,
+- tablas o listados de asistentes y votaciones,
+- estilo jurídico formal.
 
-### 5. Historial de versiones
-Cada regeneración o guardado relevante podrá crear una nueva versión. El usuario deberá poder:
-- listar versiones,
-- abrir una versión previa,
-- comparar versiones de forma básica,
-- recuperar una versión anterior como versión activa.
+### 4. Personalización según comunidad
+La exportación deberá adaptarse a cada comunidad mediante:
+- nombre de comunidad,
+- dirección,
+- CIF si existe,
+- administrador o secretario,
+- presidente,
+- elementos visuales básicos configurables,
+- datos de propietarios y cargos.
 
-### 6. Integración con la transcripción
-Cada acta deberá quedar vinculada a:
-- junta,
-- transcripción origen,
-- versión concreta de la transcripción usada,
-- método de generación.
-
-Además, la interfaz debe permitir consultar la transcripción junto al acta para facilitar revisión y corrección.
+### 5. Validación del formato
+Antes de ofrecer el archivo final, el sistema deberá validar:
+- que la estructura interna del DOCX es correcta,
+- que existen los campos obligatorios,
+- que el documento no sale vacío,
+- que el contenido es imprimible y coherente.
 
 ## Arquitectura propuesta
 
 ### Principio general
-Se mantendrá la arquitectura actual en HTML/CSS/JS vanilla, conservando separación por módulos y preparando el terreno para futura migración a React PWA.
+Se mantendrá la arquitectura actual en HTML/CSS/JS vanilla, sin introducir dependencias pesadas innecesarias. El bloque se integrará con el trabajo ya realizado en actas, exportación base y generación DOCX previa.
 
 ### Capas previstas
-1. **Modelo de acta**
-   - definición de entidad principal
-   - definición opcional de versiones
+1. **Modelo de datos de exportación**
+   - representación normalizada del acta final a exportar.
 
-2. **Repositorio de actas**
-   - persistencia en IndexedDB
-   - consultas por junta y transcripción
+2. **Servicio de composición DOCX**
+   - construcción del documento Word a partir de datos estructurados.
 
-3. **Servicio de actas**
-   - CRUD lógico
-   - gestión de versiones
-   - selección de versión activa
-   - preparación de exportaciones
+3. **Servicio de exportación de actas**
+   - selección de versión final o activa,
+   - validación de datos,
+   - generación del blob DOCX,
+   - descarga.
 
-4. **Servicio Claude API**
-   - construcción de prompt
-   - envío de contexto
-   - recepción y normalización del resultado
+4. **Servicio de validación**
+   - validación del contenido obligatorio,
+   - validación de la estructura mínima del documento.
 
-5. **UI de actas**
-   - generación
-   - edición
-   - historial
-   - comparación
-   - exportación
-
-6. **Capa de exportación**
-   - transformador a PDF
-   - transformador a DOCX
-   - transformador a TXT
-   - impresión
+5. **UI de vista previa y exportación**
+   - vista previa del documento,
+   - exportación,
+   - impresión,
+   - mensajes de validación.
 
 ## Modelo de datos propuesto
 
-### Entidad `acta`
-Campos recomendados:
-- `id`
-- `junta_id`
-- `transcripcion_id`
-- `version_activa_id`
-- `estado` (`borrador` | `final`)
-- `titulo`
-- `resumen_corto`
-- `created_at`
-- `updated_at`
-- `sync_status`
-
-### Entidad `acta_version`
-Recomendación importante: separar la cabecera del acta de sus versiones.
+### Estructura intermedia `actaExportData`
+No necesariamente persistida como entidad independiente, pero sí recomendable como objeto normalizado.
 
 Campos recomendados:
-- `id`
 - `acta_id`
-- `junta_id`
-- `transcripcion_id`
-- `numero_version`
-- `origen` (`claude_api` | `manual` | `regenerada`)
-- `es_version_final` (boolean)
-- `prompt_utilizado`
-- `modelo_utilizado`
-- `contenido_markdown`
-- `contenido_texto_plano`
-- `estructura_json`
-- `cabecera_junta_snapshot`
-- `asistentes_snapshot`
-- `orden_dia_snapshot`
-- `coste_estimado`
-- `error_codigo`
-- `error_mensaje`
-- `created_at`
-- `updated_at`
-
-### Decisión recomendada
-Separar `acta` y `acta_version` es mejor que sobrescribir siempre el mismo documento. Permite regenerar sin perder trazabilidad y encaja bien con la necesidad real de borrador frente a final.
+- `version_id`
+- `comunidad`
+  - `nombre`
+  - `direccion`
+  - `cif`
+  - `presidente`
+  - `secretario`
+- `junta`
+  - `tipo`
+  - `convocatoria`
+  - `fecha`
+  - `hora`
+  - `lugar`
+- `asistentes`
+  - `nombre`
+  - `dni`
+  - `coeficiente`
+  - `direccion_vivienda`
+  - `cargo`
+- `quorum`
+- `orden_dia`
+- `desarrollo`
+- `votaciones`
+  - `asunto`
+  - `a_favor`
+  - `en_contra`
+  - `abstenciones`
+  - `porcentaje_participacion`
+  - `resultado`
+  - `decision_aprobada`
+- `acuerdos`
+- `pendientes`
+- `firmas`
+  - `presidente`
+  - `secretario`
+  - `lugar_firma`
+  - `fecha_firma`
 
 ## Servicios propuestos
 
-### `actas.repository.js`
+### `acta-docx.service.js`
 Responsabilidad:
-- guardar acta,
-- guardar versiones,
-- listar por junta,
-- obtener versión activa,
-- recuperar versiones anteriores,
-- actualizar versión activa,
-- marcar final.
-
-### `actas.service.js`
-Responsabilidad:
-- crear estructura de acta,
-- coordinar generación,
-- gestionar borradores y finales,
-- crear nuevas versiones,
-- recuperar histórico,
-- preparar datos para exportación.
-
-### `claude.service.js`
-Responsabilidad:
-- construir prompt,
-- enviar contexto a Claude API,
-- recibir respuesta,
-- normalizar salida.
+- `buildActaDocx(actaData)`
+- composición del documento Word profesional
+- bloques de cabecera, asistentes, votaciones, acuerdos y firmas
+- generación del blob DOCX final
 
 ### `actas-export.service.js`
 Responsabilidad:
-- convertir acta a PDF,
-- convertir acta a DOCX,
-- convertir acta a TXT,
-- exponer impresión.
+- `exportActaToDocx(actaId, filename)`
+- recuperar el acta y la versión correcta
+- convertir a estructura exportable
+- invocar al generador DOCX
+- lanzar descarga
 
-## Propuesta de prompt y generación
+### `docx-validation.service.js`
+Responsabilidad:
+- `validateActaFormat(docxContent)`
+- comprobar estructura mínima del ZIP DOCX
+- comprobar presencia de bloques esenciales
+- detectar documentos vacíos o incompletos
 
-### Entrada mínima a Claude
-- nombre de comunidad,
-- fecha, hora y lugar,
-- listado de asistentes,
-- presidente y secretario,
-- orden del día,
-- transcripción activa,
-- instrucciones de estilo jurídico y claridad.
+### `acta-preview.service.js` o apoyo en UI
+Responsabilidad:
+- preparar una representación HTML o texto enriquecido similar al documento final
+- facilitar revisión visual antes de descargar
 
-### Salida recomendada
-Claude no debería devolver solo prosa. Conviene pedir una salida estructurada, por ejemplo:
-- JSON + bloque Markdown, o
-- Markdown con secciones marcadas de forma estable.
+## Integración con Claude API
+El Bloque 6 no generará el acta desde cero, sino que consumirá el resultado ya estructurado del Bloque 5.
 
-### Recomendación técnica
-La mejor opción para robustez es pedir:
-1. una estructura JSON con bloques del acta,
-2. un texto formateado listo para edición.
+Por tanto, la integración con Claude API será indirecta pero crítica:
+- tomará la estructura JSON y/o Markdown generada por Claude,
+- la transformará a formato Word,
+- respetará acuerdos, tareas, votaciones y firmas,
+- evitará rehacer el contenido en exportación salvo formateo.
 
-Así se facilita:
-- edición posterior,
-- exportación,
-- validación,
-- comparación entre versiones.
+### Decisión recomendada
+La exportación debe basarse preferentemente en la `estructura_json` del acta, no solo en Markdown. Esto mejora la fiabilidad para tablas, asistentes, votaciones y firmas.
+
+## Plantillas profesionales propuestas
+
+### Plantilla oficial por defecto
+Características:
+- encabezado institucional limpio,
+- título centrado,
+- secciones jurídicas bien separadas,
+- tabla de asistencia,
+- bloque de votaciones,
+- bloque de acuerdos,
+- bloque de pendientes,
+- firmas al final.
+
+### Plantillas por tipo de junta
+Además de la plantilla base, se pueden adaptar variantes para:
+- junta ordinaria,
+- junta extraordinaria,
+- asamblea general,
+- junta de vecinos.
+
+### Personalización visual mínima
+- tipografía profesional,
+- tamaños jerarquizados,
+- espaciado consistente,
+- negritas para datos clave,
+- tablas sobrias para impresión.
 
 ## UI/UX propuesta
 
-### Pantallas o áreas funcionales
-1. **Pantalla Generar Acta**
-   - selección de transcripción origen,
-   - vista previa del contexto,
-   - botón generar con Claude,
-   - coste estimado.
+### Pantalla de exportación Word
+Elementos previstos:
+- botón "Exportar a Word (.docx)"
+- botón "Vista previa del documento"
+- resumen de validación previa
+- nombre sugerido de archivo
+- aviso si faltan datos obligatorios
 
-2. **Pantalla Editor de Acta**
-   - edición del contenido,
-   - guardado manual,
-   - marcar como final,
-   - regenerar.
-
-3. **Panel lateral o bloque de referencia**
-   - transcripción origen visible,
-   - navegación rápida entre transcripción y acta.
-
-4. **Historial de versiones**
-   - lista de versiones,
-   - origen de cada versión,
-   - fecha de generación,
-   - opción recuperar o comparar.
-
-### Comportamientos UX importantes
-- si no hay transcripción, no debe permitirse generar acta;
-- la versión generada debe quedar marcada inicialmente como borrador;
-- debe existir confirmación antes de sobrescribir la versión activa;
-- la regeneración debe crear nueva versión, no destruir la previa;
-- la vista de exportación debe ser coherente con la vista final del documento.
-
-## Exportación propuesta
-
-### PDF
-Objetivo:
-- documento presentable,
-- fácil envío,
-- buena impresión.
-
-### DOCX
-Objetivo:
-- edición externa posterior,
-- compatibilidad con Word.
-
-### TXT
-Objetivo:
-- respaldo simple,
-- portabilidad,
-- uso técnico o archivo rápido.
+### Vista previa del documento
+La app mostrará una vista previa aproximada del acta final con:
+- cabecera,
+- asistentes,
+- acuerdos,
+- votaciones,
+- firmas.
 
 ### Impresión
-Objetivo:
-- salida directa desde navegador,
-- soporte para vista tipo documento.
+Se mantendrá opción de impresión directa desde la app para revisión rápida o salida inmediata.
 
-### Recomendación técnica
-Conviene generar una representación intermedia del acta y desde ella producir PDF, DOCX y TXT. Así se evita mantener tres lógicas distintas de composición.
+## Validación propuesta
 
-## Historial y comparación
+### Validación funcional
+Antes de exportar, comprobar:
+- existe acta activa o final,
+- existe estructura suficiente,
+- hay datos mínimos de junta,
+- hay asistentes o constancia expresa,
+- hay firmas o bloque preparado de firma.
 
-### Funciones mínimas
-- listar versiones por orden cronológico,
-- identificar origen de versión,
-- abrir cualquier versión,
-- restaurar una versión previa,
-- comparación básica texto a texto.
-
-### Comparación recomendada
-En una primera fase no hace falta un diff visual complejo. Basta con:
-- selector de dos versiones,
-- vista lado a lado,
-- resaltado simple si resulta viable.
-
-## Integración con Bloque 4
-La relación entre transcripción y acta debe ser directa.
-
-Cada acta generada debe saber:
-- qué transcripción la originó,
-- qué versión del texto se usó,
-- qué método de transcripción estaba detrás.
-
-La navegación esperada:
-- desde transcripción → generar acta,
-- desde acta → abrir transcripción origen.
-
-## Gestión de errores
-Se contemplarán al menos estos casos:
-- no hay transcripción disponible,
-- Claude API no responde,
-- clave API ausente o inválida,
-- salida incompleta o mal formada,
-- error al guardar versión,
-- fallo en exportación,
-- fallo en impresión.
-
-La UI deberá ofrecer mensajes directos y reutilizables, con opción de reintento cuando tenga sentido.
+### Validación documental
+Comprobar que el DOCX generado:
+- es un ZIP válido,
+- contiene `word/document.xml`,
+- contiene texto esencial esperado,
+- no está vacío,
+- se puede descargar con MIME correcto.
 
 ## Estructura de archivos prevista
-- `gestactas/src/models/acta.js`
-- `gestactas/src/models/acta-version.js`
-- `gestactas/src/modules/actas/actas.repository.js`
-- `gestactas/src/modules/actas/actas.service.js`
-- `gestactas/src/modules/actas/actas.ui.js`
-- `gestactas/src/modules/actas/claude.service.js`
+
+### Nuevos archivos previstos
+- `gestactas/src/modules/actas/acta-docx.service.js`
+- `gestactas/src/modules/actas/docx-validation.service.js`
+
+### Archivos previsiblemente modificados
 - `gestactas/src/modules/actas/actas-export.service.js`
-- `gestactas/src/core/bootstrap.js`
-- `gestactas/src/core/store.js`
-- `gestactas/src/db/schema.js`
+- `gestactas/src/modules/actas/actas.service.js`
+- `gestactas/src/shared/docx.js`
 - `gestactas/index.html`
 - `gestactas/styles.css`
+- `gestactas/src/core/bootstrap.js`
+- `gestactas/src/core/store.js`
+- `Loren2026/gestactas/PROPUESTA.md`
 
-## Criterio de cierre propuesto para el Bloque 5
-El Bloque 5 se considerará correctamente ejecutado cuando:
-- una transcripción válida pueda generar un borrador de acta con Claude,
-- el usuario pueda editar el resultado,
-- el borrador se pueda guardar como versión,
-- exista una versión final distinguible,
-- el historial de versiones sea recuperable,
-- el acta se pueda exportar a PDF, DOCX y TXT,
-- y la app permita navegar entre transcripción y acta.
+## Criterio de cierre propuesto para el Bloque 6
+El Bloque 6 se considerará correctamente ejecutado cuando:
+- un acta generada pueda exportarse a Word,
+- el documento tenga formato profesional,
+- incluya asistentes, quórum, votaciones, acuerdos y firmas,
+- la exportación se base en datos reales de GestActas,
+- se valide la estructura del archivo,
+- y el resultado quede listo para imprimir o enviar.
 
 ## Fuera de alcance de este bloque
 Este bloque no debe incluir todavía:
-- firma digital avanzada,
-- envío automático a propietarios,
-- integración con correo,
-- automatización legal avanzada,
-- análisis semántico profundo de conflictos o votaciones complejas.
+- firma electrónica avanzada,
+- envío automático por email o WhatsApp,
+- registro telemático externo,
+- integración con plataformas legales de terceros.
 
 ## Esperando autorización
 SÍ
 
-No se ejecutará ningún desarrollo del Bloque 5 sin autorización expresa de Lorenzo.
-
+No se ejecutará ningún desarrollo del Bloque 6 sin autorización expresa de Lorenzo.
 
 ---
 
 ## 📌 MEJORAS PROPUESTAS POR TURÍN
 
-A continuación presento las mejoras técnicas y de experiencia de usuario que recomiendo para el Bloque 5:
+He revisado la propuesta del Bloque 6 y propongo las siguientes mejoras técnicas y de UX:
 
-### 1. **[TÉCNICA] Prompt estructurado con ejemplos para Claude** ⭐⭐⭐⭐⭐
-**Problema:** La propuesta menciona pedir JSON + Markdown a Claude, pero sin ejemplos concretos puede generar formatos inconsistentes.
+### 1. **[TÉCNICA] Integración con plantillas existentes** ⭐⭐⭐⭐⭐
 
-**Mejora propuesta:** Construir un prompt que incluya:
-- Ejemplo de estructura JSON esperado
-- Ejemplo de formato Markdown deseado
-- Reglas explícitas de formato jurídico
-- Plantilla de salida predefinida
+**Problema:** La propuesta menciona plantillas profesionales pero no explica explícitamente cómo se integrará con el módulo de plantillas del Bloque 5.
 
-**Beneficio:** Mayor consistencia en la generación y menos necesidad de edición posterior.
+**Mejora propuesta:** Integración completa con plantillas existentes:
+- Reutilizar módulo de plantillas del Bloque 5
+- Crear plantillas de acta profesionales (no solo convocatoria)
+- Permite personalización con colores, logos, tipografías
+- Permite crear plantillas personalizadas por comunidad
 
-**Implementación:** Crear un archivo `prompt-templates.js` con plantillas de prompt reutilizables y parametrizables.
-
----
-
-### 2. **[TÉCNICA] Cálculo de coste estimado de Claude API** ⭐⭐⭐⭐⭐
-**Problema:** La propuesta menciona "coste estimado" en el modelo pero no especifica cómo calcularlo. El usuario debería saber cuánto costará generar el acta.
-
-**Mejora propuesta:** Implementar cálculo basado en:
-- Longitud de la transcripción (caracteres/tokens)
-- Modelo de Claude a usar (Haiku, Sonnet, Opus)
-- Tasa actual de tokens/precio
-- Mostrar coste estimado ANTES de generar
-
-**Beneficio:** Transparencia de costes para el usuario y control del gasto.
-
-**Implementación:** Función en `claude.service.js` que calcule `estimatedCost = (inputTokens + outputTokens) * pricePerMillionTokens`.
+**Beneficio:** Reutilización de código, plantillas más profesionales, más flexibilidad.
 
 ---
 
-### 3. **[UX] Editor Markdown con vista previa en tiempo real** ⭐⭐⭐⭐
-**Problema:** La propuesta sugiere un editor tipo textarea simple, que no permite ver cómo quedará el formato final.
+### 2. **[TÉCNICA] Estrategia de migración de datos** ⭐⭐⭐⭐⭐
 
-**Mejora propuesta:** Implementar editor Markdown con:
-- Panel de edición a la izquierda
-- Vista previa en tiempo real a la derecha (split screen en móvil: pestañas)
-- Sintaxis coloreada básica
-- Botones de formato rápido (negrita, cursiva, lista, encabezado)
+**Problema:** No se especifica cómo se migrarán los datos de la estructura JSON a formato DOCX.
 
-**Beneficio:** El usuario ve cómo quedará el acta mientras la edita, reduciendo errores de formato.
+**Mejora propuesta:** Implementar estrategia clara de migración:
+- Función `convertirJsonADocx(structuraJson)` - Transforma estructura JSON a estructura DOCX
+- Función `convertirMarkdownADocx(markdown)` - Transforma Markdown a formato Word
+- Soporte para ambos formatos (JSON preferido, Markdown alternativo)
+- Validación de datos antes de conversión
+- Reporte de errores si hay campos faltantes
 
-**Implementación:** Usar una librería ligera como `simplemde` o `marked` con `highlight.js`.
-
----
-
-### 4. **[TÉCNICA] Autoguardado mientras se edita** ⭐⭐⭐⭐
-**Problema:** Si el usuario cierra el navegador accidentalmente, pierde todos los cambios del acta que estaba editando.
-
-**Mejora propuesta:** Implementar autoguardado:
-- Guardar automáticamente cada 30 segundos mientras se edita
-- Guardar al perder el foco del editor
-- Recuperar borrador si hay uno guardado
-- Indicador visual de "Guardado" o "Guardando..."
-
-**Beneficio:** Protección contra pérdida de datos y mejor UX.
+**Beneficio:** Transición clara, menos errores, más robustez.
 
 ---
 
-### 5. **[TÉCNICA] Validación de estructura del acta generada** ⭐⭐⭐⭐
-**Problema:** Claude podría generar un acta incompleta sin alguna sección requerida (ej: sin acuerdos o sin pendientes).
+### 3. **[UX] Preview interactivo y editable** ⭐⭐⭐⭐⭐
 
-**Mejora propuesta:** Validar que el JSON generado incluya:
-- Todas las secciones requeridas (cabecera, asistencia, orden del día, desarrollo, acuerdos, pendientes, cierre)
-- Campos obligatorios no vacíos
-- Formato de fechas correcto
+**Problema:** La propuesta menciona vista previa pero no especifica si será interactiva o estática.
 
-**Beneficio:** Detección temprana de errores y posibilidad de regenerar automáticamente si falla la validación.
+**Mejora propuesta:** Implementar preview interactivo y editable:
+- Vista previa interactiva con navegación por secciones
+- Edición manual de datos antes de exportar (opcional)
+- Cambio de plantilla en tiempo real
+- Ajuste de márgenes y espaciado antes de exportar
+- Vista de impresión personalizable
 
----
-
-### 6. **[TÉCNICA] Manejo de límites de tokens para transcripciones largas** ⭐⭐⭐⭐
-**Problema:** Las transcripciones de juntas largas (1-2 horas) pueden superar el límite de entrada de Claude API.
-
-**Mejora propuesta:** Implementar resumen inteligente:
-- Si la transcripción supera el límite de tokens, generar un resumen primero
-- Enviar el resumen a Claude en lugar de la transcripción completa
-- Opcionalmente: dividir en partes y procesar por secciones
-
-**Beneficio:** Poder generar actas de juntas largas sin errores de API.
+**Beneficio:** Mayor control del usuario, menos sorpresas, mayor satisfacción.
 
 ---
 
-### 7. **[UX] Templates de actas predefinidos** ⭐⭐⭐⭐
-**Problema:** No todas las juntas son iguales. Algunas requieren formatos especiales (ej: juntas extraordinarias, asambleas generales, etc.).
+### 4. **[TÉCNICA] Manejo de errores robusto** ⭐⭐⭐⭐
 
-**Mejora propuesta:** Crear plantillas de actas:
-- Junta ordinaria (plantilla por defecto)
-- Junta extraordinaria
-- Asamblea general
-- Junta de vecinos
+**Problema:** No se detallan estrategias de manejo de errores específicas para la exportación.
 
-**Beneficio:** Menos edición posterior y formato más adecuado para cada tipo de junta.
+**Mejora propuesta:** Implementar manejo de errores robusto:
+- Manejo de errores de datos faltantes con mensajes claros
+- Manejo de errores de generación DOCX con fallback
+- Mensajes de error específicos por tipo de problema
+- Log de errores para depuración
+- Opción de intentar de nuevo si falla
 
----
-
-### 8. **[UX] Extracción automática de tareas pendientes** ⭐⭐⭐⭐
-**Problema:** La propuesta menciona "pendientes y responsables" como parte del acta, pero no cómo extraerlos de la transcripción.
-
-**Mejora propuesta:** Pedir a Claude que:
-- Identifique explícitamente tareas pendientes
-- Asigne responsables cuando sea posible
-- Establezca fechas límite si se mencionan
-- Las presente en una tabla separada en el acta
-
-**Beneficio:** Mayor utilidad del acta y seguimiento más fácil de acciones.
+**Beneficio:** Menos frustración del usuario, más fácil depurar problemas.
 
 ---
 
-### 9. **[UX] Diferentes modos de edición** ⭐⭐⭐
-**Problema:** Algunos usuarios prefieren editar texto plano, otros prefieren Markdown con formato.
+### 5. **[UX] Exportación a PDF como alternativa** ⭐⭐⭐⭐
 
-**Mejora propuesta:** Ofrecer dos modos:
-- Modo Simple: edición de texto plano sin formato
-- Modo Avanzado: edición Markdown con vista previa
+**Problema:** Solo se menciona exportación a Word, pero muchos usuarios prefieren PDF.
 
-**Beneficio:** Flexibilidad para diferentes tipos de usuarios.
+**Mejora propuesta:** Implementar exportación a PDF:
+- Usar librería de generación PDF (ej: jsPDF, html2pdf)
+- Mantener mismo formato profesional de Word
+- Exportar a PDF también cuando no se pueda usar Word
+- Permitir exportación a Word o PDF según preferencia del usuario
 
----
-
-### 10. **[TÉCNICA] Comparación de versiones con diff simple** ⭐⭐⭐
-**Problema:** La propuesta menciona comparación básica lado a lado, pero sin resaltar los cambios es difícil ver qué cambió entre versiones.
-
-**Mejora propuesta:** Implementar diff simple con:
-- Resaltado en verde para texto añadido
-- Resaltado en rojo para texto eliminado
-- Vista línea por línea de las diferencias
-
-**Beneficio:** Comparación de versiones más clara y útil.
-
-**Implementación:** Usar una librería ligera como `diff-match-patch` o `jsdiff`.
+**Beneficio:** Más opciones para el usuario, mayor compatibilidad.
 
 ---
 
-### 11. **[UX] Resumen ejecutivo automático** ⭐⭐⭐
-**Problema:** Para lectura rápida, un acta completa puede ser demasiado larga. Un resumen ejecutivo sería muy útil.
+### 6. **[UX] Guía de configuración de impresión** ⭐⭐⭐⭐
 
-**Mejora propuesta:** Pedir a Claude que genere un resumen ejecutivo al inicio del acta:
-- Puntos clave de la reunión
-- Decisiones más importantes
-- Tareas más críticas
-- Máximo 200-300 palabras
+**Problema:** No se menciona una guía de configuración de impresión (márgenes, papel, etc.).
 
-**Beneficio:** Lectura rápida del contenido más importante.
+**Mejora propuesta:** Implementar guía de configuración de impresión:
+- Pantalla de configuración de impresión
+- Presets de impresión (A4, carta, legal)
+- Ajuste de márgenes (normal, estrecho, amplio)
+- Configuración de encabezado/pie de página
+- Vista de cómo quedará en papel antes de imprimir
 
----
-
-### 12. **[UX] Exportación con marca de agua opcional** ⭐⭐⭐
-**Problema:** Para envío a terceros, puede ser útil añadir una marca de agua que identifique el documento como oficial.
-
-**Mejora propuesta:** Añadir opción en exportación PDF:
-- Sin marca de agua (por defecto)
-- Con marca de agua (texto configurable, ej: "BORRADOR - NO OFICIAL")
-- Posición de la marca de agua (centro, esquina)
-
-**Beneficio:** Mayor control sobre la apariencia del documento final.
+**Beneficio:** Mayor calidad de impresión, menos sorpresas.
 
 ---
 
-### 13. **[TÉCNICA] Cache de prompts y respuestas** ⭐⭐⭐
-**Problema:** Si el usuario regenera el acta varias veces con los mismos parámetros, se está gastando tokens innecesariamente.
+### 7. **[TÉCNICA] Optimización de tamaño de archivo** ⭐⭐⭐
 
-**Mejora propuesta:** Implementar cache local:
-- Guardar el prompt exacto enviado
-- Guardar la respuesta recibida
-- Si se intenta regenerar con el mismo prompt, ofrecer usar la cache
+**Problema:** No se menciona cómo se optimizará el tamaño del archivo DOCX.
 
-**Beneficio:** Ahorro de tokens y tiempo, con opción de forzar regeneración.
+**Mejora propuesta:** Implementar optimización de tamaño de archivo:
+- Comprimir imágenes en el DOCX si existen
+- Eliminar metadatos innecesarios
+- Minimizar tamaño del ZIP DOCX
+- Opción de "tamaño optimizado" vs "calidad máxima"
 
----
-
-### 14. **[UX] Indicador de progreso durante generación** ⭐⭐⭐
-**Problema:** Para transcripciones largas, la generación del acta puede tardar varios segundos. Sin feedback, el usuario puede pensar que la app se colgó.
-
-**Mejora propuesta:** Mostrar progreso claro:
-- "Enviando datos a Claude..."
-- "Generando acta..."
-- "Procesando respuesta..."
-- Barra de progreso o spinner animado
-- Tiempo estimado restante (si es posible)
-
-**Beneficio:** Mejor percepción de la app y menor ansiedad del usuario.
+**Beneficio:** Archivos más pequeños, más fáciles de compartir.
 
 ---
 
-### 15. **[TÉCNICA] Manejo de errores de Claude API con reintentos** ⭐⭐⭐
-**Problema:** La propuesta menciona errores de Claude API pero no cómo manejarlos cuando son temporales (ej: rate limits, timeouts).
+### 8. **[UX] Compartir documento** ⭐⭐⭐⭐
 
-**Mejora propuesta:** Implementar reintentos automáticos con backoff exponencial:
-- Primer intento: inmediato
-- Segundo intento: 2 segundos después
-- Tercer intento: 5 segundos después
-- Máximo 3 intentos
-- Mostrar mensaje al usuario si fallan todos
+**Problema:** No se menciona la posibilidad de compartir el documento generado.
 
-**Beneficio:** Mayor robustez y menor frustración por errores temporales.
+**Mejora propuesta:** Implementar sistema de compartir documento:
+- Botón "Compartir" que genera enlace de descarga
+- Generar enlace directo para compartir
+- Opción de compartir por email
+- Opción de copiar enlace al portapapeles
+- Copia del documento al portapapeles
+
+**Beneficio:** Fácil compartir con propietarios, mayor utilidad.
+
+---
+
+### 9. **[UX] Historial de exportaciones** ⭐⭐⭐⭐
+
+**Problema:** No se menciona un historial de documentos exportados.
+
+**Mejora propuesta:** Implementar historial de exportaciones:
+- Historial de documentos exportados
+- Acceso rápido a documentos exportados anteriormente
+- Búsqueda en historial
+- Filtro por fecha, tipo de junta, etc.
+- Opción de reexportar documentos antiguos
+
+**Beneficio:** Reutilización de documentos, mayor comodidad.
+
+---
+
+### 10. **[UX] Plantillas personalizadas por usuario** ⭐⭐⭐⭐
+
+**Problema:** No se menciona la posibilidad de que los usuarios creen sus propias plantillas.
+
+**Mejora propuesta:** Implementar sistema de plantillas personalizadas:
+- Crear plantillas personalizadas para cada comunidad
+- Editor de plantillas visual (drag & drop)
+- Guardar y usar plantillas personalizadas
+- Exportar plantillas personalizadas
+- Importar plantillas personalizadas
+
+**Beneficio:** Mayor personalización, adaptación a necesidades específicas.
+
+---
+
+### 11. **[TÉCNICA] Soporte para múltiples idiomas** ⭐⭐⭐
+
+**Problema:** No se menciona soporte para idiomas diferentes al español.
+
+**Mejora propuesta:** Implementar soporte para múltiples idiomas:
+- Traducción de plantillas a múltiples idiomas
+- Soporte para idiomas de España (es-ES, es-PT, etc.)
+- Soporte para otros idiomas (francés, portugués, etc.)
+- Selección de idioma en la configuración
+
+**Beneficio:** Aplicación usable en diferentes países, mayor alcance.
+
+---
+
+### 12. **[UX] Notificaciones de exportación completada** ⭐⭐⭐
+
+**Problema:** No se menciona notificaciones cuando la exportación se completa.
+
+**Mejora propuesta:** Implementar notificaciones de exportación:
+- Notificación al completar la exportación exitosamente
+- Notificación si hay errores en la exportación
+- Opción de guardar automáticamente en carpeta descargas
+- Opción de abrir directamente el archivo generado
+
+**Beneficio:** Mayor feedback al usuario, más control.
+
+---
+
+### 13. **[UX] Previsualización de formato de impresión** ⭐⭐⭐⭐
+
+**Problema:** No se menciona cómo se verá el documento en papel.
+
+**Mejora propuesta:** Implementar previsualización de formato de impresión:
+- Vista de cómo quedará en papel
+- Vista de cómo quedará en pantalla
+- Vista de cómo quedará en PDF
+- Vista de cómo quedará en Word
+
+**Beneficio:** Mayor claridad, menos sorpresas, mejor toma de decisiones.
+
+---
+
+### 14. **[TÉCNICA] Validación avanzada de plantillas** ⭐⭐⭐
+
+**Problema:** No se menciona cómo se validará que las plantillas son correctas.
+
+**Mejora propuesta:** Implementar validación avanzada de plantillas:
+- Validar que la plantilla tiene todos los campos obligatorios
+- Validar que la plantilla no tiene errores de formato
+- Validar que la plantilla es compatible con el formato DOCX
+- Validar que la plantilla se puede generar correctamente
+
+**Beneficio:** Menos errores, más robustez, mejor calidad.
+
+---
+
+### 15. **[UX] Sistema de favoritos de plantillas** ⭐⭐⭐
+
+**Problema:** No se menciona la posibilidad de marcar plantillas como favoritas.
+
+**Mejora propuesta:** Implementar sistema de favoritos de plantillas:
+- Marcar plantillas como favoritas
+- Acceso rápido a plantillas favoritas
+- Búsqueda en plantillas favoritas
+- Organización por categorías
+
+**Beneficio:** Mayor comodidad, acceso rápido a plantillas usadas frecuentemente.
 
 ---
 
@@ -571,24 +524,20 @@ A continuación presento las mejoras técnicas y de experiencia de usuario que r
 
 | Prioridad | Mejora | Impacto |
 |-----------|--------|---------|
-| ⭐⭐⭐⭐⭐ Alta | Prompt estructurado con ejemplos | Técnico ⭐⭐⭐⭐⭐ |
-| ⭐⭐⭐⭐⭐ Alta | Cálculo de coste estimado | Técnico ⭐⭐⭐⭐⭐ |
-| ⭐⭐⭐⭐ Alta | Editor Markdown con vista previa | UX ⭐⭐⭐⭐ |
-| ⭐⭐⭐⭐ Alta | Autoguardado mientras se edita | UX/Técnico ⭐⭐⭐⭐ |
-| ⭐⭐⭐⭐ Alta | Validación de estructura del acta | Técnico ⭐⭐⭐⭐ |
-| ⭐⭐⭐⭐ Alta | Manejo de límites de tokens | Técnico ⭐⭐⭐⭐ |
-| ⭐⭐⭐⭐ Alta | Templates de actas predefinidos | UX ⭐⭐⭐⭐ |
-| ⭐⭐⭐⭐ Alta | Extracción automática de tareas pendientes | UX ⭐⭐⭐⭐ |
-| ⭐⭐⭐ Media | Diferentes modos de edición | UX ⭐⭐⭐ |
-| ⭐⭐⭐ Media | Comparación de versiones con diff | Técnico ⭐⭐⭐ |
-| ⭐⭐⭐ Media | Resumen ejecutivo automático | UX ⭐⭐⭐ |
-| ⭐⭐⭐ Media | Exportación con marca de agua | UX ⭐⭐⭐ |
-| ⭐⭐⭐ Media | Cache de prompts y respuestas | Técnico ⭐⭐⭐ |
-| ⭐⭐⭐ Media | Indicador de progreso durante generación | UX ⭐⭐⭐ |
-| ⭐⭐⭐ Media | Manejo de errores con reintentos | Técnico ⭐⭐⭐ |
+| ⭐⭐⭐⭐⭐ Alta | Integración con plantillas existentes | Técnico |
+| ⭐⭐⭐⭐⭐ Alta | Estrategia de migración de datos | Técnico |
+| ⭐⭐⭐⭐⭐ Alta | Preview interactivo y editable | UX |
+| ⭐⭐⭐⭐ Alta | Manejo de errores robusto | Técnico |
+| ⭐⭐⭐⭐ Alta | Exportación a PDF como alternativa | UX |
+| ⭐⭐⭐⭐ Alta | Guía de configuración de impresión | UX |
+| ⭐⭐⭐ Media | Optimización de tamaño de archivo | Técnico |
+| ⭐⭐⭐⭐ Alta | Compartir documento | UX |
+| ⭐⭐⭐⭐ Alta | Historial de exportaciones | UX |
+| ⭐⭐⭐⭐ Alta | Plantillas personalizadas por usuario | UX |
+| ⭐⭐⭐ Media | Soporte para múltiples idiomas | Técnico |
+| ⭐⭐⭐ Alta | Notificaciones de exportación completada | UX |
+| ⭐⭐⭐⭐ Alta | Previsualización de formato de impresión | UX |
+| ⭐⭐⭐ Media | Validación avanzada de plantillas | Técnico |
+| ⭐⭐⭐ Media | Sistema de favoritos de plantillas | UX |
 
-**Recomendación:** Implementar las 8 mejoras de prioridad Alta (⭐⭐⭐⭐⭐) para el MVP del Bloque 5. Las mejoras de prioridad Media (⭐⭐⭐) pueden considerarse para iteraciones futuras.
-
----
-
-**Nota:** Estas mejoras propuestas por Turín están sujetas a aprobación de Lorenzo antes de ser implementadas.
+**Recomendación:** Implementar las 9 mejoras de prioridad Alta para el MVP del Bloque 6. Las 6 mejoras de prioridad Media pueden considerarse para iteraciones futuras.
