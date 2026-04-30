@@ -1,90 +1,388 @@
-import { createRouter } from './router.js';
-import { setState, getState } from './store.js';
-import { getDb } from '../db/database.js';
-import { mountLegacyUi } from './legacy-ui.js';
-import { bindComunidadesUi } from '../modules/comunidades/comunidades.ui.js';
-import { bindPropietariosUi } from '../modules/propietarios/propietarios.ui.js';
-import { createComunidadesRepository } from '../modules/comunidades/comunidades.repository.js';
-import { createComunidadesService } from '../modules/comunidades/comunidades.service.js';
-import { createPropietariosRepository } from '../modules/propietarios/propietarios.repository.js';
-import { createPropietariosService } from '../modules/propietarios/propietarios.service.js';
-import { createJuntasRepository } from '../modules/juntas/juntas.repository.js';
-import { createJuntasService } from '../modules/juntas/juntas.service.js';
-import { bindJuntasUi } from '../modules/juntas/juntas.ui.js';
-import { createGrabacionesRepository } from '../modules/grabaciones/grabaciones.repository.js';
-import { createGrabacionesService } from '../modules/grabaciones/grabaciones.service.js';
-import { bindGrabacionesUi } from '../modules/grabaciones/grabaciones.ui.js';
-import { createTranscripcionesRepository } from '../modules/transcripciones/transcripciones.repository.js';
-import { createWhisperService } from '../modules/transcripciones/whisper.service.js';
-import { createWebSpeechService } from '../modules/transcripciones/webspeech.service.js';
-import { createTranscripcionesService } from '../modules/transcripciones/transcripciones.service.js';
-import { bindTranscripcionesUi } from '../modules/transcripciones/transcripciones.ui.js';
-import { createActasRepository } from '../modules/actas/actas.repository.js';
-import { createClaudeService } from '../modules/actas/claude.service.js';
-import { createActasExportService } from '../modules/actas/actas-export.service.js';
-import { createActasService } from '../modules/actas/actas.service.js';
-import { bindActasUi } from '../modules/actas/actas.ui.js';
+/**
+ * GestActas - Bootstrap de inicialización
+ * Bloque 6 - Configuración y arranque de la aplicación
+ */
 
-export async function initializeApp() {
-  const db = await getDb();
-  const comunidadesRepository = createComunidadesRepository(db);
-  const propietariosRepository = createPropietariosRepository(db);
-  const juntasRepository = createJuntasRepository(db);
-  const grabacionesRepository = createGrabacionesRepository(db);
-  const transcripcionesRepository = createTranscripcionesRepository(db);
-  const actasRepository = createActasRepository(db);
+class GestactasBootstrap {
+    constructor() {
+        this.services = {};
+        this.initialized = false;
+        this.config = {
+            appName: 'GestActas',
+            version: '1.0.0',
+            block: '6',
+            features: {
+                exportToWord: true,
+                previewDocuments: true,
+                validateDocuments: true,
+                shareDocuments: true,
+                exportHistory: true
+            },
+            storage: {
+                prefix: 'gestactas_',
+                versionKey: 'gestactas_version'
+            }
+        };
+    }
 
-  const comunidadesService = createComunidadesService(comunidadesRepository);
-  const propietariosService = createPropietariosService(propietariosRepository);
-  const juntasService = createJuntasService({
-    repository: juntasRepository,
-    comunidadesService,
-    propietariosService,
-  });
-  const grabacionesService = createGrabacionesService(grabacionesRepository);
-  const whisperService = createWhisperService();
-  const webSpeechService = createWebSpeechService();
-  const transcripcionesService = createTranscripcionesService({
-    repository: transcripcionesRepository,
-    whisperService,
-    webSpeechService,
-    grabacionesService,
-  });
-  const claudeService = createClaudeService();
-  const actasExportService = createActasExportService();
-  const actasService = createActasService({
-    repository: actasRepository,
-    juntasService,
-    transcripcionesService,
-    claudeService,
-    exportService: actasExportService,
-  });
+    /**
+     * Inicializa la aplicación
+     * @returns {Promise<Object>} Resultado de la inicialización
+     */
+    async initialize() {
+        if (this.initialized) {
+            console.warn('GestActas ya está inicializado');
+            return { success: true, message: 'Ya inicializado' };
+        }
 
-  const legacyUi = mountLegacyUi({
-    grabacionesService,
-    getSelectedJuntaId: () => getState().selectedJuntaId,
-  });
-  const router = createRouter(legacyUi);
+        try {
+            console.log('🚀 Inicializando GestActas Bloque 6...');
 
-  await comunidadesService.bootstrap();
-  await propietariosService.bootstrap();
-  await juntasService.bootstrap();
+            // 1. Verificar compatibilidad del navegador
+            const compatibility = this._checkCompatibility();
+            if (!compatibility.compatible) {
+                return {
+                    success: false,
+                    error: 'Navegador no compatible',
+                    details: compatibility.errors
+                };
+            }
 
-  bindComunidadesUi({ db, router });
-  bindPropietariosUi({ db, router });
-  await bindJuntasUi({ router, juntasService, comunidadesService, legacyUi });
-  const grabacionesUi = bindGrabacionesUi({ router, legacyUi, grabacionesService, juntasService });
-  const transcripcionesUi = bindTranscripcionesUi({ router, grabacionesService, juntasService, transcripcionesService });
-  const actasUi = bindActasUi({ router, actasService, juntasService, transcripcionesService });
+            // 2. Inicializar almacenamiento
+            await this._initializeStorage();
 
-  setState({
-    isBootstrapped: true,
-    currentScreen: 'dashboard',
-  });
+            // 3. Inicializar servicios
+            await this._initializeServices();
 
-  await grabacionesUi.refresh();
-  await transcripcionesUi.refresh();
-  await actasUi.refresh();
+            // 4. Inicializar componentes UI
+            await this._initializeUI();
 
-  return { db, router, comunidadesService, propietariosService, juntasService, grabacionesService, transcripcionesService, actasService };
+            // 5. Configurar eventos globales
+            this._setupGlobalEvents();
+
+            // 6. Marcar como inicializado
+            this.initialized = true;
+
+            console.log('✅ GestActas Bloque 6 inicializado correctamente');
+            
+            return {
+                success: true,
+                message: 'GestActas inicializado correctamente',
+                version: this.config.version,
+                block: this.config.block
+            };
+
+        } catch (error) {
+            console.error('❌ Error al inicializar GestActas:', error);
+            return {
+                success: false,
+                error: error.message,
+                stack: error.stack
+            };
+        }
+    }
+
+    /**
+     * Obtiene un servicio inicializado
+     * @param {string} serviceName - Nombre del servicio
+     * @returns {Object|null} Servicio o null si no existe
+     */
+    getService(serviceName) {
+        return this.services[serviceName] || null;
+    }
+
+    /**
+     * Registra un nuevo servicio
+     * @param {string} serviceName - Nombre del servicio
+     * @param {Object} service - Instancia del servicio
+     */
+    registerService(serviceName, service) {
+        this.services[serviceName] = service;
+        console.log(`📦 Servicio registrado: ${serviceName}`);
+    }
+
+    /**
+     * Obtiene la configuración de la aplicación
+     * @returns {Object} Configuración
+     */
+    getConfig() {
+        return { ...this.config };
+    }
+
+    /**
+     * Actualiza la configuración de la aplicación
+     * @param {Object} newConfig - Nueva configuración (merge con la existente)
+     */
+    updateConfig(newConfig) {
+        this.config = { ...this.config, ...newConfig };
+        console.log('⚙️ Configuración actualizada:', newConfig);
+    }
+
+    /**
+     * Cierra la aplicación y limpia recursos
+     * @returns {Promise<void>}
+     */
+    async shutdown() {
+        console.log('🛑 Cerrando GestActas...');
+
+        // Limpiar servicios
+        for (const serviceName in this.services) {
+            if (this.services[serviceName].shutdown) {
+                try {
+                    await this.services[serviceName].shutdown();
+                } catch (error) {
+                    console.error(`Error al cerrar servicio ${serviceName}:`, error);
+                }
+            }
+        }
+
+        this.services = {};
+        this.initialized = false;
+
+        console.log('✅ GestActas cerrado correctamente');
+    }
+
+    // ============ MÉTODOS PRIVADOS ============
+
+    /**
+     * Verifica la compatibilidad del navegador
+     * @returns {Object} Resultado de la verificación
+     */
+    _checkCompatibility() {
+        const errors = [];
+
+        // Verificar características requeridas
+        const requiredFeatures = [
+            { name: 'Blob', check: () => typeof Blob !== 'undefined' },
+            { name: 'FileReader', check: () => typeof FileReader !== 'undefined' },
+            { name: 'localStorage', check: () => typeof localStorage !== 'undefined' },
+            { name: 'Promise', check: () => typeof Promise !== 'undefined' },
+            { name: 'Array.from', check: () => typeof Array.from === 'function' },
+            { name: 'Object.assign', check: () => typeof Object.assign === 'function' }
+        ];
+
+        requiredFeatures.forEach(feature => {
+            if (!feature.check()) {
+                errors.push(`Característica no soportada: ${feature.name}`);
+            }
+        });
+
+        return {
+            compatible: errors.length === 0,
+            errors
+        };
+    }
+
+    /**
+     * Inicializa el almacenamiento
+     * @returns {Promise<void>}
+     */
+    async _initializeStorage() {
+        console.log('💾 Inicializando almacenamiento...');
+
+        try {
+            // Verificar soporte de localStorage
+            if (typeof localStorage === 'undefined') {
+                throw new Error('localStorage no está disponible');
+            }
+
+            // Guardar versión actual
+            localStorage.setItem(this.config.storage.versionKey, this.config.version);
+
+            console.log('✅ Almacenamiento inicializado');
+        } catch (error) {
+            console.error('❌ Error al inicializar almacenamiento:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Inicializa los servicios de la aplicación
+     * @returns {Promise<void>}
+     */
+    async _initializeServices() {
+        console.log('📦 Inicializando servicios...');
+
+        try {
+            // Cargar servicios de Bloque 6 si están disponibles
+            // ActaDocxService
+            if (typeof ActaDocxService !== 'undefined') {
+                const docxService = new ActaDocxService();
+                this.registerService('docxService', docxService);
+            }
+
+            // DocxValidationService
+            if (typeof DocxValidationService !== 'undefined') {
+                const validationService = new DocxValidationService();
+                this.registerService('validationService', validationService);
+            }
+
+            // ActasExportService
+            if (typeof ActasExportService !== 'undefined' && 
+                typeof ActaDocxService !== 'undefined' && 
+                typeof DocxValidationService !== 'undefined') {
+                
+                const docxService = new ActaDocxService();
+                const validationService = new DocxValidationService();
+                const exportService = new ActasExportService(docxService, validationService);
+                this.registerService('exportService', exportService);
+            }
+
+            console.log('✅ Servicios inicializados');
+        } catch (error) {
+            console.error('❌ Error al inicializar servicios:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Inicializa los componentes UI
+     * @returns {Promise<void>}
+     */
+    async _initializeUI() {
+        console.log('🎨 Inicializando UI...');
+
+        try {
+            // Agregar meta tags si no existen
+            this._ensureMetaTags();
+
+            // Configurar manejo de errores globales
+            this._setupErrorHandling();
+
+            console.log('✅ UI inicializada');
+        } catch (error) {
+            console.error('❌ Error al inicializar UI:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Configura eventos globales
+     */
+    _setupGlobalEvents() {
+        // Manejo de visibility change (cuando el usuario cambia de pestaña)
+        if (typeof document !== 'undefined') {
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    console.log('👋 GestActas en segundo plano');
+                } else {
+                    console.log('👋 GestActas en primer plano');
+                }
+            });
+        }
+
+        // Manejo de resize
+        if (typeof window !== 'undefined') {
+            window.addEventListener('resize', () => {
+                console.log('📐 Ventana redimensionada');
+            });
+        }
+    }
+
+    /**
+     * Asegura que los meta tags necesarios existan
+     */
+    _ensureMetaTags() {
+        if (typeof document === 'undefined') return;
+
+        const metaTags = [
+            { name: 'viewport', content: 'width=device-width, initial-scale=1.0' },
+            { name: 'theme-color', content: '#764ba2' },
+            { charset: 'UTF-8' }
+        ];
+
+        metaTags.forEach(tag => {
+            const existing = document.querySelector(`meta[${tag.name || 'charset'}="${tag.name || tag.charset}"]`);
+            if (!existing) {
+                const meta = document.createElement('meta');
+                if (tag.charset) {
+                    meta.setAttribute('charset', tag.charset);
+                } else {
+                    meta.setAttribute('name', tag.name);
+                    meta.setAttribute('content', tag.content);
+                }
+                document.head.appendChild(meta);
+            }
+        });
+    }
+
+    /**
+     * Configura el manejo de errores global
+     */
+    _setupErrorHandling() {
+        if (typeof window === 'undefined') return;
+
+        // Capturar errores no manejados
+        window.addEventListener('error', (event) => {
+            console.error('❌ Error global no manejado:', event.error);
+            this._showUserError('Se ha producido un error inesperado');
+        });
+
+        // Capturar promesas rechazadas no manejadas
+        window.addEventListener('unhandledrejection', (event) => {
+            console.error('❌ Promesa rechazada no manejada:', event.reason);
+            this._showUserError('Se ha producido un error inesperado');
+        });
+    }
+
+    /**
+     * Muestra un error al usuario
+     * @param {string} message - Mensaje de error
+     */
+    _showUserError(message) {
+        if (typeof document !== 'undefined') {
+            const existingError = document.getElementById('gestactas-error-notification');
+            if (existingError) {
+                existingError.remove();
+            }
+
+            const errorDiv = document.createElement('div');
+            errorDiv.id = 'gestactas-error-notification';
+            errorDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #ef4444;
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 0.5rem;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+                z-index: 9999;
+                max-width: 400px;
+            `;
+            errorDiv.textContent = message;
+            document.body.appendChild(errorDiv);
+
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
+    }
+}
+
+// Instancia global
+let gestactasBootstrap = null;
+
+/**
+ * Inicializa GestActas
+ * @returns {Promise<Object>} Resultado de la inicialización
+ */
+async function initGestactas() {
+    if (!gestactasBootstrap) {
+        gestactasBootstrap = new GestactasBootstrap();
+    }
+    return await gestactasBootstrap.initialize();
+}
+
+/**
+ * Obtiene la instancia de bootstrap
+ * @returns {GestactasBootstrap} Instancia de bootstrap
+ */
+function getBootstrap() {
+    return gestactasBootstrap;
+}
+
+// Exportar
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { GestactasBootstrap, initGestactas, getBootstrap };
 }
