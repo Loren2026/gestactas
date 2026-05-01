@@ -399,6 +399,8 @@
             }
         }
     </style>
+    <!-- docx.js para generación de documentos Word -->
+    <script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
 </head>
 <body>
     <header>
@@ -777,6 +779,8 @@
         import { ValidacionComunidadPropietario } from './src/utilidades/validacion-comunidad-propietario.js';
         import { ContextoLegal } from './src/utilidades/contexto-legal.js';
         import { GeneradorActas } from './src/utilidades/generador-actas.js';
+        import { FormatoWord } from './src/utilidades/formato-word.js';
+        import { exportacionService } from './src/services/exportacion.service.js';
 
         class GestActasApp {
             constructor() {
@@ -2062,15 +2066,15 @@
                 try {
                     FeedbackUtils.mostrarInformacion('Generando documento Word...');
                     
-                    // Nota: La exportación a Word requeriría integrar la librería docx-js
-                    // Por ahora, mostramos un mensaje indicando que está pendiente
-                    FeedbackUtils.mostrarAdvertencia('Exportación a Word pendiente de implementación. Usa la función de imprimir del navegador.');
+                    // Usar el servicio de exportación
+                    const resultado = await exportacionService.exportarActaWord(this.actaActual);
                     
-                    // Alternativa: Abrir diálogo de impresión del navegador
-                    window.print();
+                    if (resultado.exito) {
+                        FeedbackUtils.mostrarExito(`Documento Word generado: ${resultado.nombreArchivo}`);
+                    }
                 } catch (error) {
                     console.error('Error al exportar acta:', error);
-                    FeedbackUtils.mostrarError('Error al exportar el acta');
+                    FeedbackUtils.mostrarError(`Error al exportar el acta: ${error.message}`);
                 }
             }
 
