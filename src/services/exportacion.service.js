@@ -4,10 +4,10 @@
  * Servicio para la exportación de actas a documentos Word (.docx) usando docx.js.
  */
 
-import { Document, Packer, Paragraph, TextRun, Table, TableRow, 
-         TableCell, WidthType, BorderStyle, HeadingLevel, AlignmentType,
-         PageBreak, Header, Footer, PageNumber, VerticalAlign, 
-         ImageRun, convertInchesToTwip, convertMillimetersToTwip } from 'docx';
+const { Document, Packer, Paragraph, TextRun, Table, TableRow,
+        TableCell, WidthType, BorderStyle, HeadingLevel, AlignmentType,
+        PageBreak, Header, Footer, PageNumber, VerticalAlign,
+        ImageRun, convertInchesToTwip, convertMillimetersToTwip } = docx;
 import { FormatoWord } from '../utilidades/formato-word.js';
 
 class ExportacionService {
