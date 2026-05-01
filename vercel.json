@@ -7,7 +7,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/index-bloque7.html"
+      "destination": "/index.html"
     }
   ],
   "headers": [
@@ -74,8 +74,8 @@
   ],
   "redirects": [
     {
-      "source": "/index.html",
-      "destination": "/index-bloque7.html",
+      "source": "/index-bloque7.html",
+      "destination": "/index.html",
       "permanent": true
     }
   ]

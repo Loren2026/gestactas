@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GestActas - Gestión Inteligente de Juntas</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#764ba2">
+    <meta name="description" content="Gestión de actas de juntas de propietarios con IA">
+    <style>
+        /* Estilos principales de GestActas */
+        :root {
+            --primary: #764ba2;
+            --primary-dark: #5a2d7a;
+            --primary-light: #9b72cb;
+            --secondary: #667eea;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --dark: #1a1a1a;
+            --dark-lighter: #2d2d2d;
+            --text: #e5e5e5;
+            --text-muted: #a3a3a3;
+            --border: #404040;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--dark);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Navegación */
+        nav {
+            background: var(--dark-lighter);
+            border-bottom: 1px solid var(--border);
+            padding: 0.5rem 0;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.75rem 1.25rem;
+            cursor: pointer;
+            font-size: 0.95rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .nav-btn:hover {
+            background: var(--primary-light);
+            color: white;
+        }
+
+        .nav-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Contenido principal */
+        main {
+            flex: 1;
+            padding: 2rem 1rem;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Pantallas */
+        .screen {
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Tarjetas */
+        .card {
+            background: var(--dark-lighter);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* Botones */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--dark);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--error);
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Formularios */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--dark);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Tabs de exportación */
+        .export-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .export-tab {
+            flex: 1;
+            padding: 0.75rem;
+            background: var(--dark);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .export-tab:hover {
+            border-color: var(--primary);
+        }
+
+        .export-tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Preview de documento */
+        .preview-container {
+            background: white;
+            color: #1a1a1a;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            max-height: 600px;
+            overflow-y: auto;
+            font-family: 'Times New Roman', serif;
+        }
+
+        .preview-section {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        /* Validación */
+        .validation-item {
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .validation-item.error {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 3px solid var(--error);
+        }
+
+        .validation-item.warning {
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 3px solid var(--warning);
+        }
+
+        .validation-item.success {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 3px solid var(--success);
+        }
+
+        /* Historial */
+        .history-item {
+            background: var(--dark);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-item:hover {
+            border-color: var(--primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                padding: 1rem;
+            }
+            
+            main {
+                padding: 1rem;
+            }
+            
+            .card {
+                padding: 1rem;
+            }
+            
+            .export-tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <span>📋</span>
+                <span>GestActas</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navegación -->
+    <nav>
+        <div class="nav-content">
+            <button class="nav-btn active" data-tab="juntas">📋 Juntas</button>
+            <button class="nav-btn" data-tab="actas">📄 Actas</button>
+            <button class="nav-btn" data-tab="grabacion">🎤 Grabación</button>
+            <button class="nav-btn" data-tab="export">💾 Exportar</button>
+            <button class="nav-btn" data-tab="historial">📊 Historial</button>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main>
+        <!-- Pantalla de Juntas -->
+        <section id="screen-juntas" class="screen active">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">📋 Juntas</h2>
+                    <button class="btn btn-primary" onclick="showNewJuntaModal()">
+                        ➕ Nueva Junta
+                    </button>
+                </div>
+                <div id="juntas-list">
+                    <p style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                        No hay juntas registradas.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pantalla de Actas -->
+        <section id="screen-actas" class="screen">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">📄 Actas</h2>
+                    <button class="btn btn-primary" onclick="showNewActaModal()">
+                        ➕ Nuevo Acta
+                    </button>
+                </div>
+                <div id="actas-list">
+                    <p style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                        No hay actas generadas.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pantalla de Grabación -->
+        <section id="screen-grabacion" class="screen">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">🎤 Grabación</h2>
+                    <button class="btn btn-primary" id="btn-start-recording">
+                        🔴 Grabar
+                    </button>
+                </div>
+                <div id="recording-status" style="text-align: center; padding: 2rem;">
+                    <p style="color: var(--text-muted);">
+                        Presiona el botón para iniciar la grabación.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pantalla de Exportación (Bloque 6) -->
+        <section id="screen-export" class="screen">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">💾 Exportar Acta a Word</h2>
+                </div>
+                
+                <!-- Tabs de exportación -->
+                <div class="export-tabs">
+                    <div class="export-tab active" data-export-tab="exportar">
+                        📤 Exportar
+                    </div>
+                    <div class="export-tab" data-export-tab="preview">
+                        👁️ Vista previa
+                    </div>
+                    <div class="export-tab" data-export-tab="validar">
+                        ✅ Validar
+                    </div>
+                    <div class="export-tab" data-export-tab="compartir">
+                        🔗 Compartir
+                    </div>
+                </div>
+
+                <!-- Tab: Exportar -->
+                <div id="export-tab-exportar" class="export-tab-content">
+                    <div class="form-group">
+                        <label>Seleccionar acta:</label>
+                        <select id="export-acta-select">
+                            <option value="">-- Seleccionar acta --</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Nombre del archivo (opcional):</label>
+                        <input type="text" id="export-filename" placeholder="Se generará automáticamente si se deja vacío">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Opciones:</label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <input type="checkbox" id="export-validate" checked>
+                            Validar antes de exportar
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="export-download" checked>
+                            Descargar automáticamente
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button class="btn btn-primary" id="btn-export-docx" style="width: 100%;">
+                            📤 Exportar a Word (.docx)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tab: Vista previa -->
+                <div id="export-tab-preview" class="export-tab-content" style="display: none;">
+                    <div class="form-group">
+                        <label>Seleccionar acta para vista previa:</label>
+                        <select id="preview-acta-select">
+                            <option value="">-- Seleccionar acta --</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button class="btn btn-secondary" id="btn-generate-preview" style="width: 100%;">
+                            👁️ Generar vista previa
+                        </button>
+                    </div>
+                    
+                    <div id="preview-result" style="margin-top: 1rem;"></div>
+                </div>
+
+                <!-- Tab: Validar -->
+                <div id="export-tab-validar" class="export-tab-content" style="display: none;">
+                    <div class="form-group">
+                        <label>Seleccionar acta para validar:</label>
+                        <select id="validate-acta-select">
+                            <option value="">-- Seleccionar acta --</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button class="btn btn-secondary" id="btn-validate-acta" style="width: 100%;">
+                            ✅ Validar acta
+                        </button>
+                    </div>
+                    
+                    <div id="validation-result" style="margin-top: 1rem;"></div>
+                </div>
+
+                <!-- Tab: Compartir -->
+                <div id="export-tab-compartir" class="export-tab-content" style="display: none;">
+                    <div class="form-group">
+                        <label>Seleccionar acta para compartir:</label>
+                        <select id="share-acta-select">
+                            <option value="">-- Seleccionar acta --</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button class="btn btn-secondary" id="btn-share-acta" style="width: 100%;">
+                            🔗 Generar enlace para compartir
+                        </button>
+                    </div>
+                    
+                    <div id="share-result" style="margin-top: 1rem;"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pantalla de Historial -->
+        <section id="screen-historial" class="screen">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">📊 Historial de Exportaciones</h2>
+                    <button class="btn btn-secondary" onclick="refreshHistory()">
+                        🔄 Actualizar
+                    </button>
+                </div>
+                <div id="history-list">
+                    <p style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                        No hay exportaciones registradas.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script>
+        // ==================== INICIALIZACIÓN ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeNavigation();
+            initializeExportTabs();
+            initializeExportButtons();
+        });
+
+        // ==================== NAVEGACIÓN ====================
+        function initializeNavigation() {
+            const navButtons = document.querySelectorAll('.nav-btn');
+            const screens = document.querySelectorAll('.screen');
+
+            navButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const tab = btn.dataset.tab;
+                    
+                    // Actualizar botones de navegación
+                    navButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    // Mostrar pantalla correspondiente
+                    screens.forEach(s => s.classList.remove('active'));
+                    document.getElementById(`screen-${tab}`).classList.add('active');
+                });
+            });
+        }
+
+        // ==================== TABS DE EXPORTACIÓN ====================
+        function initializeExportTabs() {
+            const tabs = document.querySelectorAll('.export-tab');
+            const contents = document.querySelectorAll('.export-tab-content');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const exportTab = tab.dataset.exportTab;
+                    
+                    // Actualizar tabs
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // Mostrar contenido correspondiente
+                    contents.forEach(c => c.style.display = 'none');
+                    document.getElementById(`export-tab-${exportTab}`).style.display = 'block';
+                });
+            });
+        }
+
+        // ==================== BOTONES DE EXPORTACIÓN ====================
+        function initializeExportButtons() {
+            // Exportar a DOCX
+            document.getElementById('btn-export-docx').addEventListener('click', async () => {
+                const actaId = document.getElementById('export-acta-select').value;
+                if (!actaId) {
+                    alert('Por favor, selecciona un acta');
+                    return;
+                }
+
+                const options = {
+                    filename: document.getElementById('export-filename').value || undefined,
+                    validate: document.getElementById('export-validate').checked,
+                    download: document.getElementById('export-download').checked
+                };
+
+                try {
+                    const result = await exportActaToDocx(actaId, options);
+                    
+                    if (result.success) {
+                        alert(`✅ Acta exportada correctamente:\nArchivo: ${result.file.filename}\nTamaño: ${result.file.size} bytes`);
+                        
+                        if (result.warnings && result.warnings.length > 0) {
+                            alert(`⚠️ Advertencias:\n${result.warnings.join('\n')}`);
+                        }
+                    } else {
+                        alert(`❌ Error al exportar:\n${result.errors.join('\n')}`);
+                    }
+                } catch (error) {
+                    alert(`❌ Error: ${error.message}`);
+                }
+            });
+
+            // Generar vista previa
+            document.getElementById('btn-generate-preview').addEventListener('click', async () => {
+                const actaId = document.getElementById('preview-acta-select').value;
+                if (!actaId) {
+                    alert('Por favor, selecciona un acta');
+                    return;
+                }
+
+                try {
+                    const result = await previewActa(actaId);
+                    
+                    if (result.success) {
+                        document.getElementById('preview-result').innerHTML = `
+                            <div class="preview-container">
+                                <pre style="white-space: pre-wrap; font-family: inherit;">${result.preview}</pre>
+                            </div>
+                            <div style="margin-top: 1rem; padding: 1rem; background: var(--dark-lighter); border-radius: 0.5rem;">
+                                <strong>📊 Metadatos:</strong><br>
+                                Comunidad: ${result.metadata.comunidad}<br>
+                                Fecha: ${result.metadata.fecha}<br>
+                                Tipo: ${result.metadata.tipo}<br>
+                                Asistentes: ${result.metadata.asistentes}<br>
+                                Acuerdos: ${result.metadata.acuerdos}
+                            </div>
+                        `;
+                    } else {
+                        alert(`❌ Error al generar vista previa: ${result.error}`);
+                    }
+                } catch (error) {
+                    alert(`❌ Error: ${error.message}`);
+                }
+            });
+
+            // Validar acta
+            document.getElementById('btn-validate-acta').addEventListener('click', async () => {
+                const actaId = document.getElementById('validate-acta-select').value;
+                if (!actaId) {
+                    alert('Por favor, selecciona un acta');
+                    return;
+                }
+
+                try {
+                    const result = await validateActaForExport(actaId);
+                    
+                    let html = '';
+                    
+                    if (result.errors && result.errors.length > 0) {
+                        html += '<h3 style="color: var(--error); margin-bottom: 0.5rem;">❌ Errores</h3>';
+                        result.errors.forEach(error => {
+                            html += `<div class="validation-item error">${error}</div>`;
+                        });
+                    }
+                    
+                    if (result.warnings && result.warnings.length > 0) {
+                        html += '<h3 style="color: var(--warning); margin-bottom: 0.5rem;">⚠️ Advertencias</h3>';
+                        result.warnings.forEach(warning => {
+                            html += `<div class="validation-item warning">${warning}</div>`;
+                        });
+                    }
+                    
+                    if (result.isValid) {
+                        html += '<h3 style="color: var(--success); margin-bottom: 0.5rem;">✅ Validación exitosa</h3>';
+                        html += '<div class="validation-item success">El acta es válida para exportar</div>';
+                    }
+                    
+                    if (result.stats) {
+                        html += '<h3 style="margin-bottom: 0.5rem;">📊 Estadísticas</h3>';
+                        html += `
+                            <div style="padding: 1rem; background: var(--dark-lighter); border-radius: 0.5rem;">
+                                Asistentes: ${result.stats.totalAsistentes}<br>
+                                Acuerdos: ${result.stats.totalAcuerdos}<br>
+                                Votaciones: ${result.stats.totalVotaciones}<br>
+                                Longitud: ${result.stats.contentLength} caracteres
+                            </div>
+                        `;
+                    }
+                    
+                    document.getElementById('validation-result').innerHTML = html;
+                } catch (error) {
+                    alert(`❌ Error: ${error.message}`);
+                }
+            });
+
+            // Compartir acta
+            document.getElementById('btn-share-acta').addEventListener('click', async () => {
+                const actaId = document.getElementById('share-acta-select').value;
+                if (!actaId) {
+                    alert('Por favor, selecciona un acta');
+                    return;
+                }
+
+                try {
+                    const result = await shareActa(actaId);
+                    
+                    if (result.success) {
+                        document.getElementById('share-result').innerHTML = `
+                            <div style="padding: 1rem; background: var(--success); color: white; border-radius: 0.5rem; margin-top: 1rem;">
+                                ✅ ${result.message}<br><br>
+                                <strong>Archivo:</strong> ${result.filename}<br>
+                                <strong>Tamaño:</strong> ${result.size} bytes
+                            </div>
+                        `;
+                    } else {
+                        alert(`❌ Error: ${result.error}`);
+                    }
+                } catch (error) {
+                    alert(`❌ Error: ${error.message}`);
+                }
+            });
+        }
+
+        // ==================== FUNCIONES DE AYUDA ====================
+        function showNewJuntaModal() {
+            alert('Función no implementada: Crear nueva junta');
+        }
+
+        function showNewActaModal() {
+            alert('Función no implementada: Crear nuevo acta');
+        }
+
+        function refreshHistory() {
+            alert('Función no implementada: Actualizar historial');
+        }
+
+        // ==================== SERVICIOS (STUBS) ====================
+        async function exportActaToDocx(actaId, options) {
+            // En una implementación real, esto llamaría a ActasExportService
+            return {
+                success: true,
+                warnings: ['Funcionalidad en desarrollo'],
+                file: {
+                    filename: 'Acta_Generada.docx',
+                    size: 10240,
+                    type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                }
+            };
+        }
+
+        async function previewActa(actaId) {
+            // En una implementación real, esto llamaría a ActasExportService
+            return {
+                success: true,
+                preview: 'Vista previa del documento...',
+                metadata: {
+                    comunidad: 'Comunidad de Prueba',
+                    fecha: '2026-04-30',
+                    tipo: 'Junta Ordinaria',
+                    asistentes: 5,
+                    acuerdos: 3
+                }
+            };
+        }
+
+        async function validateActaForExport(actaId) {
+            // En una implementación real, esto llamaría a ActasExportService
+            return {
+                isValid: true,
+                errors: [],
+                warnings: ['Funcionalidad en desarrollo'],
+                stats: {
+                    totalAsistentes: 5,
+                    totalAcuerdos: 3,
+                    totalVotaciones: 2,
+                    contentLength: 1500
+                }
+            };
+        }
+
+        async function shareActa(actaId) {
+            // En una implementación real, esto llamaría a ActasExportService
+            return {
+                success: true,
+                message: 'Enlace generado correctamente',
+                filename: 'Acta_Compartida.docx',
+                size: 10240
+            };
+        }
+    </script>
+</body>
+</html>

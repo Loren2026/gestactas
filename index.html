@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GestActas - Gestión Inteligente de Juntas</title>
+    <title>GestActas - Gestión Inteligente de Juntas (Bloque 7)</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#764ba2">
     <meta name="description" content="Gestión de actas de juntas de propietarios con IA">
     <style>
-        /* Estilos principales de GestActas */
+        /* Estilos para el Bloque 7 - Conexión UI Real */
         :root {
             --primary: #764ba2;
             --primary-dark: #5a2d7a;
@@ -57,79 +57,77 @@
         .logo {
             font-size: 1.5rem;
             font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
             display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            gap: 1rem;
         }
 
-        /* Navegación */
-        nav {
-            background: var(--dark-lighter);
-            border-bottom: 1px solid var(--border);
-            padding: 0.5rem 0;
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: background 0.3s;
         }
 
-        .nav-content {
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Main Container */
+        .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 1rem;
+            padding: 2rem;
+            flex: 1;
+        }
+
+        /* Tabs */
+        .tabs {
             display: flex;
             gap: 0.5rem;
-            overflow-x: auto;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border);
         }
 
-        .nav-btn {
-            background: transparent;
+        .tab {
+            padding: 0.75rem 1.5rem;
+            background: var(--dark-lighter);
             border: none;
-            color: var(--text-muted);
-            padding: 0.75rem 1.25rem;
+            color: var(--text);
             cursor: pointer;
-            font-size: 0.95rem;
-            border-radius: 0.5rem;
+            border-radius: 0.5rem 0.5rem 0 0;
             transition: all 0.3s;
-            white-space: nowrap;
         }
 
-        .nav-btn:hover {
-            background: var(--primary-light);
-            color: white;
-        }
-
-        .nav-btn.active {
+        .tab.active {
             background: var(--primary);
             color: white;
         }
 
-        /* Contenido principal */
-        main {
-            flex: 1;
-            padding: 2rem 1rem;
-            max-width: 1200px;
-            width: 100%;
-            margin: 0 auto;
+        .tab:hover:not(.active) {
+            background: var(--border);
         }
 
-        /* Pantallas */
-        .screen {
+        /* Content Sections */
+        .content-section {
             display: none;
-            animation: fadeIn 0.3s ease-in;
         }
 
-        .screen.active {
+        .content-section.active {
             display: block;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Tarjetas */
+        /* Cards */
         .card {
             background: var(--dark-lighter);
-            border-radius: 1rem;
+            border-radius: 0.75rem;
             padding: 1.5rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             border: 1px solid var(--border);
         }
 
@@ -138,28 +136,23 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid var(--border);
         }
 
         .card-title {
             font-size: 1.25rem;
             font-weight: 600;
-            color: var(--text);
         }
 
-        /* Botones */
+        /* Buttons */
         .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
             border: none;
-            font-size: 0.95rem;
-            font-weight: 500;
+            border-radius: 0.5rem;
             cursor: pointer;
+            font-size: 0.875rem;
             transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
+            text-decoration: none;
+            display: inline-block;
         }
 
         .btn-primary {
@@ -169,26 +162,19 @@
 
         .btn-primary:hover {
             background: var(--primary-dark);
-            transform: translateY(-2px);
         }
 
         .btn-secondary {
-            background: var(--dark);
-            color: var(--text);
-            border: 1px solid var(--border);
+            background: var(--secondary);
+            color: white;
         }
 
         .btn-secondary:hover {
-            border-color: var(--primary);
+            background: #5568d3;
         }
 
         .btn-success {
             background: var(--success);
-            color: white;
-        }
-
-        .btn-warning {
-            background: var(--warning);
             color: white;
         }
 
@@ -197,30 +183,18 @@
             color: white;
         }
 
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* Formularios */
+        /* Forms */
         .form-group {
             margin-bottom: 1rem;
         }
 
-        label {
+        .form-label {
             display: block;
             margin-bottom: 0.5rem;
             color: var(--text-muted);
-            font-size: 0.9rem;
         }
 
-        input[type="text"],
-        input[type="date"],
-        input[type="time"],
-        input[type="number"],
-        textarea,
-        select {
+        .form-input {
             width: 100%;
             padding: 0.75rem;
             background: var(--dark);
@@ -230,578 +204,2230 @@
             font-size: 1rem;
         }
 
-        input:focus,
-        textarea:focus,
-        select:focus {
+        .form-input:focus {
             outline: none;
             border-color: var(--primary);
         }
 
-        /* Tabs de exportación */
-        .export-tabs {
+        /* Tables */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table th {
+            background: var(--dark-lighter);
+            font-weight: 600;
+        }
+
+        /* Status Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .badge-error {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error);
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s;
+            max-width: 300px;
+        }
+
+        .toast-visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .toast-success {
+            background: var(--success);
+        }
+
+        .toast-error {
+            background: var(--error);
+        }
+
+        .toast-warning {
+            background: var(--warning);
+        }
+
+        .toast-info {
+            background: var(--primary);
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
             display: flex;
-            gap: 0.5rem;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        /* Dialog */
+        .dialog {
+            background: var(--dark-lighter);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .dialog-header {
             margin-bottom: 1rem;
         }
 
-        .export-tab {
-            flex: 1;
-            padding: 0.75rem;
-            background: var(--dark);
-            border: 1px solid var(--border);
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .export-tab:hover {
-            border-color: var(--primary);
-        }
-
-        .export-tab.active {
-            background: var(--primary);
-            border-color: var(--primary);
-        }
-
-        /* Preview de documento */
-        .preview-container {
-            background: white;
-            color: #1a1a1a;
-            padding: 2rem;
-            border-radius: 0.5rem;
-            max-height: 600px;
-            overflow-y: auto;
-            font-family: 'Times New Roman', serif;
-        }
-
-        .preview-section {
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #e5e5e5;
-        }
-
-        /* Validación */
-        .validation-item {
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .validation-item.error {
-            background: rgba(239, 68, 68, 0.1);
-            border-left: 3px solid var(--error);
-        }
-
-        .validation-item.warning {
-            background: rgba(245, 158, 11, 0.1);
-            border-left: 3px solid var(--warning);
-        }
-
-        .validation-item.success {
-            background: rgba(16, 185, 129, 0.1);
-            border-left: 3px solid var(--success);
-        }
-
-        /* Historial */
-        .history-item {
-            background: var(--dark);
-            border: 1px solid var(--border);
-            border-radius: 0.5rem;
-            padding: 1rem;
-            margin-bottom: 0.75rem;
+        .dialog-buttons {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            gap: 0.5rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
         }
 
-        .history-item:hover {
-            border-color: var(--primary);
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: var(--dark);
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state h3 {
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark-lighter);
+            padding: 1rem 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
         }
 
         /* Responsive */
         @media (max-width: 768px) {
-            header {
-                padding: 1rem;
-            }
-            
-            main {
-                padding: 1rem;
-            }
-            
-            .card {
-                padding: 1rem;
-            }
-            
-            .export-tabs {
+            .header-content {
                 flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab {
+                flex: 1;
+                min-width: 120px;
+                text-align: center;
             }
         }
     </style>
+    <!-- docx.js para generación de documentos Word -->
+    <script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
 </head>
 <body>
-    <!-- Header -->
     <header>
         <div class="header-content">
-            <div class="logo">
-                <span>📋</span>
-                <span>GestActas</span>
-            </div>
+            <a href="#" class="logo">📋 GestActas</a>
+            <nav class="nav-links">
+                <a href="#juntas">Juntas</a>
+                <a href="#actas">Actas</a>
+                <a href="#config">Configuración</a>
+            </nav>
         </div>
     </header>
 
-    <!-- Navegación -->
-    <nav>
-        <div class="nav-content">
-            <button class="nav-btn active" data-tab="juntas">📋 Juntas</button>
-            <button class="nav-btn" data-tab="actas">📄 Actas</button>
-            <button class="nav-btn" data-tab="grabacion">🎤 Grabación</button>
-            <button class="nav-btn" data-tab="export">💾 Exportar</button>
-            <button class="nav-btn" data-tab="historial">📊 Historial</button>
+    <main class="container">
+        <div class="tabs">
+            <button class="tab" data-tab="comunidades">Comunidades</button>
+            <button class="tab active" data-tab="juntas">Juntas</button>
+            <button class="tab" data-tab="actas">Actas</button>
+            <button class="tab" data-tab="grabaciones">Grabaciones</button>
+            <button class="tab" data-tab="transcripciones">Transcripciones</button>
+            <button class="tab" data-tab="config">Configuración</button>
+            <button class="tab" data-tab="exportaciones">Exportaciones</button>
         </div>
-    </nav>
 
-    <!-- Contenido principal -->
-    <main>
-        <!-- Pantalla de Juntas -->
-        <section id="screen-juntas" class="screen active">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">📋 Juntas</h2>
-                    <button class="btn btn-primary" onclick="showNewJuntaModal()">
-                        ➕ Nueva Junta
-                    </button>
-                </div>
-                <div id="juntas-list">
-                    <p style="text-align: center; color: var(--text-muted); padding: 2rem;">
-                        No hay juntas registradas.
-                    </p>
+        <!-- Tab: Juntas -->
+                <!-- Tab: Comunidades -->
+        <section id="tab-comunidades" class="content-section">
+            <div id="vista-comunidades-lista">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Comunidades de Vecinos</h2>
+                        <div class="card-actions">
+                            <input type="text" id="busqueda-comunidades" placeholder="Buscar comunidades..." class="form-input" style="width: 250px; margin-right: 1rem;">
+                            <select id="filtro-ciudad" class="form-input" style="width: 150px; margin-right: 0.5rem;">
+                                <option value="">Todas las ciudades</option>
+                            </select>
+                            <select id="filtro-provincia" class="form-input" style="width: 150px; margin-right: 1rem;">
+                                <option value="">Todas las provincias</option>
+                            </select>
+                            <button id="btn-nueva-comunidad" class="btn btn-primary">+ Nueva Comunidad</button>
+                        </div>
+                    </div>
+                    <div id="lista-comunidades" class="comunidades-list">
+                        <!-- Las comunidades se cargarán dinámicamente aquí -->
+                    </div>
+                    <div id="comunidades-empty" class="empty-state" style="display: none;">
+                        <h3>No hay comunidades</h3>
+                        <p>Crea una nueva comunidad para comenzar</p>
+                    </div>
                 </div>
             </div>
-        </section>
-
-        <!-- Pantalla de Actas -->
-        <section id="screen-actas" class="screen">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">📄 Actas</h2>
-                    <button class="btn btn-primary" onclick="showNewActaModal()">
-                        ➕ Nuevo Acta
-                    </button>
-                </div>
-                <div id="actas-list">
-                    <p style="text-align: center; color: var(--text-muted); padding: 2rem;">
-                        No hay actas generadas.
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Pantalla de Grabación -->
-        <section id="screen-grabacion" class="screen">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">🎤 Grabación</h2>
-                    <button class="btn btn-primary" id="btn-start-recording">
-                        🔴 Grabar
-                    </button>
-                </div>
-                <div id="recording-status" style="text-align: center; padding: 2rem;">
-                    <p style="color: var(--text-muted);">
-                        Presiona el botón para iniciar la grabación.
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Pantalla de Exportación (Bloque 6) -->
-        <section id="screen-export" class="screen">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">💾 Exportar Acta a Word</h2>
+            
+            <div id="vista-comunidad-detalle" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <button id="btn-volver-comunidades" class="btn btn-secondary">← Volver</button>
+                        <h2 id="titulo-comunidad-detalle" class="card-title">Detalle de Comunidad</h2>
+                        <div class="card-actions">
+                            <button id="btn-editar-comunidad" class="btn btn-primary">Editar</button>
+                            <button id="btn-eliminar-comunidad" class="btn btn-danger">Eliminar</button>
+                        </div>
+                    </div>
+                    <div id="detalle-comunidad-contenido">
+                        <!-- El detalle se cargará dinámicamente aquí -->
+                    </div>
                 </div>
                 
-                <!-- Tabs de exportación -->
-                <div class="export-tabs">
-                    <div class="export-tab active" data-export-tab="exportar">
-                        📤 Exportar
+                <div class="card" style="margin-top: 2rem;">
+                    <div class="card-header">
+                        <h2 class="card-title">Propietarios</h2>
+                        <div class="card-actions">
+                            <input type="text" id="busqueda-propietarios" placeholder="Buscar propietarios..." class="form-input" style="width: 250px; margin-right: 1rem;">
+                            <button id="btn-nuevo-propietario" class="btn btn-primary">+ Nuevo Propietario</button>
+                            <button id="btn-importar-propietarios" class="btn btn-secondary">⬇️ Importar CSV</button>
+                            <button id="btn-exportar-propietarios" class="btn btn-secondary">⬆️ Exportar CSV</button>
+                        </div>
                     </div>
-                    <div class="export-tab" data-export-tab="preview">
-                        👁️ Vista previa
+                    <div id="lista-propietarios" class="propietarios-list">
+                        <!-- Los propietarios se cargarán dinámicamente aquí -->
                     </div>
-                    <div class="export-tab" data-export-tab="validar">
-                        ✅ Validar
-                    </div>
-                    <div class="export-tab" data-export-tab="compartir">
-                        🔗 Compartir
-                    </div>
-                </div>
-
-                <!-- Tab: Exportar -->
-                <div id="export-tab-exportar" class="export-tab-content">
-                    <div class="form-group">
-                        <label>Seleccionar acta:</label>
-                        <select id="export-acta-select">
-                            <option value="">-- Seleccionar acta --</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Nombre del archivo (opcional):</label>
-                        <input type="text" id="export-filename" placeholder="Se generará automáticamente si se deja vacío">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Opciones:</label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                            <input type="checkbox" id="export-validate" checked>
-                            Validar antes de exportar
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem;">
-                            <input type="checkbox" id="export-download" checked>
-                            Descargar automáticamente
-                        </label>
-                    </div>
-                    
-                    <div class="form-group">
-                        <button class="btn btn-primary" id="btn-export-docx" style="width: 100%;">
-                            📤 Exportar a Word (.docx)
-                        </button>
+                    <div id="propietarios-empty" class="empty-state" style="display: none;">
+                        <h3>No hay propietarios</h3>
+                        <p>Añade propietarios a esta comunidad</p>
                     </div>
                 </div>
-
-                <!-- Tab: Vista previa -->
-                <div id="export-tab-preview" class="export-tab-content" style="display: none;">
-                    <div class="form-group">
-                        <label>Seleccionar acta para vista previa:</label>
-                        <select id="preview-acta-select">
-                            <option value="">-- Seleccionar acta --</option>
-                        </select>
+            </div>
+            
+            <div id="vista-comunidad-formulario" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <button id="btn-volver-comunidades-form" class="btn btn-secondary">← Volver</button>
+                        <h2 id="titulo-formulario-comunidad" class="card-title">Nueva Comunidad</h2>
                     </div>
-                    
-                    <div class="form-group">
-                        <button class="btn btn-secondary" id="btn-generate-preview" style="width: 100%;">
-                            👁️ Generar vista previa
-                        </button>
+                    <form id="form-comunidad">
+                        <div class="form-group">
+                            <label class="form-label">Nombre *</label>
+                            <input type="text" name="nombre" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Dirección *</label>
+                            <input type="text" name="direccion" class="form-input" required>
+                        </div>
+                        <div class="form-row" style="display: flex; gap: 1rem;">
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Código Postal *</label>
+                                <input type="text" name="codigoPostal" class="form-input" required>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Ciudad *</label>
+                                <input type="text" name="ciudad" class="form-input" required>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Provincia *</label>
+                                <input type="text" name="provincia" class="form-input" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">CIF</label>
+                            <input type="text" name="cif" class="form-input" placeholder="Formato español">
+                        </div>
+                        <div class="form-row" style="display: flex; gap: 1rem;">
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Email</label>
+                                <input type="email" name="email" class="form-input">
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Teléfono</label>
+                                <input type="tel" name="telefono" class="form-input">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Número Catastral</label>
+                            <input type="text" name="numeroCatastral" class="form-input">
+                        </div>
+                        <div class="form-row" style="display: flex; gap: 1rem;">
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Presidente</label>
+                                <input type="text" name="presidente" class="form-input">
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Administrador</label>
+                                <input type="text" name="administrador" class="form-input">
+                            </div>
+                        </div>
+                    </form>
+                    <div class="dialog-buttons" style="margin-top: 2rem;">
+                        <button type="button" id="btn-guardar-comunidad" class="btn btn-primary">Guardar</button>
+                        <button type="button" id="btn-cancelar-comunidad" class="btn btn-secondary">Cancelar</button>
                     </div>
-                    
-                    <div id="preview-result" style="margin-top: 1rem;"></div>
                 </div>
-
-                <!-- Tab: Validar -->
-                <div id="export-tab-validar" class="export-tab-content" style="display: none;">
-                    <div class="form-group">
-                        <label>Seleccionar acta para validar:</label>
-                        <select id="validate-acta-select">
-                            <option value="">-- Seleccionar acta --</option>
-                        </select>
+            </div>
+            
+            <div id="vista-propietario-formulario" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <button id="btn-volver-propietarios-form" class="btn btn-secondary">← Volver</button>
+                        <h2 id="titulo-formulario-propietario" class="card-title">Nuevo Propietario</h2>
                     </div>
-                    
-                    <div class="form-group">
-                        <button class="btn btn-secondary" id="btn-validate-acta" style="width: 100%;">
-                            ✅ Validar acta
-                        </button>
+                    <form id="form-propietario">
+                        <div class="form-group">
+                            <label class="form-label">Comunidad *</label>
+                            <select id="propietario-comunidad-id" name="comunidadId" class="form-input" required>
+                                <option value="">Seleccionar comunidad...</option>
+                            </select>
+                        </div>
+                        <div class="form-row" style="display: flex; gap: 1rem;">
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Nombre *</label>
+                                <input type="text" name="nombre" class="form-input" required>
+                            </div>
+                            <div class="form-group" style="flex: 2;">
+                                <label class="form-label">Apellidos *</label>
+                                <input type="text" name="apellidos" class="form-input" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">DNI</label>
+                            <input type="text" name="dni" class="form-input" placeholder="Formato español">
+                        </div>
+                        <div class="form-row" style="display: flex; gap: 1rem;">
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Email</label>
+                                <input type="email" name="email" class="form-input">
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Teléfono</label>
+                                <input type="tel" name="telefono" class="form-input">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Dirección *</label>
+                            <input type="text" name="direccion" class="form-input" required>
+                        </div>
+                        <div class="form-row" style="display: flex; gap: 1rem;">
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Código Postal *</label>
+                                <input type="text" name="codigoPostal" class="form-input" required>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Ciudad *</label>
+                                <input type="text" name="ciudad" class="form-input" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Coeficiente *</label>
+                            <input type="number" name="coeficiente" class="form-input" min="0" max="100" step="0.01" required>
+                        </div>
+                        <div class="form-row" style="display: flex; gap: 1rem;">
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Piso *</label>
+                                <input type="text" name="piso" class="form-input" required placeholder="ej: 1º">
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Letra</label>
+                                <input type="text" name="letra" class="form-input" placeholder="ej: A">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <input type="checkbox" id="propietario-representante" name="representante">
+                                Es representante
+                            </label>
+                        </div>
+                        <div class="form-group" id="grupo-representante-nombre" style="display: none;">
+                            <label class="form-label">Nombre del representado *</label>
+                            <input type="text" name="representanteNombre" class="form-input">
+                        </div>
+                    </form>
+                    <div class="dialog-buttons" style="margin-top: 2rem;">
+                        <button type="button" id="btn-guardar-propietario" class="btn btn-primary">Guardar</button>
+                        <button type="button" id="btn-cancelar-propietario" class="btn btn-secondary">Cancelar</button>
                     </div>
-                    
-                    <div id="validation-result" style="margin-top: 1rem;"></div>
                 </div>
+            </div>
 
-                <!-- Tab: Compartir -->
-                <div id="export-tab-compartir" class="export-tab-content" style="display: none;">
-                    <div class="form-group">
-                        <label>Seleccionar acta para compartir:</label>
-                        <select id="share-acta-select">
-                            <option value="">-- Seleccionar acta --</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <button class="btn btn-secondary" id="btn-share-acta" style="width: 100%;">
-                            🔗 Generar enlace para compartir
-                        </button>
-                    </div>
-                    
-                    <div id="share-result" style="margin-top: 1rem;"></div>
+        <section id="tab-juntas" class="content-section active">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Juntas de Propietarios</h2>
+                    <button id="btn-nueva-junta" class="btn btn-primary">+ Nueva Junta</button>
+                </div>
+                <div id="lista-juntas" class="juntas-list">
+                    <!-- Las juntas se cargarán dinámicamente aquí -->
+                </div>
+                <div id="juntas-empty" class="empty-state" style="display: none;">
+                    <h3>No hay juntas</h3>
+                    <p>Crea una nueva junta para comenzar</p>
                 </div>
             </div>
         </section>
 
-        <!-- Pantalla de Historial -->
-        <section id="screen-historial" class="screen">
+        <!-- Tab: Actas -->
+        <section id="tab-actas" class="content-section">
+            <div id="vista-actas-lista">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Actas Generadas</h2>
+                    </div>
+                    <div id="lista-actas" class="actas-list">
+                        <!-- Las actas se cargarán dinámicamente aquí -->
+                    </div>
+                    <div id="actas-empty" class="empty-state" style="display: none;">
+                        <h3>No hay actas</h3>
+                        <p>Genera un acta desde una junta existente</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="vista-acta-previsualizacion" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <button id="btn-volver-actas" class="btn btn-secondary">← Volver a Actas</button>
+                        <h2 class="card-title" id="titulo-acta-previsualizacion">Previsualización del Acta</h2>
+                        <div class="card-actions">
+                            <span id="confianza-acta" class="badge"></span>
+                            <button id="btn-exportar-word" class="btn btn-secondary">⬇️ Exportar Word</button>
+                            <button id="btn-guardar-definitiva" class="btn btn-primary">✅ Guardar como Definitiva</button>
+                            <button id="btn-descartar-acta" class="btn btn-danger">🗑️ Descartar</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Alertas legales -->
+                    <div id="alertas-legales-acta" style="display: none; margin-bottom: 1rem; padding: 1rem; background: var(--warning); border-radius: 0.5rem; border-left: 4px solid var(--error);">
+                        <h4 style="margin-bottom: 0.5rem; color: var(--error);">⚠️ Alertas Legales</h4>
+                        <ul id="lista-alertas-legales" style="margin: 0; padding-left: 1.5rem;"></ul>
+                    </div>
+                    
+                    <!-- Validaciones -->
+                    <div id="validaciones-acta" style="margin-bottom: 1rem; padding: 1rem; background: var(--dark-lighter); border-radius: 0.5rem;">
+                        <h4 style="margin-bottom: 0.5rem;">Validaciones</h4>
+                        <div id="validaciones-nivel1" style="margin-bottom: 0.5rem;"></div>
+                        <div id="validaciones-nivel2" style="margin-bottom: 0.5rem;"></div>
+                        <div id="validaciones-nivel3" style="margin-bottom: 0.5rem;"></div>
+                    </div>
+                    
+                    <!-- Contenido del acta -->
+                    <div id="contenido-acta-previsualizacion" style="padding: 1.5rem; background: white; color: black; border-radius: 0.5rem; max-height: 600px; overflow-y: auto;">
+                        <!-- El acta se renderizará aquí -->
+                    </div>
+                    
+                    <!-- Secciones con baja confianza -->
+                    <div id="secciones-baja-confianza" style="display: none; margin-top: 1rem; padding: 1rem; background: var(--warning); border-radius: 0.5rem;">
+                        <h4 style="margin-bottom: 0.5rem;">⚠️ Secciones con Baja Confianza</h4>
+                        <div id="lista-secciones-baja-confianza"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab: Grabaciones -->
+        <section id="tab-grabaciones" class="content-section">
             <div class="card">
                 <div class="card-header">
-                    <h2 class="card-title">📊 Historial de Exportaciones</h2>
-                    <button class="btn btn-secondary" onclick="refreshHistory()">
-                        🔄 Actualizar
-                    </button>
+                    <h2 class="card-title">Grabaciones de Audio</h2>
                 </div>
-                <div id="history-list">
-                    <p style="text-align: center; color: var(--text-muted); padding: 2rem;">
-                        No hay exportaciones registradas.
-                    </p>
+                <div id="lista-grabaciones" class="grabaciones-list">
+                    <!-- Las grabaciones se cargarán dinámicamente aquí -->
+                </div>
+                <div id="grabaciones-empty" class="empty-state" style="display: none;">
+                    <h3>No hay grabaciones</h3>
+                    <p>Graba el audio de una junta para comenzar</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab: Transcripciones -->
+        <section id="tab-transcripciones" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Transcripciones</h2>
+                </div>
+                <div id="lista-transcripciones" class="transcripciones-list">
+                    <!-- Las transcripciones se cargarán dinámicamente aquí -->
+                </div>
+                <div id="transcripciones-empty" class="empty-state" style="display: none;">
+                    <h3>No hay transcripciones</h3>
+                    <p>Transcribe una grabación para generar texto</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab: Exportaciones -->
+        <section id="tab-exportaciones" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Exportaciones a Word</h2>
+                </div>
+                <div id="lista-exportaciones" class="exportaciones-list">
+                    <!-- Las exportaciones se cargarán dinámicamente aquí -->
+                </div>
+                <div id="exportaciones-empty" class="empty-state" style="display: none;">
+                    <h3>No hay exportaciones</h3>
+                    <p>Exporta un acta a formato Word (.docx)</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Tab: Configuración -->
+        <section id="tab-config" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Configuración</h2>
+                </div>
+                
+                <!-- API Keys -->
+                <div style="margin-bottom: 2rem; padding: 1rem; background: var(--dark-lighter); border-radius: 0.5rem;">
+                    <h3 style="margin-bottom: 1rem; color: var(--primary-light);">API Keys</h3>
+                    
+                    <!-- Aviso de seguridad -->
+                    <div style="margin-bottom: 1rem; padding: 1rem; background: var(--warning); border-left: 4px solid var(--error); border-radius: 0.5rem;">
+                        <p style="margin: 0; font-size: 0.9rem;">
+                            <strong>🔒 Seguridad de tus claves:</strong><br>
+                            Tus claves se guardan solo en este navegador. Si borras el historial o cambias de dispositivo tendrás que introducirlas de nuevo. Usa la opción de exportar datos para hacer una copia de seguridad.
+                        </p>
+                    </div>
+                    
+                    <!-- Claude API Key -->
+                    <div style="margin-bottom: 1rem;">
+                        <label class="form-label" style="display: block; margin-bottom: 0.5rem;">Claude API Key</label>
+                        <input type="password" id="api-key-claude" class="form-input" placeholder="sk-ant-..." style="width: 100%;">
+                        <p style="margin: 0.25rem 0 0; font-size: 0.8rem; color: var(--text-muted);">Requerida para generar actas con IA</p>
+                    </div>
+                    
+                    <!-- Whisper API Key -->
+                    <div style="margin-bottom: 1rem;">
+                        <label class="form-label" style="display: block; margin-bottom: 0.5rem;">OpenAI Whisper API Key</label>
+                        <input type="password" id="api-key-whisper" class="form-input" placeholder="sk-..." style="width: 100%;">
+                        <p style="margin: 0.25rem 0 0; font-size: 0.8rem; color: var(--text-muted);">Requerida para transcribir audio</p>
+                    </div>
+                    
+                    <!-- Botones de API Keys -->
+                    <div style="display: flex; gap: 1rem;">
+                        <button id="btn-guardar-api-keys" class="btn btn-primary">Guardar API Keys</button>
+                        <button id="btn-cargar-api-keys" class="btn btn-secondary">Cargar API Keys</button>
+                    </div>
+                </div>
+                
+                <!-- Exportar/Importar Datos -->
+                <div style="padding: 1rem; background: var(--dark-lighter); border-radius: 0.5rem;">
+                    <h3 style="margin-bottom: 1rem; color: var(--primary-light);">Datos de la Aplicación</h3>
+                    
+                    <!-- Aviso de backup -->
+                    <div style="margin-bottom: 1rem; padding: 1rem; background: var(--warning); border-left: 4px solid var(--warning); border-radius: 0.5rem;">
+                        <p style="margin: 0; font-size: 0.9rem;">
+                            <strong>⚠️ Copia de seguridad:</strong><br>
+                            Exporta todos tus datos (comunidades, propietarios, juntas, actas, grabaciones) a un archivo JSON para hacer una copia de seguridad. Puedes importar estos datos en cualquier otro dispositivo o navegador.
+                        </p>
+                    </div>
+                    
+                    <!-- Botones de exportación/importación -->
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <button id="btn-exportar-datos" class="btn btn-success">⬇️ Exportar Datos</button>
+                        <button id="btn-importar-datos" class="btn btn-secondary">⬆️ Importar Datos</button>
+                        <input type="file" id="input-importar-datos" accept=".json" style="display: none;">
+                    </div>
+                    
+                    <!-- Información de exportación -->
+                    <div id="info-exportacion" style="margin-top: 1rem; padding: 1rem; background: var(--dark); border-radius: 0.5rem;">
+                        <h4 style="margin-bottom: 0.5rem;">Información de exportación</h4>
+                        <p id="info-exportacion-texto" style="margin: 0; font-size: 0.9rem; color: var(--text-muted);">
+                            No hay datos exportados recientemente.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Información de Vercel -->
+                <div style="margin-top: 2rem; padding: 1rem; background: var(--dark-lighter); border-radius: 0.5rem;">
+                    <h3 style="margin-bottom: 1rem; color: var(--primary-light);">Información de Despliegue</h3>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <p style="margin: 0; font-size: 0.9rem;">
+                            <strong>URL de Vercel:</strong><br>
+                            Tu aplicación está desplegada en Vercel. La URL será la que Vercel asigne automáticamente.
+                        </p>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <p style="margin: 0; font-size: 0.9rem;">
+                            <strong>GitHub Pages:</strong><br>
+                            Tu aplicación también está disponible en GitHub Pages como backup.
+                        </p>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <p style="margin: 0; font-size: 0.9rem;">
+                            <strong>Vercel Analytics:</strong><br>
+                            Las métricas de uso están disponibles en el dashboard de Vercel.
+                        </p>
+                    </div>
                 </div>
             </div>
         </section>
     </main>
 
+    <footer>
+        <p>GestActas - Gestión Inteligente de Juntas (Bloque 7)</p>
+        <p>Conexión UI Real con Datos de la Aplicación</p>
+    </footer>
+
     <!-- Scripts -->
-    <script>
-        // ==================== INICIALIZACIÓN ====================
-        document.addEventListener('DOMContentLoaded', () => {
-            initializeNavigation();
-            initializeExportTabs();
-            initializeExportButtons();
-        });
+    <script type="module">
+        // Importar servicios
+        import { indexedDBService } from './src/services/indexeddb.service.js';
+        import { comunidadesService } from './src/services/comunidades.service.js';
+        import { propietariosService } from './src/services/propietarios.service.js';
+        import { juntasService } from './src/services/juntas.service.js';
+        import { grabacionService } from './src/services/grabacion.service.js';
+        import { transcripcionService } from './src/services/transcripcion.service.js';
+        import { actasService } from './src/services/actas.service.js';
+        import { FeedbackUtils } from './src/utilidades/feedback.js';
+        import { StorageUtils } from './src/utilidades/storage.js';
+        import { ValidationUtils } from './src/utilidades/validacion.js';
+        import { ValidacionComunidadPropietario } from './src/utilidades/validacion-comunidad-propietario.js';
+        import { ContextoLegal } from './src/utilidades/contexto-legal.js';
+        import { GeneradorActas } from './src/utilidades/generador-actas.js';
+        import { FormatoWord } from './src/utilidades/formato-word.js';
+        import { exportacionService } from './src/services/exportacion.service.js';
 
-        // ==================== NAVEGACIÓN ====================
-        function initializeNavigation() {
-            const navButtons = document.querySelectorAll('.nav-btn');
-            const screens = document.querySelectorAll('.screen');
+        class GestActasApp {
+            constructor() {
+                this.comunidades = [];
+                this.propietarios = [];
+                this.comunidadActual = null;
+                this.juntas = [];
+                this.actas = [];
+                this.grabaciones = [];
+                this.transcripciones = [];
+                this.exportaciones = [];
+                
+                this.inicializar();
+            }
 
-            navButtons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const tab = btn.dataset.tab;
+            async inicializar() {
+                try {
+                    FeedbackUtils.mostrarInformacion('Inicializando GestActas...');
                     
-                    // Actualizar botones de navegación
-                    navButtons.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
+                    // Inicializar IndexedDB
+                    await indexedDBService.init();
                     
-                    // Mostrar pantalla correspondiente
-                    screens.forEach(s => s.classList.remove('active'));
-                    document.getElementById(`screen-${tab}`).classList.add('active');
+                    // Configurar API keys si están guardadas
+                    const apiKeys = StorageUtils.obtenerAPIKeys();
+                    if (apiKeys.whisper) {
+                        await transcripcionService.init(apiKeys.whisper);
+                    }
+                    if (apiKeys.claude) {
+                        await actasService.init(apiKeys.claude);
+                    }
+                    
+                    // Cargar datos iniciales
+                    await this.cargarDatos();
+                    
+                    // Configurar navegación
+                    this.configurarNavegacion();
+                    
+                    FeedbackUtils.mostrarExito('GestActas inicializado correctamente');
+                } catch (error) {
+                    console.error('Error al inicializar GestActas:', error);
+                    FeedbackUtils.mostrarError('Error al inicializar la aplicación');
+                }
+            }
+
+            async cargarDatos() {
+                try {
+                    // Cargar comunidades
+                    this.comunidades = await comunidadesService.obtenerComunidades();
+                    this.renderizarComunidades();
+                    this.poblarFiltrosComunidades();
+                    
+                    // Cargar propietarios
+                    this.propietarios = await propietariosService.obtenerPropietarios();
+                    
+                    // Cargar juntas
+                    this.juntas = await juntasService.obtenerJuntas();
+                    this.renderizarJuntas();
+                    
+                    // Cargar actas
+                    this.actas = await indexedDBService.getAll('actas');
+                    this.renderizarActas();
+                    
+                    // Cargar grabaciones
+                    this.grabaciones = await indexedDBService.getAll('grabaciones');
+                    this.renderizarGrabaciones();
+                    
+                    // Cargar transcripciones
+                    this.transcripciones = await indexedDBService.getAll('transcripciones');
+                    this.renderizarTranscripciones();
+                    
+                    // Cargar exportaciones
+                    this.exportaciones = await indexedDBService.getAll('exportaciones');
+                    this.renderizarExportaciones();
+                } catch (error) {
+                    console.error('Error al cargar datos:', error);
+                }
+            }
+            configurarEventListenersComunidades() {
+                // Botón nueva comunidad
+                document.getElementById('btn-nueva-comunidad')?.addEventListener('click', () => {
+                    this.mostrarFormularioNuevaComunidad();
                 });
-            });
-        }
 
-        // ==================== TABS DE EXPORTACIÓN ====================
-        function initializeExportTabs() {
-            const tabs = document.querySelectorAll('.export-tab');
-            const contents = document.querySelectorAll('.export-tab-content');
-
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const exportTab = tab.dataset.exportTab;
-                    
-                    // Actualizar tabs
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    
-                    // Mostrar contenido correspondiente
-                    contents.forEach(c => c.style.display = 'none');
-                    document.getElementById(`export-tab-${exportTab}`).style.display = 'block';
+                // Búsqueda de comunidades
+                document.getElementById('busqueda-comunidades')?.addEventListener('input', (e) => {
+                    this.filtrarComunidades(e.target.value);
                 });
-            });
-        }
 
-        // ==================== BOTONES DE EXPORTACIÓN ====================
-        function initializeExportButtons() {
-            // Exportar a DOCX
-            document.getElementById('btn-export-docx').addEventListener('click', async () => {
-                const actaId = document.getElementById('export-acta-select').value;
-                if (!actaId) {
-                    alert('Por favor, selecciona un acta');
+                // Filtros de ciudad y provincia
+                document.getElementById('filtro-ciudad')?.addEventListener('change', (e) => {
+                    this.filtrarComunidadesPorCiudad(e.target.value);
+                });
+
+                document.getElementById('filtro-provincia')?.addEventListener('change', (e) => {
+                    this.filtrarComunidadesPorProvincia(e.target.value);
+                });
+
+                // Volver a lista de comunidades
+                document.getElementById('btn-volver-comunidades')?.addEventListener('click', () => {
+                    this.mostrarListaComunidades();
+                });
+
+                document.getElementById('btn-volver-comunidades-form')?.addEventListener('click', () => {
+                    this.mostrarListaComunidades();
+                });
+
+                // Editar y eliminar comunidad
+                document.getElementById('btn-editar-comunidad')?.addEventListener('click', () => {
+                    this.mostrarFormularioEditarComunidad();
+                });
+
+                document.getElementById('btn-eliminar-comunidad')?.addEventListener('click', () => {
+                    this.eliminarComunidad();
+                });
+
+                // Guardar y cancelar comunidad
+                document.getElementById('btn-guardar-comunidad')?.addEventListener('click', () => {
+                    this.guardarComunidad();
+                });
+
+                document.getElementById('btn-cancelar-comunidad')?.addEventListener('click', () => {
+                    this.mostrarListaComunidades();
+                });
+
+                // Propietarios
+                document.getElementById('btn-nuevo-propietario')?.addEventListener('click', () => {
+                    this.mostrarFormularioNuevoPropietario();
+                });
+
+                document.getElementById('btn-importar-propietarios')?.addEventListener('click', () => {
+                    this.importarPropietariosCSV();
+                });
+
+                document.getElementById('btn-exportar-propietarios')?.addEventListener('click', () => {
+                    this.exportarPropietariosCSV();
+                });
+
+                // Búsqueda de propietarios
+                document.getElementById('busqueda-propietarios')?.addEventListener('input', (e) => {
+                    this.filtrarPropietarios(e.target.value);
+                });
+
+                // Volver a lista de propietarios
+                document.getElementById('btn-volver-propietarios-form')?.addEventListener('click', () => {
+                    this.mostrarDetalleComunidad(this.comunidadActual.id);
+                });
+
+                // Checkbox de representante
+                document.getElementById('propietario-representante')?.addEventListener('change', (e) => {
+                    const grupoNombre = document.getElementById('grupo-representante-nombre');
+                    if (grupoNombre) {
+                        grupoNombre.style.display = e.target.checked ? 'block' : 'none';
+                    }
+                });
+
+                // Guardar y cancelar propietario
+                document.getElementById('btn-guardar-propietario')?.addEventListener('click', () => {
+                    this.guardarPropietario();
+                });
+
+                document.getElementById('btn-cancelar-propietario')?.addEventListener('click', () => {
+                    this.mostrarDetalleComunidad(this.comunidadActual.id);
+                });
+            }
+
+            configurarEventListenersConfiguracion() {
+                // API Keys
+                document.getElementById('btn-guardar-api-keys')?.addEventListener('click', () => {
+                    this.guardarAPIKeys();
+                });
+
+                document.getElementById('btn-cargar-api-keys')?.addEventListener('click', () => {
+                    this.cargarAPIKeys();
+                });
+
+                // Exportar/Importar datos
+                document.getElementById('btn-exportar-datos')?.addEventListener('click', () => {
+                    this.exportarDatos();
+                });
+
+                document.getElementById('btn-importar-datos')?.addEventListener('click', () => {
+                    document.getElementById('input-importar-datos').click();
+                });
+
+                document.getElementById('input-importar-datos')?.addEventListener('change', (e) => {
+                    this.importarDatos(e.target.files[0]);
+                });
+            }
+
+            async renderizarComunidades() {
+                const contenedor = document.getElementById('lista-comunidades');
+                const mensajeVacio = document.getElementById('comunidades-empty');
+
+                if (this.comunidades.length === 0) {
+                    contenedor.innerHTML = '';
+                    mensajeVacio.style.display = 'block';
                     return;
                 }
 
-                const options = {
-                    filename: document.getElementById('export-filename').value || undefined,
-                    validate: document.getElementById('export-validate').checked,
-                    download: document.getElementById('export-download').checked
+                mensajeVacio.style.display = 'none';
+
+                contenedor.innerHTML = this.comunidades.map(comunidad => `
+                    <div class="card" style="margin-bottom: 1rem; cursor: pointer;" onclick="app.mostrarDetalleComunidad(${comunidad.id})">
+                        <div class="card-header">
+                            <h3 style="font-size: 1rem;">${this.escapeHtml(comunidad.nombre)}</h3>
+                            ${!comunidad.activo ? '<span class="badge badge-warning">Inactiva</span>' : ''}
+                        </div>
+                        <div style="font-size: 0.875rem; color: var(--text-muted);">
+                            <div>📍 ${this.escapeHtml(comunidad.direccion)}, ${this.escapeHtml(comunidad.ciudad)} (${this.escapeHtml(comunidad.provincia)})</div>
+                            <div>📧 ${comunidad.email || 'Sin email'}</div>
+                            <div>📞 ${comunidad.telefono || 'Sin teléfono'}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            async poblarFiltrosComunidades() {
+                // Poblar filtro de ciudades
+                const filtroCiudad = document.getElementById('filtro-ciudad');
+                if (filtroCiudad) {
+                    const ciudades = await comunidadesService.obtenerCiudades();
+                    filtroCiudad.innerHTML = '<option value="">Todas las ciudades</option>' +
+                        ciudades.map(ciudad => `<option value="${ciudad}">${ciudad}</option>`).join('');
+                }
+
+                // Poblar filtro de provincias
+                const filtroProvincia = document.getElementById('filtro-provincia');
+                if (filtroProvincia) {
+                    const provincias = await comunidadesService.obtenerProvincias();
+                    filtroProvincia.innerHTML = '<option value="">Todas las provincias</option>' +
+                        provincias.map(provincia => `<option value="${provincia}">${provincia}</option>`).join('');
+                }
+            }
+
+            mostrarListaComunidades() {
+                document.getElementById('vista-comunidades-lista').style.display = 'block';
+                document.getElementById('vista-comunidad-detalle').style.display = 'none';
+                document.getElementById('vista-comunidad-formulario').style.display = 'none';
+                document.getElementById('vista-propietario-formulario').style.display = 'none';
+                this.renderizarComunidades();
+            }
+
+            async mostrarDetalleComunidad(comunidadId) {
+                try {
+                    this.comunidadActual = await comunidadesService.obtenerComunidad(comunidadId);
+                    
+                    // Renderizar detalle
+                    const contenido = document.getElementById('detalle-comunidad-contenido');
+                    contenido.innerHTML = `
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+                            <div>
+                                <label style="display: block; font-weight: bold; margin-bottom: 0.25rem;">Nombre</label>
+                                <div>${this.escapeHtml(this.comunidadActual.nombre)}</div>
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: bold; margin-bottom: 0.25rem;">Dirección</label>
+                                <div>${this.escapeHtml(this.comunidadActual.direccion)}</div>
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: bold; margin-bottom: 0.25rem;">Código Postal</label>
+                                <div>${this.escapeHtml(this.comunidadActual.codigoPostal)}</div>
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: bold; margin-bottom: 0.25rem;">Ciudad</label>
+                                <div>${this.escapeHtml(this.comunidadActual.ciudad)}</div>
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: bold; margin-bottom: 0.25rem;">Provincia</label>
+                                <div>${this.escapeHtml(this.comunidadActual.provincia)}</div>
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: bold; margin-bottom: 0.25rem;">CIF</label>
+                                <div>${this.escapeHtml(this.comunidadActual.cif) || 'No especificado'}</div>
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: bold; margin-bottom: 0.25rem;">Email</label>
+                                <div>${this.escapeHtml(this.comunidadActual.email) || 'No especificado'}</div>
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: bold; margin-bottom: 0.25rem;">Teléfono</label>
+                                <div>${this.escapeHtml(this.comunidadActual.telefono) || 'No especificado'}</div>
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: bold; margin-bottom: 0.25rem;">Presidente</label>
+                                <div>${this.escapeHtml(this.comunidadActual.presidente) || 'No especificado'}</div>
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: bold; margin-bottom: 0.25rem;">Administrador</label>
+                                <div>${this.escapeHtml(this.comunidadActual.administrador) || 'No especificado'}</div>
+                            </div>
+                        </div>
+                        
+                        <div style="padding: 1rem; background: var(--dark-lighter); border-radius: 0.5rem;">
+                            <h4 style="margin-bottom: 0.5rem;">Estadísticas</h4>
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                                <div>
+                                    <label style="display: block; font-size: 0.875rem; color: var(--text-muted);">Total Propietarios</label>
+                                    <div style="font-size: 1.5rem; font-weight: bold;">${this.comunidadActual.propietarios ? this.comunidadActual.propietarios.length : 0}</div>
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 0.875rem; color: var(--text-muted);">Propietarios Activos</label>
+                                    <div style="font-size: 1.5rem; font-weight: bold;">${this.comunidadActual.propietarios ? this.comunidadActual.propietarios.filter(p => p.activo).length : 0}</div>
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 0.875rem; color: var(--text-muted);">Coeficiente Total</label>
+                                    <div style="font-size: 1.5rem; font-weight: bold;">${this.comunidadActual.propietarios ? this.comunidadActual.propietarios.reduce((sum, p) => sum + (p.coeficiente || 0), 0).toFixed(2) : 0}%</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    document.getElementById('vista-comunidades-lista').style.display = 'none';
+                    document.getElementById('vista-comunidad-detalle').style.display = 'block';
+                    document.getElementById('vista-comunidad-formulario').style.display = 'none';
+                    document.getElementById('vista-propietario-formulario').style.display = 'none';
+
+                    // Cargar propietarios
+                    await this.mostrarListaPropietarios(comunidadId);
+                } catch (error) {
+                    console.error('Error al mostrar detalle de comunidad:', error);
+                    FeedbackUtils.mostrarError('Error al cargar el detalle de la comunidad');
+                }
+            }
+
+            mostrarFormularioNuevaComunidad() {
+                document.getElementById('titulo-formulario-comunidad').textContent = 'Nueva Comunidad';
+                document.getElementById('form-comunidad').reset();
+                document.getElementById('vista-comunidades-lista').style.display = 'none';
+                document.getElementById('vista-comunidad-detalle').style.display = 'none';
+                document.getElementById('vista-comunidad-formulario').style.display = 'block';
+                document.getElementById('vista-propietario-formulario').style.display = 'none';
+            }
+
+            mostrarFormularioEditarComunidad() {
+                if (!this.comunidadActual) return;
+
+                document.getElementById('titulo-formulario-comunidad').textContent = 'Editar Comunidad';
+                
+                const form = document.getElementById('form-comunidad');
+                form.nombre.value = this.comunidadActual.nombre;
+                form.direccion.value = this.comunidadActual.direccion;
+                form.codigoPostal.value = this.comunidadActual.codigoPostal;
+                form.ciudad.value = this.comunidadActual.ciudad;
+                form.provincia.value = this.comunidadActual.provincia;
+                form.cif.value = this.comunidadActual.cif || '';
+                form.email.value = this.comunidadActual.email || '';
+                form.telefono.value = this.comunidadActual.telefono || '';
+                form.numeroCatastral.value = this.comunidadActual.numeroCatastral || '';
+                form.presidente.value = this.comunidadActual.presidente || '';
+                form.administrador.value = this.comunidadActual.administrador || '';
+
+                document.getElementById('vista-comunidades-lista').style.display = 'none';
+                document.getElementById('vista-comunidad-detalle').style.display = 'none';
+                document.getElementById('vista-comunidad-formulario').style.display = 'block';
+                document.getElementById('vista-propietario-formulario').style.display = 'none';
+            }
+
+            async guardarComunidad() {
+                try {
+                    const form = document.getElementById('form-comunidad');
+                    const formData = new FormData(form);
+                    const datos = Object.fromEntries(formData.entries());
+
+                    if (this.comunidadActual) {
+                        // Editar
+                        const comunidadActualizada = await comunidadesService.actualizarComunidad(this.comunidadActual.id, datos);
+                        FeedbackUtils.mostrarExito('Comunidad actualizada correctamente');
+                    } else {
+                        // Crear
+                        const comunidadNueva = await comunidadesService.crearComunidad(datos);
+                        FeedbackUtils.mostrarExito('Comunidad creada correctamente');
+                    }
+
+                    await this.cargarDatos();
+                    this.mostrarListaComunidades();
+                } catch (error) {
+                    console.error('Error al guardar comunidad:', error);
+                    FeedbackUtils.mostrarError(error.message);
+                }
+            }
+
+            async eliminarComunidad() {
+                if (!this.comunidadActual) return;
+
+                if (!confirm('¿Estás seguro de que quieres eliminar esta comunidad y todos sus propietarios?')) {
+                    return;
+                }
+
+                try {
+                    await comunidadesService.eliminarComunidad(this.comunidadActual.id);
+                    FeedbackUtils.mostrarExito('Comunidad eliminada correctamente');
+                    this.comunidadActual = null;
+                    await this.cargarDatos();
+                    this.mostrarListaComunidades();
+                } catch (error) {
+                    console.error('Error al eliminar comunidad:', error);
+                    FeedbackUtils.mostrarError(error.message);
+                }
+            }
+
+            async mostrarListaPropietarios(comunidadId) {
+                try {
+                    const propietarios = await propietariosService.obtenerPropietariosComunidad(comunidadId);
+                    
+                    const contenedor = document.getElementById('lista-propietarios');
+                    const mensajeVacio = document.getElementById('propietarios-empty');
+
+                    if (propietarios.length === 0) {
+                        contenedor.innerHTML = '';
+                        mensajeVacio.style.display = 'block';
+                        return;
+                    }
+
+                    mensajeVacio.style.display = 'none';
+
+                    contenedor.innerHTML = propietarios.map(propietario => `
+                        <div class="card" style="margin-bottom: 0.5rem;">
+                            <div class="card-header">
+                                <h4 style="font-size: 0.9rem;">${this.escapeHtml(propietario.nombre)} ${this.escapeHtml(propietario.apellidos)}</h4>
+                                <div>
+                                    ${!propietario.activo ? '<span class="badge badge-warning">Inactivo</span>' : ''}
+                                    ${propietario.representante ? '<span class="badge badge-info">Representante</span>' : ''}
+                                </div>
+                            </div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">
+                                <div>🏠 ${this.escapeHtml(propietario.piso)}${propietario.letra ? ' ' + this.escapeHtml(propietario.letra) : ''} · ${this.escapeHtml(propietario.direccion)}</div>
+                                <div>📊 Coeficiente: ${propietario.coeficiente}%</div>
+                                <div>📧 ${propietario.email || 'Sin email'}</div>
+                                <div>📞 ${propietario.telefono || 'Sin teléfono'}</div>
+                            </div>
+                            <div style="margin-top: 0.5rem;">
+                                <button class="btn btn-secondary btn-sm" onclick="app.mostrarFormularioEditarPropietario(${propietario.id})">Editar</button>
+                                <button class="btn btn-danger btn-sm" onclick="app.eliminarPropietario(${propietario.id})">Eliminar</button>
+                            </div>
+                        </div>
+                    `).join('');
+                } catch (error) {
+                    console.error('Error al mostrar propietarios:', error);
+                    FeedbackUtils.mostrarError('Error al cargar los propietarios');
+                }
+            }
+
+            async mostrarFormularioNuevoPropietario() {
+                if (!this.comunidadActual) return;
+
+                document.getElementById('titulo-formulario-propietario').textContent = 'Nuevo Propietario';
+                document.getElementById('form-propietario').reset();
+                
+                // Seleccionar comunidad actual
+                const selectComunidad = document.getElementById('propietario-comunidad-id');
+                selectComunidad.innerHTML = '<option value="">Seleccionar comunidad...</option>' +
+                    this.comunidades.map(c => `<option value="${c.id}" ${c.id === this.comunidadActual.id ? 'selected' : ''}>${c.nombre}</option>`).join('');
+
+                // Mostrar formulario
+                document.getElementById('vista-comunidad-detalle').style.display = 'none';
+                document.getElementById('vista-propietario-formulario').style.display = 'block';
+            }
+
+            async mostrarFormularioEditarPropietario(propietarioId) {
+                try {
+                    const propietario = await propietariosService.obtenerPropietario(propietarioId);
+                    
+                    document.getElementById('titulo-formulario-propietario').textContent = 'Editar Propietario';
+                    
+                    const form = document.getElementById('form-propietario');
+                    form.comunidadId.value = propietario.comunidadId;
+                    form.nombre.value = propietario.nombre;
+                    form.apellidos.value = propietario.apellidos;
+                    form.dni.value = propietario.dni || '';
+                    form.email.value = propietario.email || '';
+                    form.telefono.value = propietario.telefono || '';
+                    form.direccion.value = propietario.direccion;
+                    form.codigoPostal.value = propietario.codigoPostal;
+                    form.ciudad.value = propietario.ciudad;
+                    form.coeficiente.value = propietario.coeficiente;
+                    form.piso.value = propietario.piso;
+                    form.letra.value = propietario.letra || '';
+                    form.representante.checked = propietario.representante;
+                    form.representanteNombre.value = propietario.representanteNombre || '';
+
+                    // Mostrar/ocultar campo de nombre de representado
+                    document.getElementById('grupo-representante-nombre').style.display = propietario.representante ? 'block' : 'none';
+
+                    // Poblar select de comunidades
+                    const selectComunidad = document.getElementById('propietario-comunidad-id');
+                    selectComunidad.innerHTML = '<option value="">Seleccionar comunidad...</option>' +
+                        this.comunidades.map(c => `<option value="${c.id}" ${c.id === propietario.comunidadId ? 'selected' : ''}>${c.nombre}</option>`).join('');
+
+                    document.getElementById('vista-comunidad-detalle').style.display = 'none';
+                    document.getElementById('vista-propietario-formulario').style.display = 'block';
+                } catch (error) {
+                    console.error('Error al mostrar formulario de propietario:', error);
+                    FeedbackUtils.mostrarError('Error al cargar el propietario');
+                }
+            }
+
+            async guardarPropietario() {
+                try {
+                    const form = document.getElementById('form-propietario');
+                    const formData = new FormData(form);
+                    const datos = Object.fromEntries(formData.entries());
+
+                    // Convertir campos numéricos y booleanos
+                    datos.coeficiente = parseFloat(datos.coeficiente);
+                    datos.representante = datos.representante === 'on';
+
+                    // Crear propietario
+                    await propietariosService.crearPropietario(datos);
+                    FeedbackUtils.mostrarExito('Propietario guardado correctamente');
+
+                    await this.cargarDatos();
+                    this.mostrarDetalleComunidad(datos.comunidadId);
+                } catch (error) {
+                    console.error('Error al guardar propietario:', error);
+                    FeedbackUtils.mostrarError(error.message);
+                }
+            }
+
+            async eliminarPropietario(propietarioId) {
+                if (!confirm('¿Estás seguro de que quieres eliminar este propietario?')) {
+                    return;
+                }
+
+                try {
+                    await propietariosService.eliminarPropietario(propietarioId);
+                    FeedbackUtils.mostrarExito('Propietario eliminado correctamente');
+                    await this.cargarDatos();
+                    if (this.comunidadActual) {
+                        this.mostrarListaPropietarios(this.comunidadActual.id);
+                    }
+                } catch (error) {
+                    console.error('Error al eliminar propietario:', error);
+                    FeedbackUtils.mostrarError(error.message);
+                }
+            }
+
+            async importarPropietariosCSV() {
+                if (!this.comunidadActual) return;
+
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.csv';
+
+                input.onchange = async (e) => {
+                    const archivo = e.target.files[0];
+                    if (!archivo) return;
+
+                    try {
+                        FeedbackUtils.mostrarInformacion('Importando propietarios...');
+                        
+                        const resultado = await propietariosService.importarPropietariosCSV(archivo, this.comunidadActual.id);
+                        
+                        FeedbackUtils.mostrarExito(
+                            `Importación completada: ${resultado.importadas} importadas, ${resultado.fallidas} fallidas`
+                        );
+
+                        await this.cargarDatos();
+                        this.mostrarListaPropietarios(this.comunidadActual.id);
+                    } catch (error) {
+                        console.error('Error al importar propietarios:', error);
+                        FeedbackUtils.mostrarError(error.message);
+                    }
                 };
 
+                input.click();
+            }
+
+            async exportarPropietariosCSV() {
+                if (!this.comunidadActual) return;
+
                 try {
-                    const result = await exportActaToDocx(actaId, options);
+                    FeedbackUtils.mostrarInformacion('Exportando propietarios...');
                     
-                    if (result.success) {
-                        alert(`✅ Acta exportada correctamente:\nArchivo: ${result.file.filename}\nTamaño: ${result.file.size} bytes`);
-                        
-                        if (result.warnings && result.warnings.length > 0) {
-                            alert(`⚠️ Advertencias:\n${result.warnings.join('\n')}`);
+                    const resultado = await propietariosService.exportarPropietariosCSV(this.comunidadActual.id);
+                    
+                    FeedbackUtils.mostrarExito(`Exportados ${resultado.exportados} propietarios a CSV`);
+                } catch (error) {
+                    console.error('Error al exportar propietarios:', error);
+                    FeedbackUtils.mostrarError(error.message);
+                }
+            }
+
+            async filtrarComunidades(termino) {
+                if (!termino || termino.trim() === '') {
+                    this.comunidades = await comunidadesService.obtenerComunidades();
+                } else {
+                    this.comunidades = await comunidadesService.buscarComunidades(termino);
+                }
+                this.renderizarComunidades();
+            }
+
+            async filtrarComunidadesPorCiudad(ciudad) {
+                if (!ciudad) {
+                    this.comunidades = await comunidadesService.obtenerComunidades();
+                } else {
+                    this.comunidades = await comunidadesService.obtenerComunidades({ ciudad });
+                }
+                this.renderizarComunidades();
+            }
+
+            async filtrarComunidadesPorProvincia(provincia) {
+                if (!provincia) {
+                    this.comunidades = await comunidadesService.obtenerComunidades();
+                } else {
+                    this.comunidades = await comunidadesService.obtenerComunidades({ provincia });
+                }
+                this.renderizarComunidades();
+            }
+
+            async filtrarPropietarios(termino) {
+                if (!this.comunidadActual) return;
+
+                if (!termino || termino.trim() === '') {
+                    const propietarios = await propietariosService.obtenerPropietariosComunidad(this.comunidadActual.id);
+                    this.renderizarListaPropietariosDirecta(propietarios);
+                } else {
+                    const propietarios = await propietariosService.obtenerPropietariosComunidad(this.comunidadActual.id, { busqueda: termino });
+                    this.renderizarListaPropietariosDirecta(propietarios);
+                }
+            }
+
+            renderizarListaPropietariosDirecta(propietarios) {
+                const contenedor = document.getElementById('lista-propietarios');
+                const mensajeVacio = document.getElementById('propietarios-empty');
+
+                if (propietarios.length === 0) {
+                    contenedor.innerHTML = '';
+                    mensajeVacio.style.display = 'block';
+                    return;
+                }
+
+                mensajeVacio.style.display = 'none';
+
+                contenedor.innerHTML = propietarios.map(propietario => `
+                    <div class="card" style="margin-bottom: 0.5rem;">
+                        <div class="card-header">
+                            <h4 style="font-size: 0.9rem;">${this.escapeHtml(propietario.nombre)} ${this.escapeHtml(propietario.apellidos)}</h4>
+                            <div>
+                                ${!propietario.activo ? '<span class="badge badge-warning">Inactivo</span>' : ''}
+                                ${propietario.representante ? '<span class="badge badge-info">Representante</span>' : ''}
+                            </div>
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">
+                            <div>🏠 ${this.escapeHtml(propietario.piso)}${propietario.letra ? ' ' + this.escapeHtml(propietario.letra) : ''} · ${this.escapeHtml(propietario.direccion)}</div>
+                            <div>📊 Coeficiente: ${propietario.coeficiente}%</div>
+                            <div>📧 ${propietario.email || 'Sin email'}</div>
+                            <div>📞 ${propietario.telefono || 'Sin teléfono'}</div>
+                        </div>
+                        <div style="margin-top: 0.5rem;">
+                            <button class="btn btn-secondary btn-sm" onclick="app.mostrarFormularioEditarPropietario(${propietario.id})">Editar</button>
+                            <button class="btn btn-danger btn-sm" onclick="app.eliminarPropietario(${propietario.id})">Eliminar</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            escapeHtml(texto) {
+                if (!texto) return '';
+                const div = document.createElement('div');
+                div.textContent = texto;
+                return div.innerHTML;
+            }
+
+
+
+            configurarNavegacion() {
+                // Configurar tabs
+                const tabs = document.querySelectorAll('.tab');
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const tabName = tab.dataset.tab;
+                        this.cambiarTab(tabName);
+                    });
+                });
+
+                // Event listeners de Comunidades
+                this.configurarEventListenersComunidades();
+
+                // Event listeners de Actas
+                this.configurarEventListenersActas();
+
+                // Event listeners de Configuración
+                this.configurarEventListenersConfiguracion();
+
+                // Botón nueva junta
+                document.getElementById('btn-nueva-junta').addEventListener('click', () => {
+                    this.mostrarFormularioNuevaJunta();
+                });
+            }
+
+            cambiarTab(tabName) {
+                // Actualizar botones de tab
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.classList.remove('active');
+                    if (tab.dataset.tab === tabName) {
+                        tab.classList.add('active');
+                    }
+                });
+
+                // Actualizar contenido
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.remove('active');
+                    if (section.id === `tab-${tabName}`) {
+                        section.classList.add('active');
+                    }
+                });
+            }
+
+            renderizarJuntas() {
+                const contenedor = document.getElementById('lista-juntas');
+                const mensajeVacio = document.getElementById('juntas-empty');
+
+                if (this.juntas.length === 0) {
+                    contenedor.innerHTML = '';
+                    mensajeVacio.style.display = 'block';
+                    return;
+                }
+
+                mensajeVacio.style.display = 'none';
+
+                contenedor.innerHTML = this.juntas.map(junta => `
+                    <div class="card" style="margin-bottom: 1rem;">
+                        <div class="card-header">
+                            <h3 style="font-size: 1rem;">${this.formatearTipo(junta.tipo)}</h3>
+                            <span class="badge badge-${this.obtenerClaseEstado(junta.estado)}">${this.formatearEstado(junta.estado)}</span>
+                        </div>
+                        <div style="font-size: 0.875rem; color: var(--text-muted);">
+                            <div>📅 ${this.formatearFecha(junta.fecha)} a las ${junta.hora}</div>
+                            <div>📍 ${junta.lugar}</div>
+                        </div>
+                        <div style="margin-top: 0.5rem;">
+                            <button class="btn btn-secondary" onclick="window.location.href='src/ui/pantallas/grabacion.html?id=${junta.id}'">🎤 Grabar</button>
+                            <button class="btn btn-primary" onclick="app.generarActa(${junta.id})">📝 Generar Acta</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            renderizarActas() {
+                const contenedor = document.getElementById('lista-actas');
+                const mensajeVacio = document.getElementById('actas-empty');
+
+                if (this.actas.length === 0) {
+                    contenedor.innerHTML = '';
+                    mensajeVacio.style.display = 'block';
+                    return;
+                }
+
+                mensajeVacio.style.display = 'none';
+
+                contenedor.innerHTML = this.actas.map(acta => `
+                    <div class="card" style="margin-bottom: 1rem;">
+                        <div class="card-header">
+                            <h3 style="font-size: 1rem;">Acta #${acta.id}</h3>
+                            <span class="badge badge-${this.obtenerClaseEstado(acta.estado)}">${this.formatearEstado(acta.estado)}</span>
+                        </div>
+                        <div style="font-size: 0.875rem; color: var(--text-muted);">
+                            <div>📅 ${this.formatearFecha(acta.fecha)}</div>
+                            <div>🤖 Método: ${acta.metodo}</div>
+                        </div>
+                        <div style="margin-top: 0.5rem;">
+                            <button class="btn btn-secondary" onclick="app.verActa(${acta.id})">👁️ Ver</button>
+                            <button class="btn btn-primary" onclick="app.exportarActa(${acta.id})">📄 Exportar</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            renderizarGrabaciones() {
+                const contenedor = document.getElementById('lista-grabaciones');
+                const mensajeVacio = document.getElementById('grabaciones-empty');
+
+                if (this.grabaciones.length === 0) {
+                    contenedor.innerHTML = '';
+                    mensajeVacio.style.display = 'block';
+                    return;
+                }
+
+                mensajeVacio.style.display = 'none';
+
+                contenedor.innerHTML = this.grabaciones.map(grabacion => `
+                    <div class="card" style="margin-bottom: 1rem;">
+                        <div class="card-header">
+                            <h3 style="font-size: 1rem;">Grabación #${grabacion.id}</h3>
+                        </div>
+                        <div style="font-size: 0.875rem; color: var(--text-muted);">
+                            <div>📅 ${this.formatearFecha(grabacion.fecha)}</div>
+                            <div>⏱️ Duración: ${this.formatearDuracion(grabacion.duracion)}</div>
+                            <div>📏 Tamaño: ${this.formatearTamaño(grabacion.tamaño)}</div>
+                        </div>
+                        <div style="margin-top: 0.5rem;">
+                            <button class="btn btn-secondary" onclick="app.reproducirGrabacion(${grabacion.id})">▶️ Reproducir</button>
+                            <button class="btn btn-primary" onclick="app.transcribirGrabacion(${grabacion.id})">📝 Transcribir</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            renderizarTranscripciones() {
+                const contenedor = document.getElementById('lista-transcripciones');
+                const mensajeVacio = document.getElementById('transcripciones-empty');
+
+                if (this.transcripciones.length === 0) {
+                    contenedor.innerHTML = '';
+                    mensajeVacio.style.display = 'block';
+                    return;
+                }
+
+                mensajeVacio.style.display = 'none';
+
+                contenedor.innerHTML = this.transcripciones.map(transcripcion => `
+                    <div class="card" style="margin-bottom: 1rem;">
+                        <div class="card-header">
+                            <h3 style="font-size: 1rem;">Transcripción #${transcripcion.id}</h3>
+                        </div>
+                        <div style="font-size: 0.875rem; color: var(--text-muted);">
+                            <div>📅 ${this.formatearFecha(transcripcion.fecha)}</div>
+                            <div>🤖 Método: ${transcripcion.metodo}</div>
+                            <div>📊 Confianza: ${Math.round(transcripcion.confianza * 100)}%</div>
+                        </div>
+                        <div style="margin-top: 0.5rem;">
+                            <button class="btn btn-secondary" onclick="app.verTranscripcion(${transcripcion.id})">👁️ Ver</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            renderizarExportaciones() {
+                const contenedor = document.getElementById('lista-exportaciones');
+                const mensajeVacio = document.getElementById('exportaciones-empty');
+
+                if (this.exportaciones.length === 0) {
+                    contenedor.innerHTML = '';
+                    mensajeVacio.style.display = 'block';
+                    return;
+                }
+
+                mensajeVacio.style.display = 'none';
+
+                contenedor.innerHTML = this.exportaciones.map(exportacion => `
+                    <div class="card" style="margin-bottom: 1rem;">
+                        <div class="card-header">
+                            <h3 style="font-size: 1rem;">Exportación #${exportacion.id}</h3>
+                        </div>
+                        <div style="font-size: 0.875rem; color: var(--text-muted);">
+                            <div>📅 ${this.formatearFecha(exportacion.fecha)}</div>
+                            <div>📄 Formato: ${exportacion.formato || 'DOCX'}</div>
+                        </div>
+                        <div style="margin-top: 0.5rem;">
+                            <button class="btn btn-primary" onclick="app.descargarExportacion(${exportacion.id})">⬇️ Descargar</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            async mostrarFormularioNuevaJunta() {
+                const formulario = `
+                    <form id="form-nueva-junta">
+                        <div class="form-group">
+                            <label class="form-label">Tipo de Junta</label>
+                            <select class="form-input" name="tipo" required>
+                                <option value="ordinaria">Ordinaria</option>
+                                <option value="extraordinaria">Extraordinaria</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Fecha</label>
+                            <input type="date" class="form-input" name="fecha" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Hora</label>
+                            <input type="time" class="form-input" name="hora" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Lugar</label>
+                            <input type="text" class="form-input" name="lugar" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Orden del Día (separado por comas)</label>
+                            <input type="text" class="form-input" name="ordenDelDia" required>
+                        </div>
+                    </form>
+                `;
+
+                const resultado = await FeedbackUtils.mostrarModal(formulario, {
+                    titulo: 'Nueva Junta',
+                    botones: [
+                        { texto: 'Crear', valor: 'crear', clase: 'btn-primary' },
+                        { texto: 'Cancelar', valor: 'cancelar', clase: 'btn-secondary' }
+                    ]
+                });
+
+                if (resultado === 'crear') {
+                    await this.crearJunta();
+                }
+            }
+
+            async crearJunta() {
+                try {
+                    const form = document.getElementById('form-nueva-junta');
+                    const formData = new FormData(form);
+
+                    const datosJunta = {
+                        tipo: formData.get('tipo'),
+                        fecha: formData.get('fecha'),
+                        hora: formData.get('hora'),
+                        lugar: formData.get('lugar'),
+                        ordenDelDia: formData.get('ordenDelDia').split(',').map(item => item.trim()),
+                        quorumRequerido: 0.3,
+                        coeficienteTotal: 100
+                    };
+
+                    const carga = FeedbackUtils.mostrarCarga('Creando junta...');
+                    await juntasService.crearJunta(datosJunta);
+                    carga.ocultar();
+
+                    FeedbackUtils.mostrarExito('Junta creada correctamente');
+                    await this.cargarDatos();
+                } catch (error) {
+                    console.error('Error al crear junta:', error);
+                    FeedbackUtils.mostrarError('Error al crear la junta');
+                }
+            }
+
+            async generarActa(juntaId) {
+                try {
+                    const progreso = FeedbackUtils.mostrarProgreso('Generando acta con Claude...', 0);
+
+                    const acta = await actasService.generarActaConClaude(juntaId);
+
+                    const actualizarProgreso = setInterval(() => {
+                        const progresoActual = actasService.obtenerProgreso();
+                        progreso.actualizarProgreso(progresoActual.progreso, 'Generando acta...');
+
+                        if (progresoActual.progreso >= 100) {
+                            clearInterval(actualizarProgreso);
                         }
-                    } else {
-                        alert(`❌ Error al exportar:\n${result.errors.join('\n')}`);
-                    }
-                } catch (error) {
-                    alert(`❌ Error: ${error.message}`);
-                }
-            });
+                    }, 500);
 
-            // Generar vista previa
-            document.getElementById('btn-generate-preview').addEventListener('click', async () => {
-                const actaId = document.getElementById('preview-acta-select').value;
-                if (!actaId) {
-                    alert('Por favor, selecciona un acta');
+                    setTimeout(() => {
+                        clearInterval(actualizarProgreso);
+                        progreso.ocultar();
+                        FeedbackUtils.mostrarExito('Acta generada correctamente');
+                        this.cargarDatos();
+                    }, 1000);
+                } catch (error) {
+                    console.error('Error al generar acta:', error);
+                    FeedbackUtils.mostrarError('Error al generar el acta. Verifica que la API Key de Claude esté configurada.');
+                }
+            }
+
+            async reproducirGrabacion(id) {
+                try {
+                    const grabacion = await grabacionService.obtenerGrabacion(id);
+                    grabacionService.reproducirGrabacion(grabacion);
+                } catch (error) {
+                    console.error('Error al reproducir grabación:', error);
+                    FeedbackUtils.mostrarError('Error al reproducir la grabación');
+                }
+            }
+
+            async transcribirGrabacion(id) {
+                try {
+                    const transcripcion = await transcripcionService.transcribirConWebSpeechAPI(id);
+                    FeedbackUtils.mostrarExito('Transcripción completada');
+                    await this.cargarDatos();
+                } catch (error) {
+                    console.error('Error al transcribir:', error);
+                    FeedbackUtils.mostrarError('Error al transcribir la grabación');
+                }
+            }
+
+            formatearTipo(tipo) {
+                return tipo === 'ordinaria' ? 'Junta Ordinaria' : 'Junta Extraordinaria';
+            }
+
+            formatearEstado(estado) {
+                const estados = {
+                    'pendiente': 'Pendiente',
+                    'en_curso': 'En curso',
+                    'finalizada': 'Finalizada',
+                    'borrador': 'Borrador',
+                    'revisado': 'Revisado',
+                    'finalizado': 'Finalizado'
+                };
+                return estados[estado] || estado;
+            }
+
+            obtenerClaseEstado(estado) {
+                const clases = {
+                    'pendiente': 'warning',
+                    'en_curso': 'info',
+                    'finalizada': 'success',
+                    'borrador': 'warning',
+                    'revisado': 'info',
+                    'finalizado': 'success'
+                };
+                return clases[estado] || 'info';
+            }
+            configurarEventListenersActas() {
+                // Volver a lista de actas
+                document.getElementById('btn-volver-actas')?.addEventListener('click', () => {
+                    this.mostrarListaActas();
+                });
+
+                // Exportar Word
+                document.getElementById('btn-exportar-word')?.addEventListener('click', () => {
+                    this.exportarActaWord();
+                });
+
+                // Guardar como definitiva
+                document.getElementById('btn-guardar-definitiva')?.addEventListener('click', () => {
+                    this.guardarActaDefinitiva();
+                });
+
+                // Descartar acta
+                document.getElementById('btn-descartar-acta')?.addEventListener('click', () => {
+                    this.descartarActa();
+                });
+            }
+
+            async generarActa(juntaId) {
+                try {
+                    FeedbackUtils.mostrarInformacion('Iniciando generación del acta...');
+                    
+                    const acta = await actasService.generarActa(juntaId);
+                    
+                    FeedbackUtils.mostrarExito('Acta generada correctamente');
+                    await this.cargarDatos();
+                    this.mostrarPrevisualizacionActa(acta.id);
+                } catch (error) {
+                    console.error('Error al generar acta:', error);
+                    FeedbackUtils.mostrarError(error.message);
+                }
+            }
+
+            async mostrarPrevisualizacionActa(actaId) {
+                try {
+                    this.actaActual = await actasService.obtenerActa(actaId);
+                    const actaJSON = JSON.parse(this.actaActual.contenido);
+                    
+                    // Actualizar título
+                    document.getElementById('titulo-acta-previsualizacion').textContent = 
+                        `Acta #${actaJSON.encabezado?.numero || actaId}`;
+                    
+                    // Mostrar confianza
+                    const confianza = this.actaActual.confianza || 0;
+                    const badgeConfianza = document.getElementById('confianza-acta');
+                    badgeConfianza.textContent = `Confianza: ${confianza}%`;
+                    
+                    if (confianza >= 80) {
+                        badgeConfianza.className = 'badge badge-success';
+                    } else if (confianza >= 60) {
+                        badgeConfianza.className = 'badge badge-warning';
+                    } else {
+                        badgeConfianza.className = 'badge badge-error';
+                    }
+                    
+                    // Mostrar alertas legales
+                    const alertas = this.actaActual.alertas_legales || [];
+                    const alertasDiv = document.getElementById('alertas-legales-acta');
+                    const alertasLista = document.getElementById('lista-alertas-legales');
+                    
+                    if (alertas.length > 0) {
+                        alertasDiv.style.display = 'block';
+                        alertasLista.innerHTML = alertas.map(alerta => 
+                            `<li style="margin-bottom: 0.5rem;"><strong>${alerta.tipo}:</strong> ${alerta.mensaje}</li>`
+                        ).join('');
+                    } else {
+                        alertasDiv.style.display = 'none';
+                    }
+                    
+                    // Mostrar validaciones
+                    this.mostrarValidacionesActa(this.actaActual);
+                    
+                    // Renderizar contenido del acta
+                    document.getElementById('contenido-acta-previsualizacion').innerHTML = 
+                        this.renderizarActaConFormato(actaJSON);
+                    
+                    // Mostrar secciones con baja confianza
+                    this.mostrarSeccionesBajaConfianza(this.actaActual.validacion?.secciones_confianza || {});
+                    
+                    // Mostrar vista de previsualización
+                    document.getElementById('vista-actas-lista').style.display = 'none';
+                    document.getElementById('vista-acta-previsualizacion').style.display = 'block';
+                } catch (error) {
+                    console.error('Error al mostrar previsualización de acta:', error);
+                    FeedbackUtils.mostrarError('Error al cargar el acta');
+                }
+            }
+
+            mostrarValidacionesActa(acta) {
+                const validacion = acta.validacion || {};
+                
+                // Nivel 1: Estructura
+                const nivel1Div = document.getElementById('validaciones-nivel1');
+                if (validacion.validacion_nivel1) {
+                    const v1 = validacion.validacion_nivel1;
+                    nivel1Div.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="color: ${v1.valida ? 'var(--success)' : 'var(--error)'};">
+                                ${v1.valida ? '✅' : '❌'}
+                            </span>
+                            <span>Nivel 1 - Estructura JSON: ${v1.valida ? 'Válido' : 'Inválido'}</span>
+                        </div>
+                    `;
+                }
+                
+                // Nivel 2: Cálculos
+                const nivel2Div = document.getElementById('validaciones-nivel2');
+                if (validacion.validacion_nivel2) {
+                    const v2 = validacion.validacion_nivel2;
+                    nivel2Div.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="color: ${v2.valida ? 'var(--success)' : 'var(--error)'};">
+                                ${v2.valida ? '✅' : '❌'}
+                            </span>
+                            <span>Nivel 2 - Cálculos: ${v2.valida ? 'Válido' : 'Inválido'}</span>
+                        </div>
+                    `;
+                }
+                
+                // Nivel 3: Mayorías
+                const nivel3Div = document.getElementById('validaciones-nivel3');
+                if (validacion.validacion_nivel3) {
+                    const v3 = validacion.validacion_nivel3;
+                    const erroresTexto = v3.errores.length > 0 ? v3.errores.join(', ') : 'Sin errores';
+                    const advertenciasTexto = v3.advertencias.length > 0 ? v3.advertencias.join(', ') : 'Sin advertencias';
+                    
+                    nivel3Div.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="color: ${v3.valida ? 'var(--success)' : 'var(--error)'};">
+                                ${v3.valida ? '✅' : '❌'}
+                            </span>
+                            <span>Nivel 3 - Mayorías: ${v3.valida ? 'Válido' : 'Inválido'}</span>
+                        </div>
+                        ${v3.errores.length > 0 ? `<div style="margin-top: 0.25rem; font-size: 0.875rem; color: var(--error);">Errores: ${erroresTexto}</div>` : ''}
+                        ${v3.advertencias.length > 0 ? `<div style="margin-top: 0.25rem; font-size: 0.875rem; color: var(--warning);">Advertencias: ${advertenciasTexto}</div>` : ''}
+                    `;
+                }
+            }
+
+            mostrarSeccionesBajaConfianza(seccionesConfianza) {
+                const seccionesBajas = Object.entries(seccionesConfianza)
+                    .filter(([seccion, datos]) => datos.score < 70);
+                
+                const seccionesDiv = document.getElementById('secciones-baja-confianza');
+                const listaDiv = document.getElementById('lista-secciones-baja-confianza');
+                
+                if (seccionesBajas.length > 0) {
+                    seccionesDiv.style.display = 'block';
+                    listaDiv.innerHTML = seccionesBajas.map(([seccion, datos]) => `
+                        <div style="margin-bottom: 0.5rem; padding: 0.5rem; background: rgba(255,255,255,0.1); border-radius: 0.25rem;">
+                            <strong>${seccion}:</strong> ${datos.score}% - ${datos.razon || 'Sin razón especificada'}
+                        </div>
+                    `).join('');
+                } else {
+                    seccionesDiv.style.display = 'none';
+                }
+            }
+
+            renderizarActaConFormato(actaJSON) {
+                return `
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <h1 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">
+                            ${this.escapeHtml(actaJSON.encabezado?.tipo || 'ACTA DE JUNTA DE PROPIETARIOS')}
+                        </h1>
+                        <p style="margin-bottom: 0.5rem;">
+                            <strong>Acta Nº:</strong> ${this.escapeHtml(actaJSON.encabezado?.numero || '')}
+                        </p>
+                        <p style="margin-bottom: 0.5rem;">
+                            <strong>Fecha:</strong> ${this.escapeHtml(actaJSON.encabezado?.fecha || '')}
+                        </p>
+                        <p style="margin-bottom: 0.5rem;">
+                            <strong>Hora:</strong> ${this.escapeHtml(actaJSON.encabezado?.hora_inicio || '')} - ${this.escapeHtml(actaJSON.encabezado?.hora_fin || '')}
+                        </p>
+                        <p style="margin-bottom: 1rem;">
+                            <strong>Lugar:</strong> ${this.escapeHtml(actaJSON.encabezado?.lugar || '')}
+                        </p>
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem; padding: 1rem; border: 1px solid #ccc;">
+                        <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Comunidad</h2>
+                        <p style="margin-bottom: 0.5rem;">
+                            <strong>Nombre:</strong> ${this.escapeHtml(actaJSON.encabezado?.comunidad?.nombre || '')}
+                        </p>
+                        <p style="margin-bottom: 0.5rem;">
+                            <strong>Dirección:</strong> ${this.escapeHtml(actaJSON.encabezado?.comunidad?.direccion || '')}
+                        </p>
+                        <p style="margin-bottom: 0.5rem;">
+                            <strong>CIF:</strong> ${this.escapeHtml(actaJSON.encabezado?.comunidad?.cif || '')}
+                        </p>
+                        <p style="margin-bottom: 0.5rem;">
+                            <strong>Código Postal:</strong> ${this.escapeHtml(actaJSON.encabezado?.comunidad?.codigoPostal || '')}
+                        </p>
+                        <p style="margin-bottom: 0.5rem;">
+                            <strong>Ciudad:</strong> ${this.escapeHtml(actaJSON.encabezado?.comunidad?.ciudad || '')}
+                        </p>
+                        <p style="margin-bottom: 0.5rem;">
+                            <strong>Provincia:</strong> ${this.escapeHtml(actaJSON.encabezado?.comunidad?.provincia || '')}
+                        </p>
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem; padding: 1rem; border: 1px solid #ccc;">
+                        <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Convocatoria</h2>
+                        <p style="margin-bottom: 0.5rem;">
+                            <strong>Primera convocatoria:</strong> ${this.escapeHtml(actaJSON.convocatoria?.primera?.fecha || '')} - ${this.escapeHtml(actaJSON.convocatoria?.primera?.hora || '')} (${this.escapeHtml(actaJSON.convocatoria?.primera?.quorum || '')})
+                        </p>
+                        <p style="margin-bottom: 0.5rem;">
+                            <strong>Segunda convocatoria:</strong> ${this.escapeHtml(actaJSON.convocatoria?.segunda?.fecha || '')} - ${this.escapeHtml(actaJSON.convocatoria?.segunda?.hora || '')} (${this.escapeHtml(actaJSON.convocatoria?.segunda?.quorum || '')})
+                        </p>
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem; padding: 1rem; border: 1px solid #ccc;">
+                        <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Asistentes</h2>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid #000;">
+                                    <th style="text-align: left; padding: 0.5rem;">Nombre</th>
+                                    <th style="text-align: left; padding: 0.5rem;">Piso</th>
+                                    <th style="text-align: right; padding: 0.5rem;">Coeficiente</th>
+                                    <th style="text-align: right; padding: 0.5rem;">Cuota %</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${actaJSON.asistentes.map(asistente => `
+                                    <tr style="border-bottom: 1px solid #ccc;">
+                                        <td style="padding: 0.5rem;">${this.escapeHtml(asistente.nombre)}${asistente.representante_de ? ` (Rep. de ${this.escapeHtml(asistente.representante_de)})` : ''}</td>
+                                        <td style="padding: 0.5rem;">${this.escapeHtml(asistente.piso)}</td>
+                                        <td style="text-align: right; padding: 0.5rem;">${asistente.coeficiente.toFixed(2)}</td>
+                                        <td style="text-align: right; padding: 0.5rem;">${asistente.cuota_participacion}%</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem; padding: 1rem; border: 1px solid #ccc;">
+                        <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Puntos del Orden del Día</h2>
+                        ${actaJSON.puntos_orden_dia.map(punto => `
+                            <div style="margin-bottom: 2rem; padding: 1rem; border: 1px solid #ccc;">
+                                <h3 style="font-size: 1.125rem; margin-bottom: 0.5rem;">${punto.numero}. ${this.escapeHtml(punto.titulo)}</h3>
+                                <p style="margin-bottom: 0.5rem;"><strong>Descripción:</strong> ${this.escapeHtml(punto.descripcion)}</p>
+                                <p style="margin-bottom: 0.5rem;"><strong>Tipo de votación:</strong> ${this.escapeHtml(punto.tipo_votacion)}</p>
+                                <div style="margin-bottom: 1rem; padding: 0.5rem; background: #f0f0f0;">
+                                    <p style="margin-bottom: 0.25rem;"><strong>Resultados:</strong></p>
+                                    <p style="margin-bottom: 0.25rem;">- A favor: ${punto.resultados.a_favor_coeficiente.toFixed(2)} (${punto.resultados.a_favor_porcentaje}%)</p>
+                                    <p style="margin-bottom: 0.25rem;">- En contra: ${punto.resultados.en_contra_coeficiente.toFixed(2)} (${punto.resultados.en_contra_porcentaje}%)</p>
+                                    <p style="margin-bottom: 0.25rem;">- Abstención: ${punto.resultados.abstencion_coeficiente.toFixed(2)} (${punto.resultados.abstencion_porcentaje}%)</p>
+                                    <p style="margin-bottom: 0.5rem;"><strong>Resultado:</strong> ${punto.resultados.resultado}</p>
+                                </div>
+                                <div style="padding: 1rem; background: #e6f7ff; border-left: 3px solid #1890ff;">
+                                    <p style="margin-bottom: 0.5rem;"><strong>Acuerdo:</strong></p>
+                                    <p>${this.escapeHtml(punto.acuerdo)}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem; padding: 1rem; border: 1px solid #ccc;">
+                        <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Parte Declarativa</h2>
+                        ${actaJSON.parte_declarativa.map(declaracion => `
+                            <p style="margin-bottom: 0.5rem;">${this.escapeHtml(declaracion)}</p>
+                        `).join('')}
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem; padding: 1rem; border: 1px solid #ccc;">
+                        <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Parte Deliberativa</h2>
+                        ${actaJSON.parte_deliberativa.map(deliberacion => `
+                            <p style="margin-bottom: 0.5rem;">${this.escapeHtml(deliberacion)}</p>
+                        `).join('')}
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem; padding: 1rem; border: 1px solid #ccc;">
+                        <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Resumen de Acuerdos</h2>
+                        <p style="margin-bottom: 0.5rem;">Aprobados: ${actaJSON.acuerdos_totales.aprobados}</p>
+                        <p style="margin-bottom: 0.5rem;">Rechazados: ${actaJSON.acuerdos_totales.rechazados}</p>
+                        <p style="margin-bottom: 0.5rem;">Aplazados: ${actaJSON.acuerdos_totales.aplazados}</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem; padding: 1rem; border: 1px solid #ccc;">
+                        <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Cierre</h2>
+                        <p style="margin-bottom: 0.5rem;">${this.escapeHtml(actaJSON.cierre?.texto || '')}</p>
+                        <p style="margin-bottom: 0.5rem;">Fecha de firma: ${this.escapeHtml(actaJSON.cierre?.fecha_firma || '')}</p>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+                            <div style="border-top: 1px solid #000; padding-top: 0.5rem;">
+                                <p style="text-align: center;"><strong>Presidente</strong></p>
+                                <p style="text-align: center;">${this.escapeHtml(actaJSON.cierre?.presidente || '')}</p>
+                            </div>
+                            <div style="border-top: 1px solid #000; padding-top: 0.5rem;">
+                                <p style="text-align: center;"><strong>Secretario</strong></p>
+                                <p style="text-align: center;">${this.escapeHtml(actaJSON.cierre?.secretario || '')}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            mostrarListaActas() {
+                document.getElementById('vista-actas-lista').style.display = 'block';
+                document.getElementById('vista-acta-previsualizacion').style.display = 'none';
+            }
+
+            async exportarActaWord() {
+                if (!this.actaActual) {
+                    FeedbackUtils.mostrarError('No hay ningún acta seleccionada');
                     return;
                 }
 
                 try {
-                    const result = await previewActa(actaId);
+                    FeedbackUtils.mostrarInformacion('Generando documento Word...');
                     
-                    if (result.success) {
-                        document.getElementById('preview-result').innerHTML = `
-                            <div class="preview-container">
-                                <pre style="white-space: pre-wrap; font-family: inherit;">${result.preview}</pre>
-                            </div>
-                            <div style="margin-top: 1rem; padding: 1rem; background: var(--dark-lighter); border-radius: 0.5rem;">
-                                <strong>📊 Metadatos:</strong><br>
-                                Comunidad: ${result.metadata.comunidad}<br>
-                                Fecha: ${result.metadata.fecha}<br>
-                                Tipo: ${result.metadata.tipo}<br>
-                                Asistentes: ${result.metadata.asistentes}<br>
-                                Acuerdos: ${result.metadata.acuerdos}
-                            </div>
-                        `;
-                    } else {
-                        alert(`❌ Error al generar vista previa: ${result.error}`);
+                    // Usar el servicio de exportación
+                    const resultado = await exportacionService.exportarActaWord(this.actaActual);
+                    
+                    if (resultado.exito) {
+                        FeedbackUtils.mostrarExito(`Documento Word generado: ${resultado.nombreArchivo}`);
                     }
                 } catch (error) {
-                    alert(`❌ Error: ${error.message}`);
+                    console.error('Error al exportar acta:', error);
+                    FeedbackUtils.mostrarError(`Error al exportar el acta: ${error.message}`);
                 }
-            });
+            }
 
-            // Validar acta
-            document.getElementById('btn-validate-acta').addEventListener('click', async () => {
-                const actaId = document.getElementById('validate-acta-select').value;
-                if (!actaId) {
-                    alert('Por favor, selecciona un acta');
+            async guardarActaDefinitiva() {
+                if (!this.actaActual) {
+                    FeedbackUtils.mostrarError('No hay ningún acta seleccionada');
                     return;
                 }
 
                 try {
-                    const result = await validateActaForExport(actaId);
-                    
-                    let html = '';
-                    
-                    if (result.errors && result.errors.length > 0) {
-                        html += '<h3 style="color: var(--error); margin-bottom: 0.5rem;">❌ Errores</h3>';
-                        result.errors.forEach(error => {
-                            html += `<div class="validation-item error">${error}</div>`;
-                        });
+                    if (!confirm('¿Estás seguro de guardar este acta como definitiva? Ya no se podrá modificar.')) {
+                        return;
                     }
-                    
-                    if (result.warnings && result.warnings.length > 0) {
-                        html += '<h3 style="color: var(--warning); margin-bottom: 0.5rem;">⚠️ Advertencias</h3>';
-                        result.warnings.forEach(warning => {
-                            html += `<div class="validation-item warning">${warning}</div>`;
-                        });
-                    }
-                    
-                    if (result.isValid) {
-                        html += '<h3 style="color: var(--success); margin-bottom: 0.5rem;">✅ Validación exitosa</h3>';
-                        html += '<div class="validation-item success">El acta es válida para exportar</div>';
-                    }
-                    
-                    if (result.stats) {
-                        html += '<h3 style="margin-bottom: 0.5rem;">📊 Estadísticas</h3>';
-                        html += `
-                            <div style="padding: 1rem; background: var(--dark-lighter); border-radius: 0.5rem;">
-                                Asistentes: ${result.stats.totalAsistentes}<br>
-                                Acuerdos: ${result.stats.totalAcuerdos}<br>
-                                Votaciones: ${result.stats.totalVotaciones}<br>
-                                Longitud: ${result.stats.contentLength} caracteres
-                            </div>
-                        `;
-                    }
-                    
-                    document.getElementById('validation-result').innerHTML = html;
-                } catch (error) {
-                    alert(`❌ Error: ${error.message}`);
-                }
-            });
 
-            // Compartir acta
-            document.getElementById('btn-share-acta').addEventListener('click', async () => {
-                const actaId = document.getElementById('share-acta-select').value;
-                if (!actaId) {
-                    alert('Por favor, selecciona un acta');
+                    await actasService.actualizarEstadoActa(this.actaActual.id, 'finalizado');
+                    this.actaActual.estado = 'finalizado';
+                    
+                    FeedbackUtils.mostrarExito('Acta guardada como definitiva');
+                    await this.cargarDatos();
+                } catch (error) {
+                    console.error('Error al guardar acta definitiva:', error);
+                    FeedbackUtils.mostrarError('Error al guardar el acta');
+                }
+            }
+
+            async descartarActa() {
+                if (!this.actaActual) {
+                    FeedbackUtils.mostrarError('No hay ningún acta seleccionada');
                     return;
                 }
 
                 try {
-                    const result = await shareActa(actaId);
-                    
-                    if (result.success) {
-                        document.getElementById('share-result').innerHTML = `
-                            <div style="padding: 1rem; background: var(--success); color: white; border-radius: 0.5rem; margin-top: 1rem;">
-                                ✅ ${result.message}<br><br>
-                                <strong>Archivo:</strong> ${result.filename}<br>
-                                <strong>Tamaño:</strong> ${result.size} bytes
-                            </div>
-                        `;
-                    } else {
-                        alert(`❌ Error: ${result.error}`);
+                    if (!confirm('¿Estás seguro de descartar este acta? Se eliminará permanentemente.')) {
+                        return;
                     }
+
+                    await actasService.eliminarActa(this.actaActual.id);
+                    
+                    FeedbackUtils.mostrarExito('Acta descartada correctamente');
+                    this.actaActual = null;
+                    await this.cargarDatos();
+                    this.mostrarListaActas();
                 } catch (error) {
-                    alert(`❌ Error: ${error.message}`);
+                    console.error('Error al descartar acta:', error);
+                    FeedbackUtils.mostrarError('Error al descartar el acta');
                 }
-            });
-        }
+            }
 
-        // ==================== FUNCIONES DE AYUDA ====================
-        function showNewJuntaModal() {
-            alert('Función no implementada: Crear nueva junta');
-        }
 
-        function showNewActaModal() {
-            alert('Función no implementada: Crear nuevo acta');
-        }
 
-        function refreshHistory() {
-            alert('Función no implementada: Actualizar historial');
-        }
+            formatearFecha(fecha) {
+                const fechaObj = new Date(fecha);
+                return fechaObj.toLocaleDateString('es-ES', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+            }
 
-        // ==================== SERVICIOS (STUBS) ====================
-        async function exportActaToDocx(actaId, options) {
-            // En una implementación real, esto llamaría a ActasExportService
-            return {
-                success: true,
-                warnings: ['Funcionalidad en desarrollo'],
-                file: {
-                    filename: 'Acta_Generada.docx',
-                    size: 10240,
-                    type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            formatearDuracion(segundos) {
+                if (!segundos) return '00:00';
+                const mins = Math.floor(segundos / 60);
+                const segs = segundos % 60;
+                return `${mins.toString().padStart(2, '0')}:${segs.toString().padStart(2, '0')}`;
+            }
+
+            formatearTamaño(bytes) {
+                if (bytes < 1024) return `${bytes} B`;
+                if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`;
+                return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+            }
+
+            // Métodos de Configuración (Bloque 8)
+            async guardarAPIKeys() {
+                try {
+                    const claudeKey = document.getElementById('api-key-claude').value.trim();
+                    const whisperKey = document.getElementById('api-key-whisper').value.trim();
+
+                    const apiKeys = {
+                        claude: claudeKey,
+                        whisper: whisperKey
+                    };
+
+                    StorageUtils.guardarAPIKeys(apiKeys);
+                    FeedbackUtils.mostrarExito('API keys guardadas correctamente');
+                } catch (error) {
+                    console.error('Error al guardar API keys:', error);
+                    FeedbackUtils.mostrarError('Error al guardar las API keys');
                 }
-            };
-        }
+            }
 
-        async function previewActa(actaId) {
-            // En una implementación real, esto llamaría a ActasExportService
-            return {
-                success: true,
-                preview: 'Vista previa del documento...',
-                metadata: {
-                    comunidad: 'Comunidad de Prueba',
-                    fecha: '2026-04-30',
-                    tipo: 'Junta Ordinaria',
-                    asistentes: 5,
-                    acuerdos: 3
+            async cargarAPIKeys() {
+                try {
+                    const apiKeys = StorageUtils.obtenerAPIKeys();
+
+                    document.getElementById('api-key-claude').value = apiKeys.claude || '';
+                    document.getElementById('api-key-whisper').value = apiKeys.whisper || '';
+
+                    FeedbackUtils.mostrarExito('API keys cargadas correctamente');
+                } catch (error) {
+                    console.error('Error al cargar API keys:', error);
+                    FeedbackUtils.mostrarError('Error al cargar las API keys');
                 }
-            };
-        }
+            }
 
-        async function validateActaForExport(actaId) {
-            // En una implementación real, esto llamaría a ActasExportService
-            return {
-                isValid: true,
-                errors: [],
-                warnings: ['Funcionalidad en desarrollo'],
-                stats: {
-                    totalAsistentes: 5,
-                    totalAcuerdos: 3,
-                    totalVotaciones: 2,
-                    contentLength: 1500
+            async exportarDatos() {
+                try {
+                    FeedbackUtils.mostrarInformacion('Exportando datos...');
+
+                    // Obtener datos de localStorage
+                    const localStorageData = {};
+                    const keys = Object.keys(localStorage);
+                    for (const key of keys) {
+                        if (key.startsWith('gestactas_')) {
+                            try {
+                                localStorageData[key] = localStorage.getItem(key);
+                            } catch (error) {
+                                console.warn(`No se pudo leer ${key} de localStorage`);
+                            }
+                        }
+                    }
+
+                    // Obtener datos de IndexedDB
+                    const indexedDBData = {};
+                    const stores = ['comunidades', 'propietarios', 'juntas', 'actas', 'grabaciones', 'transcripciones', 'exportaciones'];
+                    
+                    for (const store of stores) {
+                        try {
+                            const datos = await indexedDBService.getAll(store);
+                            indexedDBData[store] = datos;
+                        } catch (error) {
+                            console.warn(`No se pudo leer ${store} de IndexedDB`);
+                        }
+                    }
+
+                    // Crear archivo JSON
+                    const datosCompletos = {
+                        fecha_exportacion: new Date().toISOString(),
+                        version: '1.0',
+                        localStorage: localStorageData,
+                        indexedDB: indexedDBData
+                    };
+
+                    const datosString = JSON.stringify(datosCompletos, null, 2);
+                    const blob = new Blob([datosString], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+
+                    // Descargar archivo
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `gestactas_backup_${new Date().toISOString().split('T')[0]}.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+
+                    // Actualizar información
+                    document.getElementById('info-exportacion-texto').textContent = 
+                        `Datos exportados el ${new Date().toLocaleDateString()} a las ${new Date().toLocaleTimeString()}.
+                        Total de items: ${Object.keys(indexedDBData).reduce((sum, store) => sum + (indexedDBData[store]?.length || 0), 0)} en IndexedDB.`;
+
+                    FeedbackUtils.mostrarExito('Datos exportados correctamente');
+                } catch (error) {
+                    console.error('Error al exportar datos:', error);
+                    FeedbackUtils.mostrarError(`Error al exportar los datos: ${error.message}`);
                 }
-            };
+            }
+
+            async importarDatos(archivo) {
+                if (!archivo) {
+                    FeedbackUtils.mostrarError('No se ha seleccionado ningún archivo');
+                    return;
+                }
+
+                try {
+                    FeedbackUtils.mostrarInformacion('Importando datos...');
+
+                    // Leer archivo
+                    const texto = await archivo.text();
+                    const datos = JSON.parse(texto);
+
+                    // Validar formato
+                    if (!datos.fecha_exportacion || !datos.version) {
+                        throw new Error('Formato de archivo inválido');
+                    }
+
+                    // Importar localStorage
+                    if (datos.localStorage) {
+                        for (const [key, valor] of Object.entries(datos.localStorage)) {
+                            try {
+                                localStorage.setItem(key, valor);
+                            } catch (error) {
+                                console.warn(`No se pudo guardar ${key} en localStorage`);
+                            }
+                        }
+                    }
+
+                    // Importar IndexedDB
+                    if (datos.indexedDB) {
+                        for (const [store, items] of Object.entries(datos.indexedDB)) {
+                            try {
+                                for (const item of items) {
+                                    await indexedDBService.add(store, item);
+                                }
+                            } catch (error) {
+                                console.warn(`No se pudo guardar ${store}`);
+                            }
+                        }
+                    }
+
+                    // Recargar datos de la app
+                    await this.cargarDatos();
+
+                    FeedbackUtils.mostrarExito('Datos importados correctamente. La aplicación se recargará.');
+
+                    // Recargar página después de 2 segundos
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                } catch (error) {
+                    console.error('Error al importar datos:', error);
+                    FeedbackUtils.mostrarError(`Error al importar los datos: ${error.message}`);
+                }
+            }
         }
 
-        async function shareActa(actaId) {
-            // En una implementación real, esto llamaría a ActasExportService
-            return {
-                success: true,
-                message: 'Enlace generado correctamente',
-                filename: 'Acta_Compartida.docx',
-                size: 10240
-            };
-        }
+        // Inicializar la aplicación
+        const app = new GestActasApp();
+        window.app = app;
     </script>
 </body>
 </html>
