@@ -5,9 +5,9 @@
  * con validación legal multi-nivel y sistema de confianza.
  */
 
-import { indexedDBService } from './indexeddb.service.js';
-import { ContextoLegal } from '../utilidades/contexto-legal.js';
-import { GeneradorActas } from '../utilidades/generador-actas.js';
+const indexedDBService = window.indexedDBService;
+const ContextoLegal = window.ContextoLegal;
+const GeneradorActas = window.GeneradorActas;
 
 class ActasService {
     constructor() {
@@ -711,3 +711,6 @@ ${transcripcion}`;
 
 // Exportar instancia singleton
 const actasService = new ActasService();
+
+window.ActasService = ActasService;
+window.actasService = actasService;

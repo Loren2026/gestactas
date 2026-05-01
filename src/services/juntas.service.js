@@ -5,7 +5,7 @@
  * incluyendo creación, actualización, eliminación y consulta.
  */
 
-import { indexedDBService } from './indexeddb.service.js';
+const indexedDBService = window.indexedDBService;
 
 class JuntasService {
     /**
@@ -300,3 +300,6 @@ class JuntasService {
 
 // Exportar instancia singleton
 const juntasService = new JuntasService();
+
+window.JuntasService = JuntasService;
+window.juntasService = juntasService;

@@ -4,7 +4,7 @@
  * Servicio para la grabación de audio durante las juntas usando la API MediaRecorder.
  */
 
-import { indexedDBService } from './indexeddb.service.js';
+const indexedDBService = window.indexedDBService;
 
 class GrabacionService {
     constructor() {
@@ -430,3 +430,6 @@ class GrabacionService {
 
 // Exportar instancia singleton
 const grabacionService = new GrabacionService();
+
+window.GrabacionService = GrabacionService;
+window.grabacionService = grabacionService;

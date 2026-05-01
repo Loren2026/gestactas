@@ -861,23 +861,37 @@
     </footer>
 
     <!-- Scripts -->
-    <script type="module">
-        // Importar servicios
-        import { indexedDBService } from './src/services/indexeddb.service.js';
-        import { comunidadesService } from './src/services/comunidades.service.js';
-        import { propietariosService } from './src/services/propietarios.service.js';
-        import { juntasService } from './src/services/juntas.service.js';
-        import { grabacionService } from './src/services/grabacion.service.js';
-        import { transcripcionService } from './src/services/transcripcion.service.js';
-        import { actasService } from './src/services/actas.service.js';
-        import { FeedbackUtils } from './src/utilidades/feedback.js';
-        import { StorageUtils } from './src/utilidades/storage.js';
-        import { ValidationUtils } from './src/utilidades/validacion.js';
-        import { ValidacionComunidadPropietario } from './src/utilidades/validacion-comunidad-propietario.js';
-        import { ContextoLegal } from './src/utilidades/contexto-legal.js';
-        import { GeneradorActas } from './src/utilidades/generador-actas.js';
-        import { FormatoWord } from './src/utilidades/formato-word.js';
-        import { exportacionService } from './src/services/exportacion.service.js';
+    <script src="./src/utilidades/feedback.js"></script>
+    <script src="./src/utilidades/validacion.js"></script>
+    <script src="./src/utilidades/validacion-comunidad-propietario.js"></script>
+    <script src="./src/utilidades/contexto-legal.js"></script>
+    <script src="./src/utilidades/generador-actas.js"></script>
+    <script src="./src/utilidades/formato-word.js"></script>
+    <script src="./src/services/indexeddb.service.js"></script>
+    <script src="./src/utilidades/storage.js"></script>
+    <script src="./src/services/comunidades.service.js"></script>
+    <script src="./src/services/propietarios.service.js"></script>
+    <script src="./src/services/juntas.service.js"></script>
+    <script src="./src/services/grabacion.service.js"></script>
+    <script src="./src/services/transcripcion.service.js"></script>
+    <script src="./src/services/actas.service.js"></script>
+    <script src="./src/services/exportacion.service.js"></script>
+    <script>
+        const indexedDBService = window.indexedDBService;
+        const comunidadesService = window.comunidadesService;
+        const propietariosService = window.propietariosService;
+        const juntasService = window.juntasService;
+        const grabacionService = window.grabacionService;
+        const transcripcionService = window.transcripcionService;
+        const actasService = window.actasService;
+        const exportacionService = window.exportacionService;
+        const FeedbackUtils = window.FeedbackUtils;
+        const StorageUtils = window.StorageUtils;
+        const ValidationUtils = window.ValidationUtils;
+        const ValidacionComunidadPropietario = window.ValidacionComunidadPropietario;
+        const ContextoLegal = window.ContextoLegal;
+        const GeneradorActas = window.GeneradorActas;
+        const FormatoWord = window.FormatoWord;
 
         class GestActasApp {
             constructor() {

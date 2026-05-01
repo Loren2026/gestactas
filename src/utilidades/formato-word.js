@@ -393,4 +393,5 @@ class FormatoWord {
 }
 
 // Exportar la clase
-export { FormatoWord };
+
+window.FormatoWord = FormatoWord;

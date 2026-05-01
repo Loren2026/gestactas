@@ -8,7 +8,7 @@ const { Document, Packer, Paragraph, TextRun, Table, TableRow,
         TableCell, WidthType, BorderStyle, HeadingLevel, AlignmentType,
         PageBreak, Header, Footer, PageNumber, VerticalAlign,
         ImageRun, convertInchesToTwip, convertMillimetersToTwip } = docx;
-import { FormatoWord } from '../utilidades/formato-word.js';
+const FormatoWord = window.FormatoWord;
 
 class ExportacionService {
     /**
@@ -684,3 +684,6 @@ class ExportacionService {
 
 // Exportar instancia singleton
 const exportacionService = new ExportacionService();
+
+window.ExportacionService = ExportacionService;
+window.exportacionService = exportacionService;

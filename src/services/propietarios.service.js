@@ -4,8 +4,8 @@
  * Servicio para la gestión completa de propietarios.
  */
 
-import { indexedDBService } from './indexeddb.service.js';
-import { ValidacionComunidadPropietario } from '../utilidades/validacion-comunidad-propietario.js';
+const indexedDBService = window.indexedDBService;
+const ValidacionComunidadPropietario = window.ValidacionComunidadPropietario;
 
 class PropietariosService {
     /**
@@ -560,3 +560,6 @@ class PropietariosService {
 
 // Exportar instancia singleton
 const propietariosService = new PropietariosService();
+
+window.PropietariosService = PropietariosService;
+window.propietariosService = propietariosService;

@@ -472,4 +472,5 @@ class GeneradorActas {
 }
 
 // Exportar la clase
-export { GeneradorActas };
+
+window.GeneradorActas = GeneradorActas;

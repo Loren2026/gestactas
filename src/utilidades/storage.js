@@ -4,7 +4,7 @@
  * Utilidades para facilitar el almacenamiento y gestión de datos.
  */
 
-import { indexedDBService } from '../services/indexeddb.service.js';
+const indexedDBService = window.indexedDBService;
 
 class StorageUtils {
     /**
@@ -318,4 +318,5 @@ class StorageUtils {
 }
 
 // Exportar la clase
-export { StorageUtils };
+
+window.StorageUtils = StorageUtils;

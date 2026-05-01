@@ -416,4 +416,5 @@ class ValidationUtils {
 }
 
 // Exportar la clase
-export { ValidationUtils };
+
+window.ValidationUtils = ValidationUtils;

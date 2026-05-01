@@ -4,7 +4,7 @@
  * Servicio para la transcripción de audio usando Whisper API y Web Speech API.
  */
 
-import { indexedDBService } from './indexeddb.service.js';
+const indexedDBService = window.indexedDBService;
 
 class TranscripcionService {
     constructor() {
@@ -373,3 +373,6 @@ class TranscripcionService {
 
 // Exportar instancia singleton
 const transcripcionService = new TranscripcionService();
+
+window.TranscripcionService = TranscripcionService;
+window.transcripcionService = transcripcionService;

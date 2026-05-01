@@ -413,4 +413,5 @@ class FeedbackUtils {
 }
 
 // Exportar la clase
-export { FeedbackUtils };
+
+window.FeedbackUtils = FeedbackUtils;

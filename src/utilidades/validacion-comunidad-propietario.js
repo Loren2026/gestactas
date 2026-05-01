@@ -4,7 +4,7 @@
  * Utilidades centralizadas para validar datos de comunidades y propietarios.
  */
 
-import { ValidationUtils } from './validacion.js';
+const ValidationUtils = window.ValidationUtils;
 
 class ValidacionComunidadPropietario {
     /**
@@ -477,4 +477,5 @@ class ValidacionComunidadPropietario {
 }
 
 // Exportar la clase
-export { ValidacionComunidadPropietario };
+
+window.ValidacionComunidadPropietario = ValidacionComunidadPropietario;

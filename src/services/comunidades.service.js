@@ -4,8 +4,8 @@
  * Servicio para la gestión completa de comunidades de vecinos.
  */
 
-import { indexedDBService } from './indexeddb.service.js';
-import { ValidacionComunidadPropietario } from '../utilidades/validacion-comunidad-propietario.js';
+const indexedDBService = window.indexedDBService;
+const ValidacionComunidadPropietario = window.ValidacionComunidadPropietario;
 
 class ComunidadesService {
     /**
@@ -407,3 +407,6 @@ class ComunidadesService {
 
 // Exportar instancia singleton
 const comunidadesService = new ComunidadesService();
+
+window.ComunidadesService = ComunidadesService;
+window.comunidadesService = comunidadesService;

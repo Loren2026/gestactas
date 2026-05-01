@@ -289,4 +289,5 @@ class ContextoLegal {
 }
 
 // Exportar la clase
-export { ContextoLegal };
+
+window.ContextoLegal = ContextoLegal;

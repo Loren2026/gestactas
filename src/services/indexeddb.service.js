@@ -322,3 +322,6 @@ class IndexedDBService {
 
 // Exportar instancia singleton
 const indexedDBService = new IndexedDBService();
+
+window.IndexedDBService = IndexedDBService;
+window.indexedDBService = indexedDBService;
