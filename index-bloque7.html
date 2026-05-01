@@ -651,16 +651,58 @@
 
         <!-- Tab: Actas -->
         <section id="tab-actas" class="content-section">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Actas Generadas</h2>
+            <div id="vista-actas-lista">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Actas Generadas</h2>
+                    </div>
+                    <div id="lista-actas" class="actas-list">
+                        <!-- Las actas se cargarán dinámicamente aquí -->
+                    </div>
+                    <div id="actas-empty" class="empty-state" style="display: none;">
+                        <h3>No hay actas</h3>
+                        <p>Genera un acta desde una junta existente</p>
+                    </div>
                 </div>
-                <div id="lista-actas" class="actas-list">
-                    <!-- Las actas se cargarán dinámicamente aquí -->
-                </div>
-                <div id="actas-empty" class="empty-state" style="display: none;">
-                    <h3>No hay actas</h3>
-                    <p>Genera un acta desde una junta existente</p>
+            </div>
+            
+            <div id="vista-acta-previsualizacion" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <button id="btn-volver-actas" class="btn btn-secondary">← Volver a Actas</button>
+                        <h2 class="card-title" id="titulo-acta-previsualizacion">Previsualización del Acta</h2>
+                        <div class="card-actions">
+                            <span id="confianza-acta" class="badge"></span>
+                            <button id="btn-exportar-word" class="btn btn-secondary">⬇️ Exportar Word</button>
+                            <button id="btn-guardar-definitiva" class="btn btn-primary">✅ Guardar como Definitiva</button>
+                            <button id="btn-descartar-acta" class="btn btn-danger">🗑️ Descartar</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Alertas legales -->
+                    <div id="alertas-legales-acta" style="display: none; margin-bottom: 1rem; padding: 1rem; background: var(--warning); border-radius: 0.5rem; border-left: 4px solid var(--error);">
+                        <h4 style="margin-bottom: 0.5rem; color: var(--error);">⚠️ Alertas Legales</h4>
+                        <ul id="lista-alertas-legales" style="margin: 0; padding-left: 1.5rem;"></ul>
+                    </div>
+                    
+                    <!-- Validaciones -->
+                    <div id="validaciones-acta" style="margin-bottom: 1rem; padding: 1rem; background: var(--dark-lighter); border-radius: 0.5rem;">
+                        <h4 style="margin-bottom: 0.5rem;">Validaciones</h4>
+                        <div id="validaciones-nivel1" style="margin-bottom: 0.5rem;"></div>
+                        <div id="validaciones-nivel2" style="margin-bottom: 0.5rem;"></div>
+                        <div id="validaciones-nivel3" style="margin-bottom: 0.5rem;"></div>
+                    </div>
+                    
+                    <!-- Contenido del acta -->
+                    <div id="contenido-acta-previsualizacion" style="padding: 1.5rem; background: white; color: black; border-radius: 0.5rem; max-height: 600px; overflow-y: auto;">
+                        <!-- El acta se renderizará aquí -->
+                    </div>
+                    
+                    <!-- Secciones con baja confianza -->
+                    <div id="secciones-baja-confianza" style="display: none; margin-top: 1rem; padding: 1rem; background: var(--warning); border-radius: 0.5rem;">
+                        <h4 style="margin-bottom: 0.5rem;">⚠️ Secciones con Baja Confianza</h4>
+                        <div id="lista-secciones-baja-confianza"></div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -733,6 +775,8 @@
         import { StorageUtils } from './src/utilidades/storage.js';
         import { ValidationUtils } from './src/utilidades/validacion.js';
         import { ValidacionComunidadPropietario } from './src/utilidades/validacion-comunidad-propietario.js';
+        import { ContextoLegal } from './src/utilidades/contexto-legal.js';
+        import { GeneradorActas } from './src/utilidades/generador-actas.js';
 
         class GestActasApp {
             constructor() {
@@ -1387,6 +1431,9 @@
                 // Event listeners de Comunidades
                 this.configurarEventListenersComunidades();
 
+                // Event listeners de Actas
+                this.configurarEventListenersActas();
+
                 // Botón nueva junta
                 document.getElementById('btn-nueva-junta').addEventListener('click', () => {
                     this.mostrarFormularioNuevaJunta();
@@ -1702,6 +1749,377 @@
                 };
                 return clases[estado] || 'info';
             }
+            configurarEventListenersActas() {
+                // Volver a lista de actas
+                document.getElementById('btn-volver-actas')?.addEventListener('click', () => {
+                    this.mostrarListaActas();
+                });
+
+                // Exportar Word
+                document.getElementById('btn-exportar-word')?.addEventListener('click', () => {
+                    this.exportarActaWord();
+                });
+
+                // Guardar como definitiva
+                document.getElementById('btn-guardar-definitiva')?.addEventListener('click', () => {
+                    this.guardarActaDefinitiva();
+                });
+
+                // Descartar acta
+                document.getElementById('btn-descartar-acta')?.addEventListener('click', () => {
+                    this.descartarActa();
+                });
+            }
+
+            async generarActa(juntaId) {
+                try {
+                    FeedbackUtils.mostrarInformacion('Iniciando generación del acta...');
+                    
+                    const acta = await actasService.generarActa(juntaId);
+                    
+                    FeedbackUtils.mostrarExito('Acta generada correctamente');
+                    await this.cargarDatos();
+                    this.mostrarPrevisualizacionActa(acta.id);
+                } catch (error) {
+                    console.error('Error al generar acta:', error);
+                    FeedbackUtils.mostrarError(error.message);
+                }
+            }
+
+            async mostrarPrevisualizacionActa(actaId) {
+                try {
+                    this.actaActual = await actasService.obtenerActa(actaId);
+                    const actaJSON = JSON.parse(this.actaActual.contenido);
+                    
+                    // Actualizar título
+                    document.getElementById('titulo-acta-previsualizacion').textContent = 
+                        `Acta #${actaJSON.encabezado?.numero || actaId}`;
+                    
+                    // Mostrar confianza
+                    const confianza = this.actaActual.confianza || 0;
+                    const badgeConfianza = document.getElementById('confianza-acta');
+                    badgeConfianza.textContent = `Confianza: ${confianza}%`;
+                    
+                    if (confianza >= 80) {
+                        badgeConfianza.className = 'badge badge-success';
+                    } else if (confianza >= 60) {
+                        badgeConfianza.className = 'badge badge-warning';
+                    } else {
+                        badgeConfianza.className = 'badge badge-error';
+                    }
+                    
+                    // Mostrar alertas legales
+                    const alertas = this.actaActual.alertas_legales || [];
+                    const alertasDiv = document.getElementById('alertas-legales-acta');
+                    const alertasLista = document.getElementById('lista-alertas-legales');
+                    
+                    if (alertas.length > 0) {
+                        alertasDiv.style.display = 'block';
+                        alertasLista.innerHTML = alertas.map(alerta => 
+                            `<li style="margin-bottom: 0.5rem;"><strong>${alerta.tipo}:</strong> ${alerta.mensaje}</li>`
+                        ).join('');
+                    } else {
+                        alertasDiv.style.display = 'none';
+                    }
+                    
+                    // Mostrar validaciones
+                    this.mostrarValidacionesActa(this.actaActual);
+                    
+                    // Renderizar contenido del acta
+                    document.getElementById('contenido-acta-previsualizacion').innerHTML = 
+                        this.renderizarActaConFormato(actaJSON);
+                    
+                    // Mostrar secciones con baja confianza
+                    this.mostrarSeccionesBajaConfianza(this.actaActual.validacion?.secciones_confianza || {});
+                    
+                    // Mostrar vista de previsualización
+                    document.getElementById('vista-actas-lista').style.display = 'none';
+                    document.getElementById('vista-acta-previsualizacion').style.display = 'block';
+                } catch (error) {
+                    console.error('Error al mostrar previsualización de acta:', error);
+                    FeedbackUtils.mostrarError('Error al cargar el acta');
+                }
+            }
+
+            mostrarValidacionesActa(acta) {
+                const validacion = acta.validacion || {};
+                
+                // Nivel 1: Estructura
+                const nivel1Div = document.getElementById('validaciones-nivel1');
+                if (validacion.validacion_nivel1) {
+                    const v1 = validacion.validacion_nivel1;
+                    nivel1Div.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="color: ${v1.valida ? 'var(--success)' : 'var(--error)'};">
+                                ${v1.valida ? '✅' : '❌'}
+                            </span>
+                            <span>Nivel 1 - Estructura JSON: ${v1.valida ? 'Válido' : 'Inválido'}</span>
+                        </div>
+                    `;
+                }
+                
+                // Nivel 2: Cálculos
+                const nivel2Div = document.getElementById('validaciones-nivel2');
+                if (validacion.validacion_nivel2) {
+                    const v2 = validacion.validacion_nivel2;
+                    nivel2Div.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="color: ${v2.valida ? 'var(--success)' : 'var(--error)'};">
+                                ${v2.valida ? '✅' : '❌'}
+                            </span>
+                            <span>Nivel 2 - Cálculos: ${v2.valida ? 'Válido' : 'Inválido'}</span>
+                        </div>
+                    `;
+                }
+                
+                // Nivel 3: Mayorías
+                const nivel3Div = document.getElementById('validaciones-nivel3');
+                if (validacion.validacion_nivel3) {
+                    const v3 = validacion.validacion_nivel3;
+                    const erroresTexto = v3.errores.length > 0 ? v3.errores.join(', ') : 'Sin errores';
+                    const advertenciasTexto = v3.advertencias.length > 0 ? v3.advertencias.join(', ') : 'Sin advertencias';
+                    
+                    nivel3Div.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="color: ${v3.valida ? 'var(--success)' : 'var(--error)'};">
+                                ${v3.valida ? '✅' : '❌'}
+                            </span>
+                            <span>Nivel 3 - Mayorías: ${v3.valida ? 'Válido' : 'Inválido'}</span>
+                        </div>
+                        ${v3.errores.length > 0 ? `<div style="margin-top: 0.25rem; font-size: 0.875rem; color: var(--error);">Errores: ${erroresTexto}</div>` : ''}
+                        ${v3.advertencias.length > 0 ? `<div style="margin-top: 0.25rem; font-size: 0.875rem; color: var(--warning);">Advertencias: ${advertenciasTexto}</div>` : ''}
+                    `;
+                }
+            }
+
+            mostrarSeccionesBajaConfianza(seccionesConfianza) {
+                const seccionesBajas = Object.entries(seccionesConfianza)
+                    .filter(([seccion, datos]) => datos.score < 70);
+                
+                const seccionesDiv = document.getElementById('secciones-baja-confianza');
+                const listaDiv = document.getElementById('lista-secciones-baja-confianza');
+                
+                if (seccionesBajas.length > 0) {
+                    seccionesDiv.style.display = 'block';
+                    listaDiv.innerHTML = seccionesBajas.map(([seccion, datos]) => `
+                        <div style="margin-bottom: 0.5rem; padding: 0.5rem; background: rgba(255,255,255,0.1); border-radius: 0.25rem;">
+                            <strong>${seccion}:</strong> ${datos.score}% - ${datos.razon || 'Sin razón especificada'}
+                        </div>
+                    `).join('');
+                } else {
+                    seccionesDiv.style.display = 'none';
+                }
+            }
+
+            renderizarActaConFormato(actaJSON) {
+                return `
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <h1 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">
+                            ${this.escapeHtml(actaJSON.encabezado?.tipo || 'ACTA DE JUNTA DE PROPIETARIOS')}
+                        </h1>
+                        <p style="margin-bottom: 0.5rem;">
+                            <strong>Acta Nº:</strong> ${this.escapeHtml(actaJSON.encabezado?.numero || '')}
+                        </p>
+                        <p style="margin-bottom: 0.5rem;">
+                            <strong>Fecha:</strong> ${this.escapeHtml(actaJSON.encabezado?.fecha || '')}
+                        </p>
+                        <p style="margin-bottom: 0.5rem;">
+                            <strong>Hora:</strong> ${this.escapeHtml(actaJSON.encabezado?.hora_inicio || '')} - ${this.escapeHtml(actaJSON.encabezado?.hora_fin || '')}
+                        </p>
+                        <p style="margin-bottom: 1rem;">
+                            <strong>Lugar:</strong> ${this.escapeHtml(actaJSON.encabezado?.lugar || '')}
+                        </p>
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem; padding: 1rem; border: 1px solid #ccc;">
+                        <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Comunidad</h2>
+                        <p style="margin-bottom: 0.5rem;">
+                            <strong>Nombre:</strong> ${this.escapeHtml(actaJSON.encabezado?.comunidad?.nombre || '')}
+                        </p>
+                        <p style="margin-bottom: 0.5rem;">
+                            <strong>Dirección:</strong> ${this.escapeHtml(actaJSON.encabezado?.comunidad?.direccion || '')}
+                        </p>
+                        <p style="margin-bottom: 0.5rem;">
+                            <strong>CIF:</strong> ${this.escapeHtml(actaJSON.encabezado?.comunidad?.cif || '')}
+                        </p>
+                        <p style="margin-bottom: 0.5rem;">
+                            <strong>Código Postal:</strong> ${this.escapeHtml(actaJSON.encabezado?.comunidad?.codigoPostal || '')}
+                        </p>
+                        <p style="margin-bottom: 0.5rem;">
+                            <strong>Ciudad:</strong> ${this.escapeHtml(actaJSON.encabezado?.comunidad?.ciudad || '')}
+                        </p>
+                        <p style="margin-bottom: 0.5rem;">
+                            <strong>Provincia:</strong> ${this.escapeHtml(actaJSON.encabezado?.comunidad?.provincia || '')}
+                        </p>
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem; padding: 1rem; border: 1px solid #ccc;">
+                        <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Convocatoria</h2>
+                        <p style="margin-bottom: 0.5rem;">
+                            <strong>Primera convocatoria:</strong> ${this.escapeHtml(actaJSON.convocatoria?.primera?.fecha || '')} - ${this.escapeHtml(actaJSON.convocatoria?.primera?.hora || '')} (${this.escapeHtml(actaJSON.convocatoria?.primera?.quorum || '')})
+                        </p>
+                        <p style="margin-bottom: 0.5rem;">
+                            <strong>Segunda convocatoria:</strong> ${this.escapeHtml(actaJSON.convocatoria?.segunda?.fecha || '')} - ${this.escapeHtml(actaJSON.convocatoria?.segunda?.hora || '')} (${this.escapeHtml(actaJSON.convocatoria?.segunda?.quorum || '')})
+                        </p>
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem; padding: 1rem; border: 1px solid #ccc;">
+                        <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Asistentes</h2>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid #000;">
+                                    <th style="text-align: left; padding: 0.5rem;">Nombre</th>
+                                    <th style="text-align: left; padding: 0.5rem;">Piso</th>
+                                    <th style="text-align: right; padding: 0.5rem;">Coeficiente</th>
+                                    <th style="text-align: right; padding: 0.5rem;">Cuota %</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${actaJSON.asistentes.map(asistente => `
+                                    <tr style="border-bottom: 1px solid #ccc;">
+                                        <td style="padding: 0.5rem;">${this.escapeHtml(asistente.nombre)}${asistente.representante_de ? ` (Rep. de ${this.escapeHtml(asistente.representante_de)})` : ''}</td>
+                                        <td style="padding: 0.5rem;">${this.escapeHtml(asistente.piso)}</td>
+                                        <td style="text-align: right; padding: 0.5rem;">${asistente.coeficiente.toFixed(2)}</td>
+                                        <td style="text-align: right; padding: 0.5rem;">${asistente.cuota_participacion}%</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem; padding: 1rem; border: 1px solid #ccc;">
+                        <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Puntos del Orden del Día</h2>
+                        ${actaJSON.puntos_orden_dia.map(punto => `
+                            <div style="margin-bottom: 2rem; padding: 1rem; border: 1px solid #ccc;">
+                                <h3 style="font-size: 1.125rem; margin-bottom: 0.5rem;">${punto.numero}. ${this.escapeHtml(punto.titulo)}</h3>
+                                <p style="margin-bottom: 0.5rem;"><strong>Descripción:</strong> ${this.escapeHtml(punto.descripcion)}</p>
+                                <p style="margin-bottom: 0.5rem;"><strong>Tipo de votación:</strong> ${this.escapeHtml(punto.tipo_votacion)}</p>
+                                <div style="margin-bottom: 1rem; padding: 0.5rem; background: #f0f0f0;">
+                                    <p style="margin-bottom: 0.25rem;"><strong>Resultados:</strong></p>
+                                    <p style="margin-bottom: 0.25rem;">- A favor: ${punto.resultados.a_favor_coeficiente.toFixed(2)} (${punto.resultados.a_favor_porcentaje}%)</p>
+                                    <p style="margin-bottom: 0.25rem;">- En contra: ${punto.resultados.en_contra_coeficiente.toFixed(2)} (${punto.resultados.en_contra_porcentaje}%)</p>
+                                    <p style="margin-bottom: 0.25rem;">- Abstención: ${punto.resultados.abstencion_coeficiente.toFixed(2)} (${punto.resultados.abstencion_porcentaje}%)</p>
+                                    <p style="margin-bottom: 0.5rem;"><strong>Resultado:</strong> ${punto.resultados.resultado}</p>
+                                </div>
+                                <div style="padding: 1rem; background: #e6f7ff; border-left: 3px solid #1890ff;">
+                                    <p style="margin-bottom: 0.5rem;"><strong>Acuerdo:</strong></p>
+                                    <p>${this.escapeHtml(punto.acuerdo)}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem; padding: 1rem; border: 1px solid #ccc;">
+                        <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Parte Declarativa</h2>
+                        ${actaJSON.parte_declarativa.map(declaracion => `
+                            <p style="margin-bottom: 0.5rem;">${this.escapeHtml(declaracion)}</p>
+                        `).join('')}
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem; padding: 1rem; border: 1px solid #ccc;">
+                        <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Parte Deliberativa</h2>
+                        ${actaJSON.parte_deliberativa.map(deliberacion => `
+                            <p style="margin-bottom: 0.5rem;">${this.escapeHtml(deliberacion)}</p>
+                        `).join('')}
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem; padding: 1rem; border: 1px solid #ccc;">
+                        <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Resumen de Acuerdos</h2>
+                        <p style="margin-bottom: 0.5rem;">Aprobados: ${actaJSON.acuerdos_totales.aprobados}</p>
+                        <p style="margin-bottom: 0.5rem;">Rechazados: ${actaJSON.acuerdos_totales.rechazados}</p>
+                        <p style="margin-bottom: 0.5rem;">Aplazados: ${actaJSON.acuerdos_totales.aplazados}</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem; padding: 1rem; border: 1px solid #ccc;">
+                        <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Cierre</h2>
+                        <p style="margin-bottom: 0.5rem;">${this.escapeHtml(actaJSON.cierre?.texto || '')}</p>
+                        <p style="margin-bottom: 0.5rem;">Fecha de firma: ${this.escapeHtml(actaJSON.cierre?.fecha_firma || '')}</p>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+                            <div style="border-top: 1px solid #000; padding-top: 0.5rem;">
+                                <p style="text-align: center;"><strong>Presidente</strong></p>
+                                <p style="text-align: center;">${this.escapeHtml(actaJSON.cierre?.presidente || '')}</p>
+                            </div>
+                            <div style="border-top: 1px solid #000; padding-top: 0.5rem;">
+                                <p style="text-align: center;"><strong>Secretario</strong></p>
+                                <p style="text-align: center;">${this.escapeHtml(actaJSON.cierre?.secretario || '')}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            mostrarListaActas() {
+                document.getElementById('vista-actas-lista').style.display = 'block';
+                document.getElementById('vista-acta-previsualizacion').style.display = 'none';
+            }
+
+            async exportarActaWord() {
+                if (!this.actaActual) {
+                    FeedbackUtils.mostrarError('No hay ningún acta seleccionada');
+                    return;
+                }
+
+                try {
+                    FeedbackUtils.mostrarInformacion('Generando documento Word...');
+                    
+                    // Nota: La exportación a Word requeriría integrar la librería docx-js
+                    // Por ahora, mostramos un mensaje indicando que está pendiente
+                    FeedbackUtils.mostrarAdvertencia('Exportación a Word pendiente de implementación. Usa la función de imprimir del navegador.');
+                    
+                    // Alternativa: Abrir diálogo de impresión del navegador
+                    window.print();
+                } catch (error) {
+                    console.error('Error al exportar acta:', error);
+                    FeedbackUtils.mostrarError('Error al exportar el acta');
+                }
+            }
+
+            async guardarActaDefinitiva() {
+                if (!this.actaActual) {
+                    FeedbackUtils.mostrarError('No hay ningún acta seleccionada');
+                    return;
+                }
+
+                try {
+                    if (!confirm('¿Estás seguro de guardar este acta como definitiva? Ya no se podrá modificar.')) {
+                        return;
+                    }
+
+                    await actasService.actualizarEstadoActa(this.actaActual.id, 'finalizado');
+                    this.actaActual.estado = 'finalizado';
+                    
+                    FeedbackUtils.mostrarExito('Acta guardada como definitiva');
+                    await this.cargarDatos();
+                } catch (error) {
+                    console.error('Error al guardar acta definitiva:', error);
+                    FeedbackUtils.mostrarError('Error al guardar el acta');
+                }
+            }
+
+            async descartarActa() {
+                if (!this.actaActual) {
+                    FeedbackUtils.mostrarError('No hay ningún acta seleccionada');
+                    return;
+                }
+
+                try {
+                    if (!confirm('¿Estás seguro de descartar este acta? Se eliminará permanentemente.')) {
+                        return;
+                    }
+
+                    await actasService.eliminarActa(this.actaActual.id);
+                    
+                    FeedbackUtils.mostrarExito('Acta descartada correctamente');
+                    this.actaActual = null;
+                    await this.cargarDatos();
+                    this.mostrarListaActas();
+                } catch (error) {
+                    console.error('Error al descartar acta:', error);
+                    FeedbackUtils.mostrarError('Error al descartar el acta');
+                }
+            }
+
+
 
             formatearFecha(fecha) {
                 const fechaObj = new Date(fecha);
