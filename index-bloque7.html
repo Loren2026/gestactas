@@ -414,6 +414,7 @@
 
     <main class="container">
         <div class="tabs">
+            <button class="tab" data-tab="comunidades">Comunidades</button>
             <button class="tab active" data-tab="juntas">Juntas</button>
             <button class="tab" data-tab="actas">Actas</button>
             <button class="tab" data-tab="grabaciones">Grabaciones</button>
@@ -422,6 +423,216 @@
         </div>
 
         <!-- Tab: Juntas -->
+                <!-- Tab: Comunidades -->
+        <section id="tab-comunidades" class="content-section">
+            <div id="vista-comunidades-lista">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Comunidades de Vecinos</h2>
+                        <div class="card-actions">
+                            <input type="text" id="busqueda-comunidades" placeholder="Buscar comunidades..." class="form-input" style="width: 250px; margin-right: 1rem;">
+                            <select id="filtro-ciudad" class="form-input" style="width: 150px; margin-right: 0.5rem;">
+                                <option value="">Todas las ciudades</option>
+                            </select>
+                            <select id="filtro-provincia" class="form-input" style="width: 150px; margin-right: 1rem;">
+                                <option value="">Todas las provincias</option>
+                            </select>
+                            <button id="btn-nueva-comunidad" class="btn btn-primary">+ Nueva Comunidad</button>
+                        </div>
+                    </div>
+                    <div id="lista-comunidades" class="comunidades-list">
+                        <!-- Las comunidades se cargarán dinámicamente aquí -->
+                    </div>
+                    <div id="comunidades-empty" class="empty-state" style="display: none;">
+                        <h3>No hay comunidades</h3>
+                        <p>Crea una nueva comunidad para comenzar</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="vista-comunidad-detalle" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <button id="btn-volver-comunidades" class="btn btn-secondary">← Volver</button>
+                        <h2 id="titulo-comunidad-detalle" class="card-title">Detalle de Comunidad</h2>
+                        <div class="card-actions">
+                            <button id="btn-editar-comunidad" class="btn btn-primary">Editar</button>
+                            <button id="btn-eliminar-comunidad" class="btn btn-danger">Eliminar</button>
+                        </div>
+                    </div>
+                    <div id="detalle-comunidad-contenido">
+                        <!-- El detalle se cargará dinámicamente aquí -->
+                    </div>
+                </div>
+                
+                <div class="card" style="margin-top: 2rem;">
+                    <div class="card-header">
+                        <h2 class="card-title">Propietarios</h2>
+                        <div class="card-actions">
+                            <input type="text" id="busqueda-propietarios" placeholder="Buscar propietarios..." class="form-input" style="width: 250px; margin-right: 1rem;">
+                            <button id="btn-nuevo-propietario" class="btn btn-primary">+ Nuevo Propietario</button>
+                            <button id="btn-importar-propietarios" class="btn btn-secondary">⬇️ Importar CSV</button>
+                            <button id="btn-exportar-propietarios" class="btn btn-secondary">⬆️ Exportar CSV</button>
+                        </div>
+                    </div>
+                    <div id="lista-propietarios" class="propietarios-list">
+                        <!-- Los propietarios se cargarán dinámicamente aquí -->
+                    </div>
+                    <div id="propietarios-empty" class="empty-state" style="display: none;">
+                        <h3>No hay propietarios</h3>
+                        <p>Añade propietarios a esta comunidad</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="vista-comunidad-formulario" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <button id="btn-volver-comunidades-form" class="btn btn-secondary">← Volver</button>
+                        <h2 id="titulo-formulario-comunidad" class="card-title">Nueva Comunidad</h2>
+                    </div>
+                    <form id="form-comunidad">
+                        <div class="form-group">
+                            <label class="form-label">Nombre *</label>
+                            <input type="text" name="nombre" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Dirección *</label>
+                            <input type="text" name="direccion" class="form-input" required>
+                        </div>
+                        <div class="form-row" style="display: flex; gap: 1rem;">
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Código Postal *</label>
+                                <input type="text" name="codigoPostal" class="form-input" required>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Ciudad *</label>
+                                <input type="text" name="ciudad" class="form-input" required>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Provincia *</label>
+                                <input type="text" name="provincia" class="form-input" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">CIF</label>
+                            <input type="text" name="cif" class="form-input" placeholder="Formato español">
+                        </div>
+                        <div class="form-row" style="display: flex; gap: 1rem;">
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Email</label>
+                                <input type="email" name="email" class="form-input">
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Teléfono</label>
+                                <input type="tel" name="telefono" class="form-input">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Número Catastral</label>
+                            <input type="text" name="numeroCatastral" class="form-input">
+                        </div>
+                        <div class="form-row" style="display: flex; gap: 1rem;">
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Presidente</label>
+                                <input type="text" name="presidente" class="form-input">
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Administrador</label>
+                                <input type="text" name="administrador" class="form-input">
+                            </div>
+                        </div>
+                    </form>
+                    <div class="dialog-buttons" style="margin-top: 2rem;">
+                        <button type="button" id="btn-guardar-comunidad" class="btn btn-primary">Guardar</button>
+                        <button type="button" id="btn-cancelar-comunidad" class="btn btn-secondary">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="vista-propietario-formulario" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <button id="btn-volver-propietarios-form" class="btn btn-secondary">← Volver</button>
+                        <h2 id="titulo-formulario-propietario" class="card-title">Nuevo Propietario</h2>
+                    </div>
+                    <form id="form-propietario">
+                        <div class="form-group">
+                            <label class="form-label">Comunidad *</label>
+                            <select id="propietario-comunidad-id" name="comunidadId" class="form-input" required>
+                                <option value="">Seleccionar comunidad...</option>
+                            </select>
+                        </div>
+                        <div class="form-row" style="display: flex; gap: 1rem;">
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Nombre *</label>
+                                <input type="text" name="nombre" class="form-input" required>
+                            </div>
+                            <div class="form-group" style="flex: 2;">
+                                <label class="form-label">Apellidos *</label>
+                                <input type="text" name="apellidos" class="form-input" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">DNI</label>
+                            <input type="text" name="dni" class="form-input" placeholder="Formato español">
+                        </div>
+                        <div class="form-row" style="display: flex; gap: 1rem;">
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Email</label>
+                                <input type="email" name="email" class="form-input">
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Teléfono</label>
+                                <input type="tel" name="telefono" class="form-input">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Dirección *</label>
+                            <input type="text" name="direccion" class="form-input" required>
+                        </div>
+                        <div class="form-row" style="display: flex; gap: 1rem;">
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Código Postal *</label>
+                                <input type="text" name="codigoPostal" class="form-input" required>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Ciudad *</label>
+                                <input type="text" name="ciudad" class="form-input" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Coeficiente *</label>
+                            <input type="number" name="coeficiente" class="form-input" min="0" max="100" step="0.01" required>
+                        </div>
+                        <div class="form-row" style="display: flex; gap: 1rem;">
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Piso *</label>
+                                <input type="text" name="piso" class="form-input" required placeholder="ej: 1º">
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Letra</label>
+                                <input type="text" name="letra" class="form-input" placeholder="ej: A">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <input type="checkbox" id="propietario-representante" name="representante">
+                                Es representante
+                            </label>
+                        </div>
+                        <div class="form-group" id="grupo-representante-nombre" style="display: none;">
+                            <label class="form-label">Nombre del representado *</label>
+                            <input type="text" name="representanteNombre" class="form-input">
+                        </div>
+                    </form>
+                    <div class="dialog-buttons" style="margin-top: 2rem;">
+                        <button type="button" id="btn-guardar-propietario" class="btn btn-primary">Guardar</button>
+                        <button type="button" id="btn-cancelar-propietario" class="btn btn-secondary">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+
         <section id="tab-juntas" class="content-section active">
             <div class="card">
                 <div class="card-header">
@@ -512,6 +723,8 @@
     <script type="module">
         // Importar servicios
         import { indexedDBService } from './src/services/indexeddb.service.js';
+        import { comunidadesService } from './src/services/comunidades.service.js';
+        import { propietariosService } from './src/services/propietarios.service.js';
         import { juntasService } from './src/services/juntas.service.js';
         import { grabacionService } from './src/services/grabacion.service.js';
         import { transcripcionService } from './src/services/transcripcion.service.js';
@@ -519,9 +732,13 @@
         import { FeedbackUtils } from './src/utilidades/feedback.js';
         import { StorageUtils } from './src/utilidades/storage.js';
         import { ValidationUtils } from './src/utilidades/validacion.js';
+        import { ValidacionComunidadPropietario } from './src/utilidades/validacion-comunidad-propietario.js';
 
         class GestActasApp {
             constructor() {
+                this.comunidades = [];
+                this.propietarios = [];
+                this.comunidadActual = null;
                 this.juntas = [];
                 this.actas = [];
                 this.grabaciones = [];
@@ -562,6 +779,14 @@
 
             async cargarDatos() {
                 try {
+                    // Cargar comunidades
+                    this.comunidades = await comunidadesService.obtenerComunidades();
+                    this.renderizarComunidades();
+                    this.poblarFiltrosComunidades();
+                    
+                    // Cargar propietarios
+                    this.propietarios = await propietariosService.obtenerPropietarios();
+                    
                     // Cargar juntas
                     this.juntas = await juntasService.obtenerJuntas();
                     this.renderizarJuntas();
@@ -585,6 +810,569 @@
                     console.error('Error al cargar datos:', error);
                 }
             }
+            configurarEventListenersComunidades() {
+                // Botón nueva comunidad
+                document.getElementById('btn-nueva-comunidad')?.addEventListener('click', () => {
+                    this.mostrarFormularioNuevaComunidad();
+                });
+
+                // Búsqueda de comunidades
+                document.getElementById('busqueda-comunidades')?.addEventListener('input', (e) => {
+                    this.filtrarComunidades(e.target.value);
+                });
+
+                // Filtros de ciudad y provincia
+                document.getElementById('filtro-ciudad')?.addEventListener('change', (e) => {
+                    this.filtrarComunidadesPorCiudad(e.target.value);
+                });
+
+                document.getElementById('filtro-provincia')?.addEventListener('change', (e) => {
+                    this.filtrarComunidadesPorProvincia(e.target.value);
+                });
+
+                // Volver a lista de comunidades
+                document.getElementById('btn-volver-comunidades')?.addEventListener('click', () => {
+                    this.mostrarListaComunidades();
+                });
+
+                document.getElementById('btn-volver-comunidades-form')?.addEventListener('click', () => {
+                    this.mostrarListaComunidades();
+                });
+
+                // Editar y eliminar comunidad
+                document.getElementById('btn-editar-comunidad')?.addEventListener('click', () => {
+                    this.mostrarFormularioEditarComunidad();
+                });
+
+                document.getElementById('btn-eliminar-comunidad')?.addEventListener('click', () => {
+                    this.eliminarComunidad();
+                });
+
+                // Guardar y cancelar comunidad
+                document.getElementById('btn-guardar-comunidad')?.addEventListener('click', () => {
+                    this.guardarComunidad();
+                });
+
+                document.getElementById('btn-cancelar-comunidad')?.addEventListener('click', () => {
+                    this.mostrarListaComunidades();
+                });
+
+                // Propietarios
+                document.getElementById('btn-nuevo-propietario')?.addEventListener('click', () => {
+                    this.mostrarFormularioNuevoPropietario();
+                });
+
+                document.getElementById('btn-importar-propietarios')?.addEventListener('click', () => {
+                    this.importarPropietariosCSV();
+                });
+
+                document.getElementById('btn-exportar-propietarios')?.addEventListener('click', () => {
+                    this.exportarPropietariosCSV();
+                });
+
+                // Búsqueda de propietarios
+                document.getElementById('busqueda-propietarios')?.addEventListener('input', (e) => {
+                    this.filtrarPropietarios(e.target.value);
+                });
+
+                // Volver a lista de propietarios
+                document.getElementById('btn-volver-propietarios-form')?.addEventListener('click', () => {
+                    this.mostrarDetalleComunidad(this.comunidadActual.id);
+                });
+
+                // Checkbox de representante
+                document.getElementById('propietario-representante')?.addEventListener('change', (e) => {
+                    const grupoNombre = document.getElementById('grupo-representante-nombre');
+                    if (grupoNombre) {
+                        grupoNombre.style.display = e.target.checked ? 'block' : 'none';
+                    }
+                });
+
+                // Guardar y cancelar propietario
+                document.getElementById('btn-guardar-propietario')?.addEventListener('click', () => {
+                    this.guardarPropietario();
+                });
+
+                document.getElementById('btn-cancelar-propietario')?.addEventListener('click', () => {
+                    this.mostrarDetalleComunidad(this.comunidadActual.id);
+                });
+            }
+
+            async renderizarComunidades() {
+                const contenedor = document.getElementById('lista-comunidades');
+                const mensajeVacio = document.getElementById('comunidades-empty');
+
+                if (this.comunidades.length === 0) {
+                    contenedor.innerHTML = '';
+                    mensajeVacio.style.display = 'block';
+                    return;
+                }
+
+                mensajeVacio.style.display = 'none';
+
+                contenedor.innerHTML = this.comunidades.map(comunidad => `
+                    <div class="card" style="margin-bottom: 1rem; cursor: pointer;" onclick="app.mostrarDetalleComunidad(${comunidad.id})">
+                        <div class="card-header">
+                            <h3 style="font-size: 1rem;">${this.escapeHtml(comunidad.nombre)}</h3>
+                            ${!comunidad.activo ? '<span class="badge badge-warning">Inactiva</span>' : ''}
+                        </div>
+                        <div style="font-size: 0.875rem; color: var(--text-muted);">
+                            <div>📍 ${this.escapeHtml(comunidad.direccion)}, ${this.escapeHtml(comunidad.ciudad)} (${this.escapeHtml(comunidad.provincia)})</div>
+                            <div>📧 ${comunidad.email || 'Sin email'}</div>
+                            <div>📞 ${comunidad.telefono || 'Sin teléfono'}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            async poblarFiltrosComunidades() {
+                // Poblar filtro de ciudades
+                const filtroCiudad = document.getElementById('filtro-ciudad');
+                if (filtroCiudad) {
+                    const ciudades = await comunidadesService.obtenerCiudades();
+                    filtroCiudad.innerHTML = '<option value="">Todas las ciudades</option>' +
+                        ciudades.map(ciudad => `<option value="${ciudad}">${ciudad}</option>`).join('');
+                }
+
+                // Poblar filtro de provincias
+                const filtroProvincia = document.getElementById('filtro-provincia');
+                if (filtroProvincia) {
+                    const provincias = await comunidadesService.obtenerProvincias();
+                    filtroProvincia.innerHTML = '<option value="">Todas las provincias</option>' +
+                        provincias.map(provincia => `<option value="${provincia}">${provincia}</option>`).join('');
+                }
+            }
+
+            mostrarListaComunidades() {
+                document.getElementById('vista-comunidades-lista').style.display = 'block';
+                document.getElementById('vista-comunidad-detalle').style.display = 'none';
+                document.getElementById('vista-comunidad-formulario').style.display = 'none';
+                document.getElementById('vista-propietario-formulario').style.display = 'none';
+                this.renderizarComunidades();
+            }
+
+            async mostrarDetalleComunidad(comunidadId) {
+                try {
+                    this.comunidadActual = await comunidadesService.obtenerComunidad(comunidadId);
+                    
+                    // Renderizar detalle
+                    const contenido = document.getElementById('detalle-comunidad-contenido');
+                    contenido.innerHTML = `
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+                            <div>
+                                <label style="display: block; font-weight: bold; margin-bottom: 0.25rem;">Nombre</label>
+                                <div>${this.escapeHtml(this.comunidadActual.nombre)}</div>
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: bold; margin-bottom: 0.25rem;">Dirección</label>
+                                <div>${this.escapeHtml(this.comunidadActual.direccion)}</div>
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: bold; margin-bottom: 0.25rem;">Código Postal</label>
+                                <div>${this.escapeHtml(this.comunidadActual.codigoPostal)}</div>
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: bold; margin-bottom: 0.25rem;">Ciudad</label>
+                                <div>${this.escapeHtml(this.comunidadActual.ciudad)}</div>
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: bold; margin-bottom: 0.25rem;">Provincia</label>
+                                <div>${this.escapeHtml(this.comunidadActual.provincia)}</div>
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: bold; margin-bottom: 0.25rem;">CIF</label>
+                                <div>${this.escapeHtml(this.comunidadActual.cif) || 'No especificado'}</div>
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: bold; margin-bottom: 0.25rem;">Email</label>
+                                <div>${this.escapeHtml(this.comunidadActual.email) || 'No especificado'}</div>
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: bold; margin-bottom: 0.25rem;">Teléfono</label>
+                                <div>${this.escapeHtml(this.comunidadActual.telefono) || 'No especificado'}</div>
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: bold; margin-bottom: 0.25rem;">Presidente</label>
+                                <div>${this.escapeHtml(this.comunidadActual.presidente) || 'No especificado'}</div>
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: bold; margin-bottom: 0.25rem;">Administrador</label>
+                                <div>${this.escapeHtml(this.comunidadActual.administrador) || 'No especificado'}</div>
+                            </div>
+                        </div>
+                        
+                        <div style="padding: 1rem; background: var(--dark-lighter); border-radius: 0.5rem;">
+                            <h4 style="margin-bottom: 0.5rem;">Estadísticas</h4>
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                                <div>
+                                    <label style="display: block; font-size: 0.875rem; color: var(--text-muted);">Total Propietarios</label>
+                                    <div style="font-size: 1.5rem; font-weight: bold;">${this.comunidadActual.propietarios ? this.comunidadActual.propietarios.length : 0}</div>
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 0.875rem; color: var(--text-muted);">Propietarios Activos</label>
+                                    <div style="font-size: 1.5rem; font-weight: bold;">${this.comunidadActual.propietarios ? this.comunidadActual.propietarios.filter(p => p.activo).length : 0}</div>
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 0.875rem; color: var(--text-muted);">Coeficiente Total</label>
+                                    <div style="font-size: 1.5rem; font-weight: bold;">${this.comunidadActual.propietarios ? this.comunidadActual.propietarios.reduce((sum, p) => sum + (p.coeficiente || 0), 0).toFixed(2) : 0}%</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    document.getElementById('vista-comunidades-lista').style.display = 'none';
+                    document.getElementById('vista-comunidad-detalle').style.display = 'block';
+                    document.getElementById('vista-comunidad-formulario').style.display = 'none';
+                    document.getElementById('vista-propietario-formulario').style.display = 'none';
+
+                    // Cargar propietarios
+                    await this.mostrarListaPropietarios(comunidadId);
+                } catch (error) {
+                    console.error('Error al mostrar detalle de comunidad:', error);
+                    FeedbackUtils.mostrarError('Error al cargar el detalle de la comunidad');
+                }
+            }
+
+            mostrarFormularioNuevaComunidad() {
+                document.getElementById('titulo-formulario-comunidad').textContent = 'Nueva Comunidad';
+                document.getElementById('form-comunidad').reset();
+                document.getElementById('vista-comunidades-lista').style.display = 'none';
+                document.getElementById('vista-comunidad-detalle').style.display = 'none';
+                document.getElementById('vista-comunidad-formulario').style.display = 'block';
+                document.getElementById('vista-propietario-formulario').style.display = 'none';
+            }
+
+            mostrarFormularioEditarComunidad() {
+                if (!this.comunidadActual) return;
+
+                document.getElementById('titulo-formulario-comunidad').textContent = 'Editar Comunidad';
+                
+                const form = document.getElementById('form-comunidad');
+                form.nombre.value = this.comunidadActual.nombre;
+                form.direccion.value = this.comunidadActual.direccion;
+                form.codigoPostal.value = this.comunidadActual.codigoPostal;
+                form.ciudad.value = this.comunidadActual.ciudad;
+                form.provincia.value = this.comunidadActual.provincia;
+                form.cif.value = this.comunidadActual.cif || '';
+                form.email.value = this.comunidadActual.email || '';
+                form.telefono.value = this.comunidadActual.telefono || '';
+                form.numeroCatastral.value = this.comunidadActual.numeroCatastral || '';
+                form.presidente.value = this.comunidadActual.presidente || '';
+                form.administrador.value = this.comunidadActual.administrador || '';
+
+                document.getElementById('vista-comunidades-lista').style.display = 'none';
+                document.getElementById('vista-comunidad-detalle').style.display = 'none';
+                document.getElementById('vista-comunidad-formulario').style.display = 'block';
+                document.getElementById('vista-propietario-formulario').style.display = 'none';
+            }
+
+            async guardarComunidad() {
+                try {
+                    const form = document.getElementById('form-comunidad');
+                    const formData = new FormData(form);
+                    const datos = Object.fromEntries(formData.entries());
+
+                    if (this.comunidadActual) {
+                        // Editar
+                        const comunidadActualizada = await comunidadesService.actualizarComunidad(this.comunidadActual.id, datos);
+                        FeedbackUtils.mostrarExito('Comunidad actualizada correctamente');
+                    } else {
+                        // Crear
+                        const comunidadNueva = await comunidadesService.crearComunidad(datos);
+                        FeedbackUtils.mostrarExito('Comunidad creada correctamente');
+                    }
+
+                    await this.cargarDatos();
+                    this.mostrarListaComunidades();
+                } catch (error) {
+                    console.error('Error al guardar comunidad:', error);
+                    FeedbackUtils.mostrarError(error.message);
+                }
+            }
+
+            async eliminarComunidad() {
+                if (!this.comunidadActual) return;
+
+                if (!confirm('¿Estás seguro de que quieres eliminar esta comunidad y todos sus propietarios?')) {
+                    return;
+                }
+
+                try {
+                    await comunidadesService.eliminarComunidad(this.comunidadActual.id);
+                    FeedbackUtils.mostrarExito('Comunidad eliminada correctamente');
+                    this.comunidadActual = null;
+                    await this.cargarDatos();
+                    this.mostrarListaComunidades();
+                } catch (error) {
+                    console.error('Error al eliminar comunidad:', error);
+                    FeedbackUtils.mostrarError(error.message);
+                }
+            }
+
+            async mostrarListaPropietarios(comunidadId) {
+                try {
+                    const propietarios = await propietariosService.obtenerPropietariosComunidad(comunidadId);
+                    
+                    const contenedor = document.getElementById('lista-propietarios');
+                    const mensajeVacio = document.getElementById('propietarios-empty');
+
+                    if (propietarios.length === 0) {
+                        contenedor.innerHTML = '';
+                        mensajeVacio.style.display = 'block';
+                        return;
+                    }
+
+                    mensajeVacio.style.display = 'none';
+
+                    contenedor.innerHTML = propietarios.map(propietario => `
+                        <div class="card" style="margin-bottom: 0.5rem;">
+                            <div class="card-header">
+                                <h4 style="font-size: 0.9rem;">${this.escapeHtml(propietario.nombre)} ${this.escapeHtml(propietario.apellidos)}</h4>
+                                <div>
+                                    ${!propietario.activo ? '<span class="badge badge-warning">Inactivo</span>' : ''}
+                                    ${propietario.representante ? '<span class="badge badge-info">Representante</span>' : ''}
+                                </div>
+                            </div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">
+                                <div>🏠 ${this.escapeHtml(propietario.piso)}${propietario.letra ? ' ' + this.escapeHtml(propietario.letra) : ''} · ${this.escapeHtml(propietario.direccion)}</div>
+                                <div>📊 Coeficiente: ${propietario.coeficiente}%</div>
+                                <div>📧 ${propietario.email || 'Sin email'}</div>
+                                <div>📞 ${propietario.telefono || 'Sin teléfono'}</div>
+                            </div>
+                            <div style="margin-top: 0.5rem;">
+                                <button class="btn btn-secondary btn-sm" onclick="app.mostrarFormularioEditarPropietario(${propietario.id})">Editar</button>
+                                <button class="btn btn-danger btn-sm" onclick="app.eliminarPropietario(${propietario.id})">Eliminar</button>
+                            </div>
+                        </div>
+                    `).join('');
+                } catch (error) {
+                    console.error('Error al mostrar propietarios:', error);
+                    FeedbackUtils.mostrarError('Error al cargar los propietarios');
+                }
+            }
+
+            async mostrarFormularioNuevoPropietario() {
+                if (!this.comunidadActual) return;
+
+                document.getElementById('titulo-formulario-propietario').textContent = 'Nuevo Propietario';
+                document.getElementById('form-propietario').reset();
+                
+                // Seleccionar comunidad actual
+                const selectComunidad = document.getElementById('propietario-comunidad-id');
+                selectComunidad.innerHTML = '<option value="">Seleccionar comunidad...</option>' +
+                    this.comunidades.map(c => `<option value="${c.id}" ${c.id === this.comunidadActual.id ? 'selected' : ''}>${c.nombre}</option>`).join('');
+
+                // Mostrar formulario
+                document.getElementById('vista-comunidad-detalle').style.display = 'none';
+                document.getElementById('vista-propietario-formulario').style.display = 'block';
+            }
+
+            async mostrarFormularioEditarPropietario(propietarioId) {
+                try {
+                    const propietario = await propietariosService.obtenerPropietario(propietarioId);
+                    
+                    document.getElementById('titulo-formulario-propietario').textContent = 'Editar Propietario';
+                    
+                    const form = document.getElementById('form-propietario');
+                    form.comunidadId.value = propietario.comunidadId;
+                    form.nombre.value = propietario.nombre;
+                    form.apellidos.value = propietario.apellidos;
+                    form.dni.value = propietario.dni || '';
+                    form.email.value = propietario.email || '';
+                    form.telefono.value = propietario.telefono || '';
+                    form.direccion.value = propietario.direccion;
+                    form.codigoPostal.value = propietario.codigoPostal;
+                    form.ciudad.value = propietario.ciudad;
+                    form.coeficiente.value = propietario.coeficiente;
+                    form.piso.value = propietario.piso;
+                    form.letra.value = propietario.letra || '';
+                    form.representante.checked = propietario.representante;
+                    form.representanteNombre.value = propietario.representanteNombre || '';
+
+                    // Mostrar/ocultar campo de nombre de representado
+                    document.getElementById('grupo-representante-nombre').style.display = propietario.representante ? 'block' : 'none';
+
+                    // Poblar select de comunidades
+                    const selectComunidad = document.getElementById('propietario-comunidad-id');
+                    selectComunidad.innerHTML = '<option value="">Seleccionar comunidad...</option>' +
+                        this.comunidades.map(c => `<option value="${c.id}" ${c.id === propietario.comunidadId ? 'selected' : ''}>${c.nombre}</option>`).join('');
+
+                    document.getElementById('vista-comunidad-detalle').style.display = 'none';
+                    document.getElementById('vista-propietario-formulario').style.display = 'block';
+                } catch (error) {
+                    console.error('Error al mostrar formulario de propietario:', error);
+                    FeedbackUtils.mostrarError('Error al cargar el propietario');
+                }
+            }
+
+            async guardarPropietario() {
+                try {
+                    const form = document.getElementById('form-propietario');
+                    const formData = new FormData(form);
+                    const datos = Object.fromEntries(formData.entries());
+
+                    // Convertir campos numéricos y booleanos
+                    datos.coeficiente = parseFloat(datos.coeficiente);
+                    datos.representante = datos.representante === 'on';
+
+                    // Crear propietario
+                    await propietariosService.crearPropietario(datos);
+                    FeedbackUtils.mostrarExito('Propietario guardado correctamente');
+
+                    await this.cargarDatos();
+                    this.mostrarDetalleComunidad(datos.comunidadId);
+                } catch (error) {
+                    console.error('Error al guardar propietario:', error);
+                    FeedbackUtils.mostrarError(error.message);
+                }
+            }
+
+            async eliminarPropietario(propietarioId) {
+                if (!confirm('¿Estás seguro de que quieres eliminar este propietario?')) {
+                    return;
+                }
+
+                try {
+                    await propietariosService.eliminarPropietario(propietarioId);
+                    FeedbackUtils.mostrarExito('Propietario eliminado correctamente');
+                    await this.cargarDatos();
+                    if (this.comunidadActual) {
+                        this.mostrarListaPropietarios(this.comunidadActual.id);
+                    }
+                } catch (error) {
+                    console.error('Error al eliminar propietario:', error);
+                    FeedbackUtils.mostrarError(error.message);
+                }
+            }
+
+            async importarPropietariosCSV() {
+                if (!this.comunidadActual) return;
+
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.csv';
+
+                input.onchange = async (e) => {
+                    const archivo = e.target.files[0];
+                    if (!archivo) return;
+
+                    try {
+                        FeedbackUtils.mostrarInformacion('Importando propietarios...');
+                        
+                        const resultado = await propietariosService.importarPropietariosCSV(archivo, this.comunidadActual.id);
+                        
+                        FeedbackUtils.mostrarExito(
+                            `Importación completada: ${resultado.importadas} importadas, ${resultado.fallidas} fallidas`
+                        );
+
+                        await this.cargarDatos();
+                        this.mostrarListaPropietarios(this.comunidadActual.id);
+                    } catch (error) {
+                        console.error('Error al importar propietarios:', error);
+                        FeedbackUtils.mostrarError(error.message);
+                    }
+                };
+
+                input.click();
+            }
+
+            async exportarPropietariosCSV() {
+                if (!this.comunidadActual) return;
+
+                try {
+                    FeedbackUtils.mostrarInformacion('Exportando propietarios...');
+                    
+                    const resultado = await propietariosService.exportarPropietariosCSV(this.comunidadActual.id);
+                    
+                    FeedbackUtils.mostrarExito(`Exportados ${resultado.exportados} propietarios a CSV`);
+                } catch (error) {
+                    console.error('Error al exportar propietarios:', error);
+                    FeedbackUtils.mostrarError(error.message);
+                }
+            }
+
+            async filtrarComunidades(termino) {
+                if (!termino || termino.trim() === '') {
+                    this.comunidades = await comunidadesService.obtenerComunidades();
+                } else {
+                    this.comunidades = await comunidadesService.buscarComunidades(termino);
+                }
+                this.renderizarComunidades();
+            }
+
+            async filtrarComunidadesPorCiudad(ciudad) {
+                if (!ciudad) {
+                    this.comunidades = await comunidadesService.obtenerComunidades();
+                } else {
+                    this.comunidades = await comunidadesService.obtenerComunidades({ ciudad });
+                }
+                this.renderizarComunidades();
+            }
+
+            async filtrarComunidadesPorProvincia(provincia) {
+                if (!provincia) {
+                    this.comunidades = await comunidadesService.obtenerComunidades();
+                } else {
+                    this.comunidades = await comunidadesService.obtenerComunidades({ provincia });
+                }
+                this.renderizarComunidades();
+            }
+
+            async filtrarPropietarios(termino) {
+                if (!this.comunidadActual) return;
+
+                if (!termino || termino.trim() === '') {
+                    const propietarios = await propietariosService.obtenerPropietariosComunidad(this.comunidadActual.id);
+                    this.renderizarListaPropietariosDirecta(propietarios);
+                } else {
+                    const propietarios = await propietariosService.obtenerPropietariosComunidad(this.comunidadActual.id, { busqueda: termino });
+                    this.renderizarListaPropietariosDirecta(propietarios);
+                }
+            }
+
+            renderizarListaPropietariosDirecta(propietarios) {
+                const contenedor = document.getElementById('lista-propietarios');
+                const mensajeVacio = document.getElementById('propietarios-empty');
+
+                if (propietarios.length === 0) {
+                    contenedor.innerHTML = '';
+                    mensajeVacio.style.display = 'block';
+                    return;
+                }
+
+                mensajeVacio.style.display = 'none';
+
+                contenedor.innerHTML = propietarios.map(propietario => `
+                    <div class="card" style="margin-bottom: 0.5rem;">
+                        <div class="card-header">
+                            <h4 style="font-size: 0.9rem;">${this.escapeHtml(propietario.nombre)} ${this.escapeHtml(propietario.apellidos)}</h4>
+                            <div>
+                                ${!propietario.activo ? '<span class="badge badge-warning">Inactivo</span>' : ''}
+                                ${propietario.representante ? '<span class="badge badge-info">Representante</span>' : ''}
+                            </div>
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">
+                            <div>🏠 ${this.escapeHtml(propietario.piso)}${propietario.letra ? ' ' + this.escapeHtml(propietario.letra) : ''} · ${this.escapeHtml(propietario.direccion)}</div>
+                            <div>📊 Coeficiente: ${propietario.coeficiente}%</div>
+                            <div>📧 ${propietario.email || 'Sin email'}</div>
+                            <div>📞 ${propietario.telefono || 'Sin teléfono'}</div>
+                        </div>
+                        <div style="margin-top: 0.5rem;">
+                            <button class="btn btn-secondary btn-sm" onclick="app.mostrarFormularioEditarPropietario(${propietario.id})">Editar</button>
+                            <button class="btn btn-danger btn-sm" onclick="app.eliminarPropietario(${propietario.id})">Eliminar</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            escapeHtml(texto) {
+                if (!texto) return '';
+                const div = document.createElement('div');
+                div.textContent = texto;
+                return div.innerHTML;
+            }
+
+
 
             configurarNavegacion() {
                 // Configurar tabs
@@ -595,6 +1383,9 @@
                         this.cambiarTab(tabName);
                     });
                 });
+
+                // Event listeners de Comunidades
+                this.configurarEventListenersComunidades();
 
                 // Botón nueva junta
                 document.getElementById('btn-nueva-junta').addEventListener('click', () => {
