@@ -189,7 +189,7 @@ class ContextoLegal {
             },
             mixta: {
                 rol: "acta_junta_mixta",
-                foco "combinación de asuntos ordinarios y extraordinarios",
+                foco: "combinación de asuntos ordinarios y extraordinarios",
                 contexto_adicional: "Las juntas mixtas tratan tanto asuntos ordinarios como extraordinarios en la misma reunión."
             }
         };
