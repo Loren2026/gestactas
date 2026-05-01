@@ -541,3 +541,502 @@ He revisado la propuesta del Bloque 6 y propongo las siguientes mejoras técnica
 | ⭐⭐⭐ Media | Sistema de favoritos de plantillas | UX |
 
 **Recomendación:** Implementar las 9 mejoras de prioridad Alta para el MVP del Bloque 6. Las 6 mejoras de prioridad Media pueden considerarse para iteraciones futuras.
+
+---
+
+## Bloque 7 - Conexión UI Real con Datos de la Aplicación
+
+### Paso en curso
+Bloque 7 propuesto: conectar toda la lógica construida en los bloques anteriores con la UI real de GestActas, de forma que la app deje de mostrar datos estáticos y muestre datos reales.
+
+### Estado actual
+- Bloque 1 completado: estructura base de juntas y convocatorias.
+- Bloque 2 completado: documento Word de convocatoria.
+- Bloque 3 completado: grabación real de audio y almacenamiento local.
+- Bloque 4 completado: transcripción con Whisper y Web Speech API.
+- Bloque 5 completado: generación de actas con Claude.
+- Bloque 6 completado: exportación a Word profesional.
+- Bloque 7 pendiente: conexión de toda la lógica con la UI.
+
+### Objetivo general del Bloque 7
+Crear una interfaz de usuario funcional que conecte todos los servicios implementados en los Bloques 1-6, permitiendo una experiencia de usuario completa donde:
+- Los datos se ingresen y almacenen realmente en IndexedDB
+- La grabación de audio funcione con la API de MediaRecorder
+- La transcripción se realice realmente con Whisper/Web Speech API
+- Las actas se generen realmente con Claude API
+- Las exportaciones a Word funcionen realmente
+- La aplicación sea completamente funcional con datos reales
+
+### Objetivos funcionales
+1. Crear una interfaz de usuario completa que permita la entrada de datos reales.
+2. Implementar la grabación de audio real con MediaRecorder API.
+3. Implementar la transcripción real con Whisper API y Web Speech API.
+4. Implementar la generación real de actas con Claude API.
+5. Implementar la exportación real a Word (.docx).
+6. Crear un sistema de navegación completo entre todas las pantallas.
+7. Implementar el almacenamiento local de todos los datos en IndexedDB.
+8. Crear un sistema de feedback visual en tiempo real.
+
+### Alcance del Bloque 7
+
+### 1. Conexión de datos reales con IndexedDB
+Crear un servicio de almacenamiento robusto que permita:
+- Almacenar juntas, convocatorias, asistentes, propietarios, etc.
+- Recuperar datos almacenados
+- Actualizar datos existentes
+- Eliminar datos
+- Establecer relaciones entre datos (ej. asistentes a una junta específica)
+- Implementar migración de datos si es necesario
+
+### 2. UI de gestión de juntas
+Crear pantallas completas para:
+- **Lista de juntas**: Mostrar todas las juntas con filtros y búsqueda
+- **Detalle de junta**: Ver detalles completos de una junta específica
+- **Formulario de nueva junta**: Entrada completa de datos de junta
+- **Gestión de asistentes**: Añadir, eliminar y editar asistentes a una junta
+- **Gestión de quórum**: Establecer y ver el quórum de cada junta
+
+### 3. UI de grabación de audio
+Crear una interfaz de grabación real que permita:
+- **Pantalla de grabación**: Botón de grabar, pausar, detener
+- **Visualizador de audio**: Waveform de audio en tiempo real
+- **Gestión de grabaciones**: Ver, escuchar y eliminar grabaciones
+- **Selección de grabación**: Elegir cuál grabación usar para transcripción
+
+### 4. UI de transcripción
+Crear una interfaz de transcripción que permita:
+- **Selección de grabación**: Elegir grabación a transcribir
+- **Transcripción en tiempo real**: Mostrar texto mientras se transcribe
+- **Edición de transcripción**: Corregir, añadir y eliminar texto
+- **Exportación de transcripción**: Guardar transcripción como texto
+
+### 5. UI de generación de actas
+Crear una interfaz de generación de actas que permita:
+- **Selección de junta**: Elegir qué junta generar acta
+- **Selección de plantilla**: Elegir plantilla de acta
+- **Generación de acta**: Llamar a Claude API y mostrar resultado
+- **Edición de acta generada**: Corregir, añadir y eliminar contenido
+- **Validación de acta**: Verificar que la acta es válida antes de exportar
+
+### 6. UI de exportación a Word
+Crear una interfaz de exportación a Word que permita:
+- **Vista previa de acta**: Ver cómo quedará el documento Word
+- **Exportación a Word**: Generar el archivo .docx real
+- **Descarga del archivo**: Descargar el archivo generado
+- **Historial de exportaciones**: Ver actas exportadas anteriormente
+- **Compartir exportación**: Generar enlace para compartir
+
+### 7. Navegación completa
+Implementar un sistema de navegación que permita:
+- **Navegación entre pantallas**: Ir de una pantalla a otra
+- **Navegación en árbol**: Estructura jerárquica de la aplicación
+- **Navegación con tabs**: Tabs para pantallas principales
+- **Navegación con drawer**: Drawer lateral para menús secundarios
+- **Navegación con modales**: Modales para acciones secundarias
+
+### 8. Sistema de feedback visual
+Implementar un sistema de feedback que permita:
+- **Feedback de carga**: Indicar cuando se está procesando
+- **Feedback de éxito**: Confirmar acciones exitosas
+- **Feedback de error**: Mostrar errores de forma clara
+- **Feedback de progreso**: Mostrar progreso de operaciones largas
+- **Feedback de validación**: Indicar si los datos son válidos
+
+### Observaciones de mejora
+
+**Observación 1: Arquitectura de navegación**
+Actualmente no hay una arquitectura clara de navegación. Se recomienda implementar un patrón de navegación basado en:
+- **Tabs principales**: Juntas, Actas, Grabación, Exportar, Historial
+- **Navegación en árbol**: Para detalles y formularios
+- **Modales**: Para acciones secundarias
+- **Drawer lateral**: Para menús contextuales
+
+**Observación 2: Manejo de errores**
+Se debe implementar un sistema robusto de manejo de errores que permita:
+- Capturar errores en todas las operaciones
+- Mostrar errores de forma clara al usuario
+- Registrar errores para depuración
+- Proporcionar soluciones o workarounds
+
+**Observación 3: Persistencia de datos**
+Se debe asegurar que todos los datos se guarden en IndexedDB de forma consistente:
+- Validar que los datos se guarden correctamente
+- Implementar respaldo de datos
+- Implementar recuperación de datos
+- Implementar migración de datos si cambia la estructura
+
+**Observación 4: Feedback del usuario**
+Se debe proporcionar feedback constante al usuario:
+- Indicar estado de operaciones
+- Mostrar progreso de operaciones largas
+- Confirmar acciones exitosas
+- Mostrar errores de forma clara
+- Proporcionar ayuda cuando sea necesario
+
+**Observación 5: Accesibilidad**
+Se debe mejorar la accesibilidad de la aplicación:
+- Añadir etiquetas ARIA a elementos interactivos
+- Añadir atajos de teclado
+- Añadir soporte para navegación por teclado
+- Mejorar contraste de colores
+- Añadir soporte para lectores de pantalla
+
+**Observación 6: Responsividad**
+Se debe mejorar la responsividad de la aplicación:
+- Optimizar para móviles
+- Optimizar para tablets
+- Optimizar para escritorio
+- Implementar diseño responsive
+- Añadir soporte para diferentes tamaños de pantalla
+
+**Observación 7: Internacionalización**
+Se debe prepararse para internacionalización:
+- Preparar textos para traducción
+- Preparar fechas para diferentes formatos
+- Preparar monedas para diferentes países
+- Añadir soporte para múltiples idiomas
+
+### Arquitectura propuesta
+
+#### Principio general
+Se mantendrá la arquitectura actual en HTML/CSS/JS vanilla, sin introducir dependencias pesadas innecesarias. El bloque se integrará con el trabajo ya realizado en los Bloques 1-6.
+
+#### Capas previstas
+1. **Capa de datos**
+   - Servicio de almacenamiento en IndexedDB
+   - Servicio de migración de datos
+   - Servicio de validación de datos
+
+2. **Capa de servicios**
+   - Servicio de juntas
+   - Servicio de asistentes
+   - Servicio de grabaciones
+   - Servicio de transcripciones
+   - Servicio de actas
+   - Servicio de exportaciones
+
+3. **Capa de UI**
+   - Pantallas de gestión de juntas
+   - Pantallas de grabación
+   - Pantallas de transcripción
+   - Pantallas de generación de actas
+   - Pantallas de exportación
+   - Sistema de navegación
+
+4. **Capa de utilidades**
+   - Utilidades de almacenamiento
+   - Utilidades de validación
+   - Utilidades de formateo
+   - Utilidades de feedback
+
+### Archivos previstos
+
+#### Archivos de servicio
+- `gestactas/src/services/indexeddb.service.js` - Servicio de almacenamiento en IndexedDB
+- `gestactas/src/services/juntas.service.js` - Servicio de gestión de juntas
+- `gestactas/src/services/grabacion.service.js` - Servicio de grabación de audio
+- `gestactas/src/services/transcripcion.service.js` - Servicio de transcripción
+- `gestactas/src/services/actas.service.js` - Servicio de gestión de actas
+
+#### Archivos de UI
+- `gestactas/src/ui/pantallas/juntas-lista.html` - Lista de juntas
+- `gestactas/src/ui/pantallas/junta-detalle.html` - Detalle de junta
+- `gestactas/src/ui/pantallas/junta-crear.html` - Formulario de nueva junta
+- `gestactas/src/ui/pantallas/grabacion.html` - Pantalla de grabación
+- `gestactas/src/ui/pantallas/transcripcion.html` - Pantalla de transcripción
+- `gestactas/src/ui/pantallas/actas.html` - Pantalla de actas
+- `gestactas/src/ui/pantallas/exportar.html` - Pantalla de exportación
+- `gestactas/src/ui/navegacion.html` - Sistema de navegación
+
+#### Archivos de utilidades
+- `gestactas/src/utilidades/storage.js` - Utilidades de almacenamiento
+- `gestactas/src/utilidades/validacion.js` - Utilidades de validación
+- `gestactas/src/utilidades/feedback.js` - Utilidades de feedback
+
+### Criterio de cierre propuesto para el Bloque 7
+El Bloque 7 se considerará correctamente ejecutado cuando:
+- Un usuario pueda crear una junta real con datos
+- Un usuario pueda grabar audio real
+- Un usuario pueda transcribir el audio
+- Un usuario pueda generar un acta real con Claude
+- Un usuario pueda exportar el acta a Word real
+- La aplicación sea completamente funcional con datos reales
+- La aplicación tenga una interfaz de usuario completa
+- La aplicación tenga un sistema de navegación completo
+
+### Fuera de alcance de este bloque
+Este bloque no debe incluir todavía:
+- Firma electrónica avanzada
+- Envío automático por email
+- Registro telemático externo
+- Integración con plataformas legales de terceros
+- Sistema de notificaciones push
+- Integración con servicios de terceros
+
+### Esperando autorización
+SÍ
+
+No se ejecutará ningún desarrollo del Bloque 7 sin autorización expresa de Lorenzo.
+
+---
+
+## 📌 MEJORAS PROPUESTAS POR TURÍN
+
+He revisado la propuesta del Bloque 7 y propongo las siguientes mejoras técnicas y de UX:
+
+### 1. **[UX] Panel de control centralizado** ⭐⭐⭐⭐⭐
+
+**Problema:** No hay un panel de control centralizado que resuma toda la actividad de la aplicación.
+
+**Mejora propuesta:** Implementar un panel de control centralizado que muestre:
+- Resumen de juntas creadas
+- Resumen de actas generadas
+- Resumen de exportaciones realizadas
+- Gráfico de actividad reciente
+- Próximas juntas programadas
+- Alertas y notificaciones
+- Estadísticas rápidas
+
+**Beneficio:** Vista panorámica de toda la actividad, fácil acceso a información importante.
+
+---
+
+### 2. **[UX] Asistente de creación guiada** ⭐⭐⭐⭐⭐
+
+**Problema:** Crear una junta completa puede ser tedioso con muchos formularios.
+
+**Mejora propuesta:** Implementar un asistente de creación guiada que:
+- Guía paso a paso al crear una junta
+- Sugiere datos basados en juntas anteriores
+- Sugiere asistentes basados en propietarios
+- Sugiere quórum basado en asistentes
+- Permite editar sugerencias fácilmente
+- Permite saltar pasos si se sabe qué se hace
+
+**Beneficio:** Facilita la creación de juntas, reduce errores, mejora experiencia.
+
+---
+
+### 3. **[UX] Editor en tiempo real** ⭐⭐⭐⭐⭐
+
+**Problema:** No hay feedback inmediato cuando se edita un dato.
+
+**Mejora propuesta:** Implementar editor en tiempo real que:
+- Muestre cambios inmediatamente
+- Valide datos mientras se edita
+- Muestre sugerencias mientras se edita
+- Permite revertir cambios
+- Muestre progreso de edición
+
+**Beneficio:** Mejor experiencia de edición, menos errores, más natural.
+
+---
+
+### 4. **[TÉCNICA] Sistema de caché** ⭐⭐⭐⭐
+
+**Problema:** Se deben cargar datos múltiples veces si se navega entre pantallas.
+
+**Mejora propuesta:** Implementar sistema de caché que:
+- Cache datos en memoria
+- Cache datos en localStorage
+- Cache datos en IndexedDB
+- Actualiza caché automáticamente
+- Permite invalidar caché manualmente
+- Permite limpiar caché
+
+**Beneficio:** Mejor rendimiento, menos carga de red, mejor experiencia.
+
+---
+
+### 5. **[UX] Búsqueda avanzada** ⭐⭐⭐⭐
+
+**Problema:** La búsqueda de juntas y actas es básica y limitada.
+
+**Mejora propuesta:** Implementar búsqueda avanzada que:
+- Busque por múltiples criterios
+- Permita combinación de filtros
+- Permita búsqueda en texto completo
+- Permita búsqueda por fecha
+- Permita búsqueda por estado
+- Permita búsqueda por asistente
+
+**Beneficio:** Más flexible, más potente, mejor experiencia.
+
+---
+
+### 6. **[UX] Sistema de etiquetas** ⭐⭐⭐⭐
+
+**Problema:** No hay forma de organizar y categorizar juntas y actas.
+
+**Mejora propuesta:** Implementar sistema de etiquetas que:
+- Permita añadir etiquetas a juntas y actas
+- Permita filtrar por etiquetas
+- Permita organizar por etiquetas
+- Permita crear nuevas etiquetas
+- Permita eliminar etiquetas
+
+**Beneficio:** Mejor organización, más fácil de encontrar datos, mejor UX.
+
+---
+
+### 7. **[TÉCNICA] Sistema de versionado** ⭐⭐⭐⭐
+
+**Problema:** No hay forma de revertir cambios a datos.
+
+**Mejora propuesta:** Implementar sistema de versionado que:
+- Versione cada dato
+- Permita ver versiones anteriores
+- Permita revertir a versiones anteriores
+- Permita comparar versiones
+- Permita ver diferencias entre versiones
+
+**Beneficio:** Más seguridad, menos riesgo, mejor control.
+
+---
+
+### 8. **[UX] Sistema de notificaciones** ⭐⭐⭐⭐
+
+**Problema:** No hay notificaciones cuando se completan tareas.
+
+**Mejora propuesta:** Implementar sistema de notificaciones que:
+- Notifique cuando se complete una tarea
+- Notifique cuando haya errores
+- Notifique cuando haya nuevas juntas
+- Notifique cuando haya nuevos asistentes
+- Permita configurar tipo de notificaciones
+- Permita ocultar notificaciones
+
+**Beneficio:** Mejor feedback, menos fricción, mejor experiencia.
+
+---
+
+### 9. **[UX] Modo de demostración** ⭐⭐⭐⭐
+
+**Problema:** No hay forma de probar la aplicación sin datos reales.
+
+**Mejora propuesta:** Implementar modo de demostración que:
+- Genere datos de ejemplo automáticamente
+- Permita navegar como si fuera real
+- Permita probar todas las funcionalidades
+- Permita exportar datos de demostración
+- Permita limpiar datos de demostración
+
+**Beneficio:** Fácil testing, fácil demostración, mejor desarrollo.
+
+---
+
+### 10. **[UX] Sistema de guardado automático** ⭐⭐⭐⭐
+
+**Problema:** No hay guardado automático de datos.
+
+**Mejora propuesta:** Implementar sistema de guardado automático que:
+- Guarde datos automáticamente
+- Guarde en intervalos regulares
+- Notifique cuando se guarde
+- Notifique cuando haya errores de guardado
+- Permita configurar intervalo de guardado
+
+**Beneficio:** Menos riesgo de pérdida de datos, mejor experiencia.
+
+---
+
+### 11. **[UX] Sistema de carga diferida** ⭐⭐⭐⭐
+
+**Problema:** Se cargan todos los datos al inicio, lo que puede ser lento.
+
+**Mejora propuesta:** Implementar sistema de carga diferida que:
+- Cargue datos solo cuando sean necesarios
+- Cargue datos en segundo plano
+- Muestre indicadores de carga
+- Permita cargar más datos al hacer scroll
+- Permita cachear datos en localStorage
+
+**Beneficio:** Mejor rendimiento, mejor experiencia, menos carga de red.
+
+---
+
+### 12. **[UX] Sistema de exportación de datos** ⭐⭐⭐⭐
+
+**Problema:** No hay forma de exportar todos los datos de la aplicación.
+
+**Mejora propuesta:** Implementar sistema de exportación de datos que:
+- Permita exportar todos los datos
+- Permita exportar por tipo (juntas, actas, etc.)
+- Permita exportar en formato JSON
+- Permita exportar en formato CSV
+- Permita exportar en formato PDF
+- Permita exportar selección de datos
+
+**Beneficio:** Más portabilidad, más control, mejor gestión.
+
+---
+
+### 13. **[UX] Sistema de importación de datos** ⭐⭐⭐⭐
+
+**Problema:** No hay forma de importar datos existentes.
+
+**Mejora propuesta:** Implementar sistema de importación de datos que:
+- Permita importar datos en formato JSON
+- Permita importar datos en formato CSV
+- Permita importar datos en formato PDF
+- Permita importar datos de otras aplicaciones
+- Permita validar datos antes de importar
+- Permita ver qué se va a importar
+
+**Beneficio:** Más portabilidad, más control, mejor gestión.
+
+---
+
+### 14. **[UX] Sistema de respaldo y restauración** ⭐⭐⭐⭐
+
+**Problema:** No hay forma de hacer respaldo de datos.
+
+**Mejora propuesta:** Implementar sistema de respaldo y restauración que:
+- Permita hacer respaldo de todos los datos
+- Permita hacer respaldo de datos seleccionados
+- Permita hacer respaldo automático
+- Permita restaurar datos
+- Permita restaurar desde respaldo
+- Permita ver historial de respaldos
+
+**Beneficio:** Más seguridad, menos riesgo, mejor gestión.
+
+---
+
+### 15. **[UX] Sistema de migración de datos** ⭐⭐⭐⭐
+
+**Problema:** No hay forma de migrar datos entre versiones.
+
+**Mejora propuesta:** Implementar sistema de migración de datos que:
+- Detecte versiones de datos
+- Detecte cambios en estructura
+- Detecte cambios en datos
+- Permita migrar datos automáticamente
+- Permita migrar datos manualmente
+- Permita ver qué se va a migrar
+
+**Beneficio:** Más seguridad, menos riesgo, mejor gestión.
+
+---
+
+## 📊 RESUMEN DE MEJORAS PROPUESTAS POR TURÍN
+
+| Prioridad | Mejora | Impacto |
+|-----------|--------|---------|
+| ⭐⭐⭐⭐⭐ Alta | Panel de control centralizado | UX |
+| ⭐⭐⭐⭐⭐ Alta | Asistente de creación guiada | UX |
+| ⭐⭐⭐⭐⭐ Alta | Editor en tiempo real | UX |
+| ⭐⭐⭐⭐ Alta | Sistema de caché | Técnico |
+| ⭐⭐⭐⭐ Alta | Búsqueda avanzada | UX |
+| ⭐⭐⭐⭐ Alta | Sistema de etiquetas | UX |
+| ⭐⭐⭐⭐ Alta | Sistema de versionado | Técnico |
+| ⭐⭐⭐⭐ Alta | Sistema de notificaciones | UX |
+| ⭐⭐⭐⭐ Alta | Modo de demostración | UX |
+| ⭐⭐⭐⭐ Alta | Sistema de guardado automático | UX |
+| ⭐⭐⭐⭐ Alta | Sistema de carga diferida | UX |
+| ⭐⭐⭐⭐ Alta | Sistema de exportación de datos | UX |
+| ⭐⭐⭐⭐ Alta | Sistema de importación de datos | UX |
+| ⭐⭐⭐⭐ Alta | Sistema de respaldo y restauración | UX |
+| ⭐⭐⭐⭐ Alta | Sistema de migración de datos | Técnico |
+
+**Recomendación:** Implementar las 9 mejoras de prioridad Alta para el MVP del Bloque 7. Las 6 mejoras de prioridad Media pueden considerarse para iteraciones futuras.
