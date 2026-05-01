@@ -400,7 +400,6 @@
         }
     </style>
     <!-- docx.js para generación de documentos Word -->
-    <script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
 </head>
 <body>
     <header>
@@ -866,6 +865,7 @@
     <script src="./src/utilidades/validacion-comunidad-propietario.js"></script>
     <script src="./src/utilidades/contexto-legal.js"></script>
     <script src="./src/utilidades/generador-actas.js"></script>
+    <script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
     <script src="./src/utilidades/formato-word.js"></script>
     <script src="./src/services/indexeddb.service.js"></script>
     <script src="./src/utilidades/storage.js"></script>
@@ -877,22 +877,6 @@
     <script src="./src/services/actas.service.js"></script>
     <script src="./src/services/exportacion.service.js"></script>
     <script>
-        const indexedDBService = window.indexedDBService;
-        const comunidadesService = window.comunidadesService;
-        const propietariosService = window.propietariosService;
-        const juntasService = window.juntasService;
-        const grabacionService = window.grabacionService;
-        const transcripcionService = window.transcripcionService;
-        const actasService = window.actasService;
-        const exportacionService = window.exportacionService;
-        const FeedbackUtils = window.FeedbackUtils;
-        const StorageUtils = window.StorageUtils;
-        const ValidationUtils = window.ValidationUtils;
-        const ValidacionComunidadPropietario = window.ValidacionComunidadPropietario;
-        const ContextoLegal = window.ContextoLegal;
-        const GeneradorActas = window.GeneradorActas;
-        const FormatoWord = window.FormatoWord;
-
         class GestActasApp {
             constructor() {
                 this.comunidades = [];

@@ -4,7 +4,7 @@
  * Servicio para la grabación de audio durante las juntas usando la API MediaRecorder.
  */
 
-const indexedDBService = window.indexedDBService;
+const indexedDBServiceGlobal = window.indexedDBService;
 
 class GrabacionService {
     constructor() {
@@ -24,7 +24,7 @@ class GrabacionService {
      */
     async init() {
         // Inicializar IndexedDB si no está inicializado
-        await indexedDBService.init();
+        await indexedDBServiceGlobal.init();
     }
 
     /**
@@ -165,7 +165,7 @@ class GrabacionService {
                         formato: this.obtenerFormato(mimeType)
                     };
 
-                    const id = await indexedDBService.add('grabaciones', grabacion);
+                    const id = await indexedDBServiceGlobal.add('grabaciones', grabacion);
                     console.log('Grabación guardada con ID:', id);
                     resolve({ ...grabacion, id });
                 };
@@ -186,7 +186,7 @@ class GrabacionService {
      */
     async obtenerGrabaciones(juntaId) {
         try {
-            const grabaciones = await indexedDBService.getByIndex('grabaciones', 'juntaId', juntaId);
+            const grabaciones = await indexedDBServiceGlobal.getByIndex('grabaciones', 'juntaId', juntaId);
             return grabaciones.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
         } catch (error) {
             console.error('Error al obtener grabaciones:', error);
@@ -199,7 +199,7 @@ class GrabacionService {
      */
     async obtenerGrabacion(id) {
         try {
-            const grabacion = await indexedDBService.get('grabaciones', id);
+            const grabacion = await indexedDBServiceGlobal.get('grabaciones', id);
             
             if (!grabacion) {
                 throw new Error(`Grabación con ID ${id} no encontrada`);
@@ -218,13 +218,13 @@ class GrabacionService {
     async eliminarGrabacion(id) {
         try {
             // Verificar si hay transcripciones asociadas
-            const transcripciones = await indexedDBService.getByIndex('transcripciones', 'grabacionId', id);
+            const transcripciones = await indexedDBServiceGlobal.getByIndex('transcripciones', 'grabacionId', id);
             
             if (transcripciones.length > 0) {
                 throw new Error('No se puede eliminar la grabación porque tiene transcripciones asociadas');
             }
 
-            await indexedDBService.delete('grabaciones', id);
+            await indexedDBServiceGlobal.delete('grabaciones', id);
             console.log('Grabación eliminada:', id);
         } catch (error) {
             console.error('Error al eliminar grabación:', error);

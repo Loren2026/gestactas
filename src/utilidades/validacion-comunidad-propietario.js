@@ -4,7 +4,7 @@
  * Utilidades centralizadas para validar datos de comunidades y propietarios.
  */
 
-const ValidationUtils = window.ValidationUtils;
+const ValidationUtilsGlobal = window.ValidationUtils;
 
 class ValidacionComunidadPropietario {
     /**
@@ -33,7 +33,7 @@ class ValidacionComunidadPropietario {
 
         if (!datos.codigoPostal || datos.codigoPostal.trim() === '') {
             errores.push('El código postal es obligatorio');
-        } else if (!ValidationUtils.validarCodigoPostal(datos.codigoPostal)) {
+        } else if (!ValidationUtilsGlobal.validarCodigoPostal(datos.codigoPostal)) {
             errores.push('El código postal no es válido (formato español)');
         }
 
@@ -59,13 +59,13 @@ class ValidacionComunidadPropietario {
         }
 
         if (datos.email && datos.email.trim() !== '') {
-            if (!ValidationUtils.validarEmail(datos.email)) {
+            if (!ValidationUtilsGlobal.validarEmail(datos.email)) {
                 errores.push('El email no es válido');
             }
         }
 
         if (datos.telefono && datos.telefono.trim() !== '') {
-            if (!ValidationUtils.validarTelefono(datos.telefono)) {
+            if (!ValidationUtilsGlobal.validarTelefono(datos.telefono)) {
                 errores.push('El teléfono no es válido (formato español)');
             }
         }
@@ -121,7 +121,7 @@ class ValidacionComunidadPropietario {
 
         if (!datos.codigoPostal || datos.codigoPostal.trim() === '') {
             errores.push('El código postal es obligatorio');
-        } else if (!ValidationUtils.validarCodigoPostal(datos.codigoPostal)) {
+        } else if (!ValidationUtilsGlobal.validarCodigoPostal(datos.codigoPostal)) {
             errores.push('El código postal no es válido (formato español)');
         }
 
@@ -145,19 +145,19 @@ class ValidacionComunidadPropietario {
 
         // Campos opcionales con validación si se proporcionan
         if (datos.dni && datos.dni.trim() !== '') {
-            if (!ValidationUtils.validarDNI(datos.dni)) {
+            if (!ValidationUtilsGlobal.validarDNI(datos.dni)) {
                 errores.push('El DNI no es válido (formato español)');
             }
         }
 
         if (datos.email && datos.email.trim() !== '') {
-            if (!ValidationUtils.validarEmail(datos.email)) {
+            if (!ValidationUtilsGlobal.validarEmail(datos.email)) {
                 errores.push('El email no es válido');
             }
         }
 
         if (datos.telefono && datos.telefono.trim() !== '') {
-            if (!ValidationUtils.validarTelefono(datos.telefono)) {
+            if (!ValidationUtilsGlobal.validarTelefono(datos.telefono)) {
                 errores.push('El teléfono no es válido (formato español)');
             }
         }
@@ -478,4 +478,4 @@ class ValidacionComunidadPropietario {
 
 // Exportar la clase
 
-window.ValidacionComunidadPropietario = ValidacionComunidadPropietario;
+window.ValidacionComunidadPropietario = ValidacionComunidadPropietarioGlobal;

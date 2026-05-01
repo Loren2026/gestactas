@@ -4,7 +4,7 @@
  * Utilidades para facilitar el almacenamiento y gestión de datos.
  */
 
-const indexedDBService = window.indexedDBService;
+const indexedDBServiceGlobal = window.indexedDBService;
 
 class StorageUtils {
     /**
@@ -230,7 +230,7 @@ class StorageUtils {
             const stores = ['comunidades', 'propietarios', 'juntas', 'asistentes', 'grabaciones', 'transcripciones', 'actas', 'exportaciones'];
             
             for (const store of stores) {
-                await indexedDBService.clear(store);
+                await indexedDBServiceGlobal.clear(store);
             }
             
             console.log('Todos los datos han sido limpiados');
@@ -245,7 +245,7 @@ class StorageUtils {
      */
     static async exportarTodosLosDatos() {
         try {
-            const datos = await indexedDBService.backup();
+            const datos = await indexedDBServiceGlobal.backup();
             const datosJSON = JSON.stringify(datos, null, 2);
             this.descargarArchivo(datosJSON, `gestactas_backup_${new Date().toISOString().split('T')[0]}.json`, 'application/json');
             return datos;
@@ -261,7 +261,7 @@ class StorageUtils {
     static async importarDatos(archivoJSON) {
         try {
             const datos = JSON.parse(archivoJSON);
-            await indexedDBService.restore(datos);
+            await indexedDBServiceGlobal.restore(datos);
             console.log('Datos importados correctamente');
             return datos;
         } catch (error) {
@@ -276,14 +276,14 @@ class StorageUtils {
     static async obtenerEstadisticas() {
         try {
             const stats = {
-                comunidades: await indexedDBService.getAll('comunidades'),
-                propietarios: await indexedDBService.getAll('propietarios'),
-                juntas: await indexedDBService.getAll('juntas'),
-                asistentes: await indexedDBService.getAll('asistentes'),
-                grabaciones: await indexedDBService.getAll('grabaciones'),
-                transcripciones: await indexedDBService.getAll('transcripciones'),
-                actas: await indexedDBService.getAll('actas'),
-                exportaciones: await indexedDBService.getAll('exportaciones')
+                comunidades: await indexedDBServiceGlobal.getAll('comunidades'),
+                propietarios: await indexedDBServiceGlobal.getAll('propietarios'),
+                juntas: await indexedDBServiceGlobal.getAll('juntas'),
+                asistentes: await indexedDBServiceGlobal.getAll('asistentes'),
+                grabaciones: await indexedDBServiceGlobal.getAll('grabaciones'),
+                transcripciones: await indexedDBServiceGlobal.getAll('transcripciones'),
+                actas: await indexedDBServiceGlobal.getAll('actas'),
+                exportaciones: await indexedDBServiceGlobal.getAll('exportaciones')
             };
 
             return {

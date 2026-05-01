@@ -4,7 +4,7 @@
  * Servicio para la transcripción de audio usando Whisper API y Web Speech API.
  */
 
-const indexedDBService = window.indexedDBService;
+const indexedDBServiceGlobal = window.indexedDBService;
 
 class TranscripcionService {
     constructor() {
@@ -20,7 +20,7 @@ class TranscripcionService {
      */
     async init(apiKeyWhisper = null) {
         this.apiKeyWhisper = apiKeyWhisper;
-        await indexedDBService.init();
+        await indexedDBServiceGlobal.init();
     }
 
     /**
@@ -36,7 +36,7 @@ class TranscripcionService {
             this.progresoTranscripcion = 0;
 
             // Obtener la grabación
-            const grabacion = await indexedDBService.get('grabaciones', grabacionId);
+            const grabacion = await indexedDBServiceGlobal.get('grabaciones', grabacionId);
             
             if (!grabacion) {
                 throw new Error(`Grabación con ID ${grabacionId} no encontrada`);
@@ -85,7 +85,7 @@ class TranscripcionService {
                 confianza: 0.95 // Whisper suele tener alta confianza
             };
 
-            const id = await indexedDBService.add('transcripciones', transcripcion);
+            const id = await indexedDBServiceGlobal.add('transcripciones', transcripcion);
             this.isTranscribing = false;
 
             console.log('Transcripción completada con ID:', id);
@@ -106,7 +106,7 @@ class TranscripcionService {
             this.progresoTranscripcion = 0;
 
             // Obtener la grabación
-            const grabacion = await indexedDBService.get('grabaciones', grabacionId);
+            const grabacion = await indexedDBServiceGlobal.get('grabaciones', grabacionId);
             
             if (!grabacion) {
                 throw new Error(`Grabación con ID ${grabacionId} no encontrada`);
@@ -188,7 +188,7 @@ class TranscripcionService {
                         confianza: 0.65 // Web Speech API suele tener ~65% de precisión
                     };
 
-                    const id = await indexedDBService.add('transcripciones', transcripcion);
+                    const id = await indexedDBServiceGlobal.add('transcripciones', transcripcion);
                     this.isTranscribing = false;
 
                     console.log('Transcripción completada con ID:', id);
@@ -214,7 +214,7 @@ class TranscripcionService {
      */
     async obtenerTranscripciones(grabacionId) {
         try {
-            const transcripciones = await indexedDBService.getByIndex('transcripciones', 'grabacionId', grabacionId);
+            const transcripciones = await indexedDBServiceGlobal.getByIndex('transcripciones', 'grabacionId', grabacionId);
             return transcripciones.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
         } catch (error) {
             console.error('Error al obtener transcripciones:', error);
@@ -227,7 +227,7 @@ class TranscripcionService {
      */
     async obtenerTranscripcion(id) {
         try {
-            const transcripcion = await indexedDBService.get('transcripciones', id);
+            const transcripcion = await indexedDBServiceGlobal.get('transcripciones', id);
             
             if (!transcripcion) {
                 throw new Error(`Transcripción con ID ${id} no encontrada`);
@@ -245,7 +245,7 @@ class TranscripcionService {
      */
     async actualizarTranscripcion(id, nuevoTexto) {
         try {
-            const transcripcionActual = await indexedDBService.get('transcripciones', id);
+            const transcripcionActual = await indexedDBServiceGlobal.get('transcripciones', id);
             
             if (!transcripcionActual) {
                 throw new Error(`Transcripción con ID ${id} no encontrada`);
@@ -257,7 +257,7 @@ class TranscripcionService {
                 fechaEdicion: new Date().toISOString()
             };
 
-            await indexedDBService.update('transcripciones', transcripcionActualizada);
+            await indexedDBServiceGlobal.update('transcripciones', transcripcionActualizada);
             console.log('Transcripción actualizada:', id);
             return transcripcionActualizada;
         } catch (error) {
@@ -271,7 +271,7 @@ class TranscripcionService {
      */
     async eliminarTranscripcion(id) {
         try {
-            await indexedDBService.delete('transcripciones', id);
+            await indexedDBServiceGlobal.delete('transcripciones', id);
             console.log('Transcripción eliminada:', id);
         } catch (error) {
             console.error('Error al eliminar transcripción:', error);

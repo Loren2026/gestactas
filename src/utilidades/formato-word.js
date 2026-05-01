@@ -4,7 +4,7 @@
  * Estilos y configuraciones para generar documentos Word profesionales.
  */
 
-const { Document, Packer, Paragraph, TextRun, Table, TableRow,
+const { Document: DocxDocument, Packer, Paragraph, TextRun, Table, TableRow,
         TableCell, WidthType, BorderStyle, HeadingLevel, AlignmentType,
         PageBreak, Header, Footer, PageNumber, VerticalAlign,
         ImageRun, convertInchesToTwip, convertMillimetersToTwip } = docx;

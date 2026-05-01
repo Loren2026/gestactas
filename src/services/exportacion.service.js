@@ -4,11 +4,11 @@
  * Servicio para la exportación de actas a documentos Word (.docx) usando docx.js.
  */
 
-const { Document, Packer, Paragraph, TextRun, Table, TableRow,
+const { Document: DocxDocument, Packer, Paragraph, TextRun, Table, TableRow,
         TableCell, WidthType, BorderStyle, HeadingLevel, AlignmentType,
         PageBreak, Header, Footer, PageNumber, VerticalAlign,
         ImageRun, convertInchesToTwip, convertMillimetersToTwip } = docx;
-const FormatoWord = window.FormatoWord;
+const FormatoWordGlobal = window.FormatoWord;
 
 class ExportacionService {
     /**
@@ -27,7 +27,7 @@ class ExportacionService {
             const doc = await this.generarDocumentoWord(actaJSON);
 
             // Obtener el nombre del archivo
-            const nombreArchivo = FormatoWord.obtenerNombreArchivo(acta);
+            const nombreArchivo = FormatoWordGlobal.obtenerNombreArchivo(acta);
 
             // Descargar el archivo
             await this.descargarArchivo(doc, nombreArchivo);
@@ -52,7 +52,7 @@ class ExportacionService {
         this.agregarEncabezado(children, actaJSON);
 
         // 2. Título principal
-        children.push(FormatoWord.crearParrafo(
+        children.push(FormatoWordGlobal.crearParrafo(
             actaJSON.encabezado?.tipo || 'ACTA DE JUNTA DE PROPIETARIOS',
             'tituloPrincipal'
         ));
@@ -96,10 +96,10 @@ class ExportacionService {
         this.agregarCierreYFirmas(children, actaJSON);
 
         // Crear documento
-        const doc = new Document({
+        const doc = new DocxDocument({
             sections: [
                 {
-                    properties: FormatoWord.obtenerConfiguracionPagina(),
+                    properties: FormatoWordGlobal.obtenerConfiguracionPagina(),
                     children: children
                 }
             ]
@@ -143,7 +143,7 @@ class ExportacionService {
             })
         );
 
-        children.push(FormatoWord.crearSeparador());
+        children.push(FormatoWordGlobal.crearSeparador());
     }
 
     /**
@@ -162,7 +162,7 @@ class ExportacionService {
         children.push(new Paragraph({
             children: [
                 new TextRun({ text: 'Fecha: ', bold: true, color: '1a2535' }),
-                new TextRun({ text: FormatoWord.formatearFechaWord(encabezado.fecha) })
+                new TextRun({ text: FormatoWordGlobal.formatearFechaWord(encabezado.fecha) })
             ]
         }));
 
@@ -181,7 +181,7 @@ class ExportacionService {
             spacing: { after: 400 }
         }));
 
-        children.push(FormatoWord.crearSeparador());
+        children.push(FormatoWordGlobal.crearSeparador());
     }
 
     /**
@@ -190,8 +190,8 @@ class ExportacionService {
     agregarSeccionComunidad(children, actaJSON) {
         const comunidad = actaJSON.encabezado?.comunidad || {};
 
-        children.push(FormatoWord.crearParrafo('COMUNIDAD DE PROPIETARIOS', 'subtituloSeccion'));
-        children.push(FormatoWord.crearSeparador());
+        children.push(FormatoWordGlobal.crearParrafo('COMUNIDAD DE PROPIETARIOS', 'subtituloSeccion'));
+        children.push(FormatoWordGlobal.crearSeparador());
 
         const campos = [
             { etiqueta: 'Nombre:', valor: comunidad.nombre },
@@ -221,13 +221,13 @@ class ExportacionService {
     agregarSeccionConvocatoria(children, actaJSON) {
         const convocatoria = actaJSON.convocatoria || {};
 
-        children.push(FormatoWord.crearParrafo('CONVOCATORIA', 'subtituloSeccion'));
-        children.push(FormatoWord.crearSeparador());
+        children.push(FormatoWordGlobal.crearParrafo('CONVOCATORIA', 'subtituloSeccion'));
+        children.push(FormatoWordGlobal.crearSeparador());
 
         children.push(new Paragraph({
             children: [
                 new TextRun({ text: 'Primera convocatoria: ', bold: true }),
-                new TextRun({ text: `${FormatoWord.formatearFechaWord(convocatoria.primera?.fecha)} a las ${convocatoria.primera?.hora}` })
+                new TextRun({ text: `${FormatoWordGlobal.formatearFechaWord(convocatoria.primera?.fecha)} a las ${convocatoria.primera?.hora}` })
             ],
             spacing: { after: 100 }
         }));
@@ -243,7 +243,7 @@ class ExportacionService {
         children.push(new Paragraph({
             children: [
                 new TextRun({ text: 'Segunda convocatoria: ', bold: true }),
-                new TextRun({ text: `${FormatoWord.formatearFechaWord(convocatoria.segunda?.fecha)} a las ${convocatoria.segunda?.hora}` })
+                new TextRun({ text: `${FormatoWordGlobal.formatearFechaWord(convocatoria.segunda?.fecha)} a las ${convocatoria.segunda?.hora}` })
             ],
             spacing: { after: 100 }
         }));
@@ -265,8 +265,8 @@ class ExportacionService {
         const totalCoeficientes = asistentes.reduce((sum, a) => sum + (a.coeficiente || 0), 0);
         const porcentajeAsistencia = totalCoeficientes;
 
-        children.push(FormatoWord.crearParrafo('ASISTENTES A LA JUNTA', 'subtituloSeccion'));
-        children.push(FormatoWord.crearSeparador());
+        children.push(FormatoWordGlobal.crearParrafo('ASISTENTES A LA JUNTA', 'subtituloSeccion'));
+        children.push(FormatoWordGlobal.crearSeparador());
 
         // Crear tabla de asistentes
         const filasTabla = [];
@@ -385,11 +385,11 @@ class ExportacionService {
     agregarParteDeclarativa(children, actaJSON) {
         const declaraciones = actaJSON.parte_declarativa || [];
 
-        children.push(FormatoWord.crearParrafo('PARTE DECLARATIVA', 'subtituloSeccion'));
-        children.push(FormatoWord.crearSeparador());
+        children.push(FormatoWordGlobal.crearParrafo('PARTE DECLARATIVA', 'subtituloSeccion'));
+        children.push(FormatoWordGlobal.crearSeparador());
 
         if (declaraciones.length === 0) {
-            children.push(FormatoWord.crearParrafo('No hay declaraciones.', 'parrafoDestacado'));
+            children.push(FormatoWordGlobal.crearParrafo('No hay declaraciones.', 'parrafoDestacado'));
         } else {
             declaraciones.forEach((declaracion, index) => {
                 children.push(new Paragraph({
@@ -411,14 +411,14 @@ class ExportacionService {
     agregarParteDeliberativa(children, actaJSON) {
         const deliberaciones = actaJSON.parte_deliberativa || [];
 
-        children.push(FormatoWord.crearParrafo('PARTE DELIBERATIVA', 'subtituloSeccion'));
-        children.push(FormatoWord.crearSeparador());
+        children.push(FormatoWordGlobal.crearParrafo('PARTE DELIBERATIVA', 'subtituloSeccion'));
+        children.push(FormatoWordGlobal.crearSeparador());
 
         if (deliberaciones.length === 0) {
-            children.push(FormatoWord.crearParrafo('No hay deliberaciones.', 'parrafoDestacado'));
+            children.push(FormatoWordGlobal.crearParrafo('No hay deliberaciones.', 'parrafoDestacado'));
         } else {
             deliberaciones.forEach(deliberacion => {
-                children.push(FormatoWord.crearParrafo(deliberacion, 'parrafoNormal'));
+                children.push(FormatoWordGlobal.crearParrafo(deliberacion, 'parrafoNormal'));
             });
         }
 
@@ -429,8 +429,8 @@ class ExportacionService {
      * Agrega un punto del orden del día
      */
     agregarPuntoOrdenDia(children, punto) {
-        children.push(FormatoWord.crearParrafo(`PUNTO ${punto.numero}: ${punto.titulo}`, 'tituloPunto'));
-        children.push(FormatoWord.crearSeparador());
+        children.push(FormatoWordGlobal.crearParrafo(`PUNTO ${punto.numero}: ${punto.titulo}`, 'tituloPunto'));
+        children.push(FormatoWordGlobal.crearSeparador());
 
         // Descripción
         children.push(new Paragraph({
@@ -495,7 +495,7 @@ class ExportacionService {
             spacing: { before: 200, after: 100 }
         }));
 
-        children.push(FormatoWord.crearSeparador());
+        children.push(FormatoWordGlobal.crearSeparador());
 
         children.push(new Paragraph({
             children: [new TextRun({ text: punto.acuerdo || 'Sin acuerdo' })],
@@ -531,8 +531,8 @@ class ExportacionService {
     agregarResumenAcuerdos(children, actaJSON) {
         const acuerdos = actaJSON.acuerdos_totales || {};
 
-        children.push(FormatoWord.crearParrafo('RESUMEN DE ACUERDOS', 'subtituloSeccion'));
-        children.push(FormatoWord.crearSeparador());
+        children.push(FormatoWordGlobal.crearParrafo('RESUMEN DE ACUERDOS', 'subtituloSeccion'));
+        children.push(FormatoWordGlobal.crearSeparador());
 
         children.push(new Paragraph({
             children: [
@@ -566,7 +566,7 @@ class ExportacionService {
             spacing: { after: 300 }
         }));
 
-        children.push(FormatoWord.crearSeparador());
+        children.push(FormatoWordGlobal.crearSeparador());
     }
 
     /**
@@ -575,15 +575,15 @@ class ExportacionService {
     agregarCierreYFirmas(children, actaJSON) {
         const cierre = actaJSON.cierre || {};
 
-        children.push(FormatoWord.crearParrafo('CIERRE DE LA JUNTA', 'subtituloSeccion'));
-        children.push(FormatoWord.crearSeparador());
+        children.push(FormatoWordGlobal.crearParrafo('CIERRE DE LA JUNTA', 'subtituloSeccion'));
+        children.push(FormatoWordGlobal.crearSeparador());
 
-        children.push(FormatoWord.crearParrafo(cierre.texto || '', 'parrafoNormal'));
+        children.push(FormatoWordGlobal.crearParrafo(cierre.texto || '', 'parrafoNormal'));
 
         children.push(new Paragraph({
             children: [
                 new TextRun({ text: 'Fecha de firma: ', bold: true }),
-                new TextRun({ text: FormatoWord.formatearFechaWord(cierre.fecha_firma) })
+                new TextRun({ text: FormatoWordGlobal.formatearFechaWord(cierre.fecha_firma) })
             ],
             spacing: { before: 200, after: 200 }
         }));
@@ -638,7 +638,7 @@ class ExportacionService {
             spacing: { after: 400 }
         }));
 
-        children.push(FormatoWord.crearSeparador());
+        children.push(FormatoWordGlobal.crearSeparador());
 
         // Nota de conformidad
         children.push(new Paragraph({

@@ -4,8 +4,8 @@
  * Servicio para la gestión completa de comunidades de vecinos.
  */
 
-const indexedDBService = window.indexedDBService;
-const ValidacionComunidadPropietario = window.ValidacionComunidadPropietario;
+const indexedDBServiceGlobal = window.indexedDBService;
+const ValidacionComunidadPropietarioGlobal = window.ValidacionComunidadPropietario;
 
 class ComunidadesService {
     /**
@@ -14,7 +14,7 @@ class ComunidadesService {
     async crearComunidad(datosComunidad) {
         try {
             // Validar datos de comunidad
-            const validacion = ValidacionComunidadPropietario.validarComunidad(datosComunidad);
+            const validacion = ValidacionComunidadPropietarioGlobal.validarComunidad(datosComunidad);
             
             if (!validacion.valida) {
                 throw new Error(`Comunidad inválida: ${validacion.errores.join(', ')}`);
@@ -37,7 +37,7 @@ class ComunidadesService {
                 activo: true
             };
 
-            const id = await indexedDBService.add('comunidades', comunidad);
+            const id = await indexedDBServiceGlobal.add('comunidades', comunidad);
             console.log('Comunidad creada con ID:', id);
             return { ...comunidad, id };
         } catch (error) {
@@ -51,7 +51,7 @@ class ComunidadesService {
      */
     async obtenerComunidades(filtros = {}) {
         try {
-            let comunidades = await indexedDBService.getAll('comunidades');
+            let comunidades = await indexedDBServiceGlobal.getAll('comunidades');
 
             // Filtrar por activo
             if (filtros.activo !== undefined) {
@@ -96,7 +96,7 @@ class ComunidadesService {
      */
     async obtenerComunidad(id) {
         try {
-            const comunidad = await indexedDBService.get('comunidades', id);
+            const comunidad = await indexedDBServiceGlobal.get('comunidades', id);
             
             if (!comunidad) {
                 throw new Error(`Comunidad con ID ${id} no encontrada`);
@@ -121,13 +121,13 @@ class ComunidadesService {
     async actualizarComunidad(id, datosActualizados) {
         try {
             // Validar datos actualizados
-            const validacion = ValidacionComunidadPropietario.validarComunidad(datosActualizados);
+            const validacion = ValidacionComunidadPropietarioGlobal.validarComunidad(datosActualizados);
             
             if (!validacion.valida) {
                 throw new Error(`Comunidad inválida: ${validacion.errores.join(', ')}`);
             }
 
-            const comunidadActual = await indexedDBService.get('comunidades', id);
+            const comunidadActual = await indexedDBServiceGlobal.get('comunidades', id);
             
             if (!comunidadActual) {
                 throw new Error(`Comunidad con ID ${id} no encontrada`);
@@ -139,7 +139,7 @@ class ComunidadesService {
                 fechaActualizacion: new Date().toISOString()
             };
 
-            await indexedDBService.update('comunidades', comunidadActualizada);
+            await indexedDBServiceGlobal.update('comunidades', comunidadActualizada);
             console.log('Comunidad actualizada:', id);
             return comunidadActualizada;
         } catch (error) {
@@ -154,14 +154,14 @@ class ComunidadesService {
     async eliminarComunidad(id) {
         try {
             // Verificar que la comunidad existe
-            const comunidad = await indexedDBService.get('comunidades', id);
+            const comunidad = await indexedDBServiceGlobal.get('comunidades', id);
             
             if (!comunidad) {
                 throw new Error(`Comunidad con ID ${id} no encontrada`);
             }
 
             // Validar relaciones (Mejora 8)
-            const validacion = await ValidacionComunidadPropietario.validarEliminarComunidad(
+            const validacion = await ValidacionComunidadPropietarioGlobal.validarEliminarComunidad(
                 id, 
                 (comunidadId) => this.obtenerPropietarios(comunidadId)
             );
@@ -173,11 +173,11 @@ class ComunidadesService {
             // Eliminar propietarios de la comunidad
             const propietarios = await this.obtenerPropietarios(id);
             for (const propietario of propietarios) {
-                await indexedDBService.delete('propietarios', propietario.id);
+                await indexedDBServiceGlobal.delete('propietarios', propietario.id);
             }
 
             // Eliminar la comunidad
-            await indexedDBService.delete('comunidades', id);
+            await indexedDBServiceGlobal.delete('comunidades', id);
             console.log('Comunidad eliminada:', id);
         } catch (error) {
             console.error('Error al eliminar comunidad:', error);
@@ -195,7 +195,7 @@ class ComunidadesService {
             }
 
             const terminoLower = termino.toLowerCase();
-            let comunidades = await indexedDBService.getAll('comunidades');
+            let comunidades = await indexedDBServiceGlobal.getAll('comunidades');
 
             comunidades = comunidades.filter(c => 
                 c.nombre.toLowerCase().includes(terminoLower) ||
@@ -217,7 +217,7 @@ class ComunidadesService {
      */
     async obtenerPropietarios(comunidadId) {
         try {
-            const propietarios = await indexedDBService.getAll('propietarios');
+            const propietarios = await indexedDBServiceGlobal.getAll('propietarios');
             
             return propietarios
                 .filter(p => p.comunidadId === comunidadId)
@@ -352,7 +352,7 @@ class ComunidadesService {
      */
     async cambiarEstadoComunidad(id, activo) {
         try {
-            const comunidad = await indexedDBService.get('comunidades', id);
+            const comunidad = await indexedDBServiceGlobal.get('comunidades', id);
             
             if (!comunidad) {
                 throw new Error(`Comunidad con ID ${id} no encontrada`);
@@ -364,7 +364,7 @@ class ComunidadesService {
                 fechaActualizacion: new Date().toISOString()
             };
 
-            await indexedDBService.update('comunidades', comunidadActualizada);
+            await indexedDBServiceGlobal.update('comunidades', comunidadActualizada);
             console.log(`Comunidad ${id} ${activo ? 'activada' : 'desactivada'}`);
             
             return comunidadActualizada;

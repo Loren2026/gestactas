@@ -5,9 +5,9 @@
  * con validación legal multi-nivel y sistema de confianza.
  */
 
-const indexedDBService = window.indexedDBService;
-const ContextoLegal = window.ContextoLegal;
-const GeneradorActas = window.GeneradorActas;
+const indexedDBServiceGlobal = window.indexedDBService;
+const ContextoLegalGlobal = window.ContextoLegal;
+const GeneradorActasGlobal = window.GeneradorActas;
 
 class ActasService {
     constructor() {
@@ -23,7 +23,7 @@ class ActasService {
      */
     async init(apiKeyClaude = null) {
         this.apiKeyClaude = apiKeyClaude;
-        await indexedDBService.init();
+        await indexedDBServiceGlobal.init();
     }
 
     /**
@@ -68,7 +68,7 @@ class ActasService {
             this.progresoGeneracion = 45;
 
             // PASO 6: Truncar transcripción si excede el límite de tokens
-            const transcripcionTruncada = GeneradorActas.truncarTranscripcion(
+            const transcripcionTruncada = GeneradorActasGlobal.truncarTranscripcion(
                 transcripcion, 
                 this.maxTokensTranscripcion
             );
@@ -157,10 +157,10 @@ class ActasService {
      */
     prepararPromptClaude(junta, transcripcion, comunidad, asistentes) {
         // Obtener contexto legal
-        const contextoLegal = ContextoLegal.obtenerContextoCompletoParaClaude();
+        const contextoLegal = ContextoLegalGlobal.obtenerContextoCompletoParaClaude();
         
         // Obtener plantilla según tipo de junta
-        const plantilla = ContextoLegal.obtenerPlantillaPrompt(junta.tipo);
+        const plantilla = ContextoLegalGlobal.obtenerPlantillaPrompt(junta.tipo);
 
         // Calcular estadísticas
         const totalCoeficientes = comunidad.propietarios.reduce((sum, p) => sum + (p.coeficiente || 0), 0);
@@ -442,7 +442,7 @@ ${transcripcion}`;
             const actaJSON = JSON.parse(jsonMatch[0]);
 
             // Validación Nivel 1: Estructura JSON
-            const validacion1 = GeneradorActas.validarEstructuraActa(actaJSON);
+            const validacion1 = GeneradorActasGlobal.validarEstructuraActa(actaJSON);
             
             if (!validacion1.valida) {
                 throw new Error(`Estructura de acta inválida: ${validacion1.errores.join(', ')}`);
@@ -452,7 +452,7 @@ ${transcripcion}`;
             await this.validarCalculos(actaJSON, comunidad);
 
             // Validación Nivel 3: Mayorías
-            const validacionLegal = GeneradorActas.validarDatosLegales(actaJSON, comunidad);
+            const validacionLegal = GeneradorActasGlobal.validarDatosLegales(actaJSON, comunidad);
             
             // Calcular confianza de secciones
             const seccionesConfianza = this.calcularConfianzaSecciones(actaJSON);
@@ -530,7 +530,7 @@ ${transcripcion}`;
                 const keywords = [`punto ${punto.numero}`, punto.titulo.toLowerCase(), "votación", "acuerdo"];
                 const longitud = punto.acuerdo ? punto.acuerdo.length : 0;
                 
-                seccionesConfianza[`punto_${punto.numero}`] = GeneradorActas.calcularConfianzaSeccion(
+                seccionesConfianza[`punto_${punto.numero}`] = GeneradorActasGlobal.calcularConfianzaSeccion(
                     punto.acuerdo || "",
                     keywords,
                     longitud
@@ -541,7 +541,7 @@ ${transcripcion}`;
         // Confianza en asistentes
         if (acta.asistentes) {
             const asistentesTexto = JSON.stringify(acta.asistentes);
-            seccionesConfianza["asistentes"] = GeneradorActas.calcularConfianzaSeccion(
+            seccionesConfianza["asistentes"] = GeneradorActasGlobal.calcularConfianzaSeccion(
                 asistentesTexto,
                 ["nombre", "coeficiente", "asistio", "dni"],
                 asistentesTexto.length
@@ -551,7 +551,7 @@ ${transcripcion}`;
         // Confianza en encabezado
         if (acta.encabezado) {
             const encabezadoTexto = JSON.stringify(acta.encabezado);
-            seccionesConfianza["encabezado"] = GeneradorActas.calcularConfianzaSeccion(
+            seccionesConfianza["encabezado"] = GeneradorActasGlobal.calcularConfianzaSeccion(
                 encabezadoTexto,
                 ["fecha", "hora", "lugar", "comunidad"],
                 encabezadoTexto.length
@@ -592,7 +592,7 @@ ${transcripcion}`;
             validacion: acta.metadatos
         };
 
-        const id = await indexedDBService.add('actas', actaParaGuardar);
+        const id = await indexedDBServiceGlobal.add('actas', actaParaGuardar);
         return { ...actaParaGuardar, id };
     }
 
@@ -601,7 +601,7 @@ ${transcripcion}`;
      */
     async obtenerActas(juntaId) {
         try {
-            const actas = await indexedDBService.getByIndex('actas', 'juntaId', juntaId);
+            const actas = await indexedDBServiceGlobal.getByIndex('actas', 'juntaId', juntaId);
             return actas.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
         } catch (error) {
             console.error('Error al obtener actas:', error);
@@ -614,7 +614,7 @@ ${transcripcion}`;
      */
     async obtenerActa(id) {
         try {
-            const acta = await indexedDBService.get('actas', id);
+            const acta = await indexedDBServiceGlobal.get('actas', id);
             
             if (!acta) {
                 throw new Error(`Acta con ID ${id} no encontrada`);
@@ -632,7 +632,7 @@ ${transcripcion}`;
      */
     async actualizarActa(id, nuevoContenido) {
         try {
-            const actaActual = await indexedDBService.get('actas', id);
+            const actaActual = await indexedDBServiceGlobal.get('actas', id);
             
             if (!actaActual) {
                 throw new Error(`Acta con ID ${id} no encontrada`);
@@ -644,7 +644,7 @@ ${transcripcion}`;
                 fechaEdicion: new Date().toISOString()
             };
 
-            await indexedDBService.update('actas', actaActualizada);
+            await indexedDBServiceGlobal.update('actas', actaActualizada);
             console.log('Acta actualizada:', id);
             return actaActualizada;
         } catch (error) {
@@ -664,7 +664,7 @@ ${transcripcion}`;
                 throw new Error(`Estado inválido: ${nuevoEstado}. Estados válidos: ${estadosValidos.join(', ')}`);
             }
 
-            const actaActual = await indexedDBService.get('actas', id);
+            const actaActual = await indexedDBServiceGlobal.get('actas', id);
             
             if (!actaActual) {
                 throw new Error(`Acta con ID ${id} no encontrada`);
@@ -676,7 +676,7 @@ ${transcripcion}`;
                 fechaEstado: new Date().toISOString()
             };
 
-            await indexedDBService.update('actas', actaActualizada);
+            await indexedDBServiceGlobal.update('actas', actaActualizada);
             console.log('Estado de acta actualizado:', nuevoEstado);
             return actaActualizada;
         } catch (error) {
@@ -690,7 +690,7 @@ ${transcripcion}`;
      */
     async eliminarActa(id) {
         try {
-            await indexedDBService.delete('actas', id);
+            await indexedDBServiceGlobal.delete('actas', id);
             console.log('Acta eliminada:', id);
         } catch (error) {
             console.error('Error al eliminar acta:', error);

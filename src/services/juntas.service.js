@@ -5,7 +5,7 @@
  * incluyendo creación, actualización, eliminación y consulta.
  */
 
-const indexedDBService = window.indexedDBService;
+const indexedDBServiceGlobal = window.indexedDBService;
 
 class JuntasService {
     /**
@@ -26,7 +26,7 @@ class JuntasService {
                 estado: 'pendiente' // 'pendiente' | 'en_curso' | 'finalizada'
             };
 
-            const id = await indexedDBService.add('juntas', junta);
+            const id = await indexedDBServiceGlobal.add('juntas', junta);
             console.log('Junta creada con ID:', id);
             return { ...junta, id };
         } catch (error) {
@@ -40,7 +40,7 @@ class JuntasService {
      */
     async obtenerJuntas() {
         try {
-            const juntas = await indexedDBService.getAll('juntas');
+            const juntas = await indexedDBServiceGlobal.getAll('juntas');
             return juntas.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
         } catch (error) {
             console.error('Error al obtener juntas:', error);
@@ -53,20 +53,20 @@ class JuntasService {
      */
     async obtenerJunta(id) {
         try {
-            const junta = await indexedDBService.get('juntas', id);
+            const junta = await indexedDBServiceGlobal.get('juntas', id);
             
             if (!junta) {
                 throw new Error(`Junta con ID ${id} no encontrada`);
             }
 
             // Obtener asistentes de la junta
-            const asistentes = await indexedDBService.getByIndex('asistentes', 'juntaId', id);
+            const asistentes = await indexedDBServiceGlobal.getByIndex('asistentes', 'juntaId', id);
             
             // Obtener grabaciones de la junta
-            const grabaciones = await indexedDBService.getByIndex('grabaciones', 'juntaId', id);
+            const grabaciones = await indexedDBServiceGlobal.getByIndex('grabaciones', 'juntaId', id);
             
             // Obtener actas de la junta
-            const actas = await indexedDBService.getByIndex('actas', 'juntaId', id);
+            const actas = await indexedDBServiceGlobal.getByIndex('actas', 'juntaId', id);
 
             return {
                 ...junta,
@@ -85,7 +85,7 @@ class JuntasService {
      */
     async actualizarJunta(id, datosActualizados) {
         try {
-            const juntaActual = await indexedDBService.get('juntas', id);
+            const juntaActual = await indexedDBServiceGlobal.get('juntas', id);
             
             if (!juntaActual) {
                 throw new Error(`Junta con ID ${id} no encontrada`);
@@ -97,7 +97,7 @@ class JuntasService {
                 fechaActualizacion: new Date().toISOString()
             };
 
-            await indexedDBService.update('juntas', juntaActualizada);
+            await indexedDBServiceGlobal.update('juntas', juntaActualizada);
             console.log('Junta actualizada:', juntaActualizada);
             return juntaActualizada;
         } catch (error) {
@@ -112,45 +112,45 @@ class JuntasService {
     async eliminarJunta(id) {
         try {
             // Verificar que la junta existe
-            const junta = await indexedDBService.get('juntas', id);
+            const junta = await indexedDBServiceGlobal.get('juntas', id);
             
             if (!junta) {
                 throw new Error(`Junta con ID ${id} no encontrada`);
             }
 
             // Eliminar asistentes asociados
-            const asistentes = await indexedDBService.getByIndex('asistentes', 'juntaId', id);
+            const asistentes = await indexedDBServiceGlobal.getByIndex('asistentes', 'juntaId', id);
             for (const asistente of asistentes) {
-                await indexedDBService.delete('asistentes', asistente.id);
+                await indexedDBServiceGlobal.delete('asistentes', asistente.id);
             }
 
             // Eliminar grabaciones asociadas
-            const grabaciones = await indexedDBService.getByIndex('grabaciones', 'juntaId', id);
+            const grabaciones = await indexedDBServiceGlobal.getByIndex('grabaciones', 'juntaId', id);
             for (const grabacion of grabaciones) {
-                await indexedDBService.delete('grabaciones', grabacion.id);
+                await indexedDBServiceGlobal.delete('grabaciones', grabacion.id);
             }
 
             // Eliminar transcripciones asociadas
             for (const grabacion of grabaciones) {
-                const transcripciones = await indexedDBService.getByIndex('transcripciones', 'grabacionId', grabacion.id);
+                const transcripciones = await indexedDBServiceGlobal.getByIndex('transcripciones', 'grabacionId', grabacion.id);
                 for (const transcripcion of transcripciones) {
-                    await indexedDBService.delete('transcripciones', transcripcion.id);
+                    await indexedDBServiceGlobal.delete('transcripciones', transcripcion.id);
                 }
             }
 
             // Eliminar actas asociadas
-            const actas = await indexedDBService.getByIndex('actas', 'juntaId', id);
+            const actas = await indexedDBServiceGlobal.getByIndex('actas', 'juntaId', id);
             for (const acta of actas) {
                 // Eliminar exportaciones asociadas
-                const exportaciones = await indexedDBService.getByIndex('exportaciones', 'actaId', acta.id);
+                const exportaciones = await indexedDBServiceGlobal.getByIndex('exportaciones', 'actaId', acta.id);
                 for (const exportacion of exportaciones) {
-                    await indexedDBService.delete('exportaciones', exportacion.id);
+                    await indexedDBServiceGlobal.delete('exportaciones', exportacion.id);
                 }
-                await indexedDBService.delete('actas', acta.id);
+                await indexedDBServiceGlobal.delete('actas', acta.id);
             }
 
             // Eliminar la junta
-            await indexedDBService.delete('juntas', id);
+            await indexedDBServiceGlobal.delete('juntas', id);
             console.log('Junta eliminada:', id);
         } catch (error) {
             console.error('Error al eliminar junta:', error);
@@ -175,7 +175,7 @@ class JuntasService {
                 fechaRegistro: new Date().toISOString()
             };
 
-            const id = await indexedDBService.add('asistentes', asistente);
+            const id = await indexedDBServiceGlobal.add('asistentes', asistente);
             console.log('Asistente añadido con ID:', id);
             return { ...asistente, id };
         } catch (error) {
@@ -189,7 +189,7 @@ class JuntasService {
      */
     async eliminarAsistente(id) {
         try {
-            await indexedDBService.delete('asistentes', id);
+            await indexedDBServiceGlobal.delete('asistentes', id);
             console.log('Asistente eliminado:', id);
         } catch (error) {
             console.error('Error al eliminar asistente:', error);
@@ -202,8 +202,8 @@ class JuntasService {
      */
     async calcularQuorum(juntaId) {
         try {
-            const asistentes = await indexedDBService.getByIndex('asistentes', 'juntaId', juntaId);
-            const junta = await indexedDBService.get('juntas', juntaId);
+            const asistentes = await indexedDBServiceGlobal.getByIndex('asistentes', 'juntaId', juntaId);
+            const junta = await indexedDBServiceGlobal.get('juntas', juntaId);
 
             // Calcular coeficiente total de asistentes
             const coeficienteAsistentes = asistentes.reduce((total, asistente) => {

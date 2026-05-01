@@ -4,8 +4,8 @@
  * Servicio para la gestión completa de propietarios.
  */
 
-const indexedDBService = window.indexedDBService;
-const ValidacionComunidadPropietario = window.ValidacionComunidadPropietario;
+const indexedDBServiceGlobal = window.indexedDBService;
+const ValidacionComunidadPropietarioGlobal = window.ValidacionComunidadPropietario;
 
 class PropietariosService {
     /**
@@ -14,14 +14,14 @@ class PropietariosService {
     async crearPropietario(datosPropietario) {
         try {
             // Validar datos de propietario
-            const validacion = ValidacionComunidadPropietario.validarPropietario(datosPropietario);
+            const validacion = ValidacionComunidadPropietarioGlobal.validarPropietario(datosPropietario);
             
             if (!validacion.valida) {
                 throw new Error(`Propietario inválido: ${validacion.errores.join(', ')}`);
             }
 
             // Verificar que la comunidad existe
-            const comunidad = await indexedDBService.get('comunidades', datosPropietario.comunidadId);
+            const comunidad = await indexedDBServiceGlobal.get('comunidades', datosPropietario.comunidadId);
             
             if (!comunidad) {
                 throw new Error(`Comunidad con ID ${datosPropietario.comunidadId} no encontrada`);
@@ -47,7 +47,7 @@ class PropietariosService {
                 activo: true
             };
 
-            const id = await indexedDBService.add('propietarios', propietario);
+            const id = await indexedDBServiceGlobal.add('propietarios', propietario);
             console.log('Propietario creado con ID:', id);
             return { ...propietario, id };
         } catch (error) {
@@ -61,7 +61,7 @@ class PropietariosService {
      */
     async obtenerPropietarios(filtros = {}) {
         try {
-            let propietarios = await indexedDBService.getAll('propietarios');
+            let propietarios = await indexedDBServiceGlobal.getAll('propietarios');
 
             // Filtrar por comunidad
             if (filtros.comunidadId) {
@@ -131,14 +131,14 @@ class PropietariosService {
      */
     async obtenerPropietario(id) {
         try {
-            const propietario = await indexedDBService.get('propietarios', id);
+            const propietario = await indexedDBServiceGlobal.get('propietarios', id);
             
             if (!propietario) {
                 throw new Error(`Propietario con ID ${id} no encontrado`);
             }
 
             // Obtener comunidad del propietario
-            const comunidad = await indexedDBService.get('comunidades', propietario.comunidadId);
+            const comunidad = await indexedDBServiceGlobal.get('comunidades', propietario.comunidadId);
 
             return {
                 ...propietario,
@@ -156,13 +156,13 @@ class PropietariosService {
     async actualizarPropietario(id, datosActualizados) {
         try {
             // Validar datos actualizados
-            const validacion = ValidacionComunidadPropietario.validarPropietario(datosActualizados);
+            const validacion = ValidacionComunidadPropietarioGlobal.validarPropietario(datosActualizados);
             
             if (!validacion.valida) {
                 throw new Error(`Propietario inválido: ${validacion.errores.join(', ')}`);
             }
 
-            const propietarioActual = await indexedDBService.get('propietarios', id);
+            const propietarioActual = await indexedDBServiceGlobal.get('propietarios', id);
             
             if (!propietarioActual) {
                 throw new Error(`Propietario con ID ${id} no encontrado`);
@@ -170,7 +170,7 @@ class PropietariosService {
 
             // Si se cambia de comunidad, verificar que la nueva existe
             if (datosActualizados.comunidadId && datosActualizados.comunidadId !== propietarioActual.comunidadId) {
-                const comunidad = await indexedDBService.get('comunidades', datosActualizados.comunidadId);
+                const comunidad = await indexedDBServiceGlobal.get('comunidades', datosActualizados.comunidadId);
                 
                 if (!comunidad) {
                     throw new Error(`Comunidad con ID ${datosActualizados.comunidadId} no encontrada`);
@@ -183,7 +183,7 @@ class PropietariosService {
                 fechaActualizacion: new Date().toISOString()
             };
 
-            await indexedDBService.update('propietarios', propietarioActualizado);
+            await indexedDBServiceGlobal.update('propietarios', propietarioActualizado);
             console.log('Propietario actualizado:', id);
             return propietarioActualizado;
         } catch (error) {
@@ -198,14 +198,14 @@ class PropietariosService {
     async eliminarPropietario(id) {
         try {
             // Verificar que el propietario existe
-            const propietario = await indexedDBService.get('propietarios', id);
+            const propietario = await indexedDBServiceGlobal.get('propietarios', id);
             
             if (!propietario) {
                 throw new Error(`Propietario con ID ${id} no encontrado`);
             }
 
             // Validar relaciones (Mejora 8)
-            const validacion = await ValidacionComunidadPropietario.validarEliminarPropietario(
+            const validacion = await ValidacionComunidadPropietarioGlobal.validarEliminarPropietario(
                 id,
                 (propietarioId) => this.obtenerJuntasPropietario(propietarioId)
             );
@@ -215,7 +215,7 @@ class PropietariosService {
             }
 
             // Eliminar el propietario
-            await indexedDBService.delete('propietarios', id);
+            await indexedDBServiceGlobal.delete('propietarios', id);
             console.log('Propietario eliminado:', id);
         } catch (error) {
             console.error('Error al eliminar propietario:', error);
@@ -229,14 +229,14 @@ class PropietariosService {
     async asignarComunidad(propietarioId, nuevaComunidadId) {
         try {
             // Verificar que el propietario existe
-            const propietario = await indexedDBService.get('propietarios', propietarioId);
+            const propietario = await indexedDBServiceGlobal.get('propietarios', propietarioId);
             
             if (!propietario) {
                 throw new Error(`Propietario con ID ${propietarioId} no encontrado`);
             }
 
             // Verificar que la nueva comunidad existe
-            const comunidad = await indexedDBService.get('comunidades', nuevaComunidadId);
+            const comunidad = await indexedDBServiceGlobal.get('comunidades', nuevaComunidadId);
             
             if (!comunidad) {
                 throw new Error(`Comunidad con ID ${nuevaComunidadId} no encontrada`);
@@ -249,7 +249,7 @@ class PropietariosService {
                 fechaActualizacion: new Date().toISOString()
             };
 
-            await indexedDBService.update('propietarios', propietarioActualizado);
+            await indexedDBServiceGlobal.update('propietarios', propietarioActualizado);
             console.log(`Propietario ${propietarioId} asignado a comunidad ${nuevaComunidadId}`);
             
             return propietarioActualizado;
@@ -268,7 +268,7 @@ class PropietariosService {
             const textoCSV = await this.leerArchivoCSV(archivoCSV);
             
             // Validar CSV
-            const validacion = ValidacionComunidadPropietario.validarImportacionCSV(textoCSV);
+            const validacion = ValidacionComunidadPropietarioGlobal.validarImportacionCSV(textoCSV);
             
             if (!validacion.valida) {
                 throw new Error(`CSV inválido: ${validacion.errores.join(', ')}`);
@@ -425,7 +425,7 @@ class PropietariosService {
      */
     async cambiarEstadoPropietario(id, activo) {
         try {
-            const propietario = await indexedDBService.get('propietarios', id);
+            const propietario = await indexedDBServiceGlobal.get('propietarios', id);
             
             if (!propietario) {
                 throw new Error(`Propietario con ID ${id} no encontrado`);
@@ -437,7 +437,7 @@ class PropietariosService {
                 fechaActualizacion: new Date().toISOString()
             };
 
-            await indexedDBService.update('propietarios', propietarioActualizado);
+            await indexedDBServiceGlobal.update('propietarios', propietarioActualizado);
             console.log(`Propietario ${id} ${activo ? 'activado' : 'desactivado'}`);
             
             return propietarioActualizado;
@@ -452,7 +452,7 @@ class PropietariosService {
      */
     async obtenerJuntasPropietario(propietarioId) {
         try {
-            const asistentes = await indexedDBService.getByIndex('asistentes', 'propietarioId', propietarioId);
+            const asistentes = await indexedDBServiceGlobal.getByIndex('asistentes', 'propietarioId', propietarioId);
             
             if (!asistentes) {
                 return [];
@@ -462,7 +462,7 @@ class PropietariosService {
             const juntas = [];
 
             for (const juntaId of juntasIds) {
-                const junta = await indexedDBService.get('juntas', juntaId);
+                const junta = await indexedDBServiceGlobal.get('juntas', juntaId);
                 if (junta) {
                     juntas.push(junta);
                 }
