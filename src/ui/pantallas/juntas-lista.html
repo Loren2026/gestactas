@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juntas - GestActas</title>
+    <link rel="stylesheet" href="../../styles.css">
+</head>
+<body>
+    <div class="contenedor-principal">
+        <header class="cabecera">
+            <h1>Juntas de Propietarios</h1>
+            <button id="btn-nueva-junta" class="boton boton-primario">
+                <span class="icono">+</span> Nueva Junta
+            </button>
+        </header>
+
+        <div class="contenedor-filtros">
+            <div class="filtro">
+                <label for="busqueda">Buscar:</label>
+                <input type="text" id="busqueda" placeholder="Buscar por lugar, asistente...">
+            </div>
+            
+            <div class="filtro">
+                <label for="filtro-tipo">Tipo:</label>
+                <select id="filtro-tipo">
+                    <option value="">Todos</option>
+                    <option value="ordinaria">Ordinaria</option>
+                    <option value="extraordinaria">Extraordinaria</option>
+                </select>
+            </div>
+            
+            <div class="filtro">
+                <label for="filtro-estado">Estado:</label>
+                <select id="filtro-estado">
+                    <option value="">Todos</option>
+                    <option value="pendiente">Pendiente</option>
+                    <option value="en_curso">En curso</option>
+                    <option value="finalizada">Finalizada</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="lista-juntas" class="lista-juntas">
+            <!-- Las juntas se cargarán dinámicamente aquí -->
+        </div>
+
+        <div id="mensaje-vacio" class="mensaje-vacio" style="display: none;">
+            <h3>No hay juntas</h3>
+            <p>Comienza creando una nueva junta.</p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { juntasService } from '../../services/juntas.service.js';
+        import { FeedbackUtils } from '../../utilidades/feedback.js';
+
+        class ListaJuntas {
+            constructor() {
+                this.juntas = [];
+                this.filtros = {
+                    busqueda: '',
+                    tipo: '',
+                    estado: ''
+                };
+                
+                this.inicializar();
+            }
+
+            async inicializar() {
+                // Cargar juntas
+                await this.cargarJuntas();
+                
+                // Configurar event listeners
+                this.configurarEventListeners();
+            }
+
+            async cargarJuntas() {
+                try {
+                    const carga = FeedbackUtils.mostrarCarga('Cargando juntas...');
+                    
+                    this.juntas = await juntasService.obtenerJuntas();
+                    
+                    carga.ocultar();
+                    
+                    this.renderizarJuntas();
+                } catch (error) {
+                    console.error('Error al cargar juntas:', error);
+                    FeedbackUtils.mostrarError('Error al cargar las juntas');
+                }
+            }
+
+            renderizarJuntas() {
+                const contenedor = document.getElementById('lista-juntas');
+                const mensajeVacio = document.getElementById('mensaje-vacio');
+                
+                // Filtrar juntas
+                const juntasFiltradas = this.juntas.filter(junta => {
+                    const coincideBusqueda = !this.filtros.busqueda || 
+                        junta.lugar?.toLowerCase().includes(this.filtros.busqueda.toLowerCase()) ||
+                        junta.ordenDelDia?.some(item => item.toLowerCase().includes(this.filtros.busqueda.toLowerCase()));
+                    
+                    const coincideTipo = !this.filtros.tipo || junta.tipo === this.filtros.tipo;
+                    const coincideEstado = !this.filtros.estado || junta.estado === this.filtros.estado;
+                    
+                    return coincideBusqueda && coincideTipo && coincideEstado;
+                });
+
+                // Mostrar mensaje vacío si no hay juntas
+                if (juntasFiltradas.length === 0) {
+                    contenedor.innerHTML = '';
+                    mensajeVacio.style.display = 'block';
+                    return;
+                }
+
+                mensajeVacio.style.display = 'none';
+
+                // Renderizar juntas
+                contenedor.innerHTML = juntasFiltradas.map(junta => `
+                    <div class="tarjeta-junta" data-id="${junta.id}">
+                        <div class="tarjeta-cabecera">
+                            <h3>${this.formatearTipo(junta.tipo)}</h3>
+                            <span class="estado estado-${junta.estado}">${this.formatearEstado(junta.estado)}</span>
+                        </div>
+                        <div class="tarjeta-cuerpo">
+                            <div class="informacion">
+                                <span class="icono">📅</span>
+                                <span>${this.formatearFecha(junta.fecha)} a las ${junta.hora}</span>
+                            </div>
+                            <div class="informacion">
+                                <span class="icono">📍</span>
+                                <span>${junta.lugar}</span>
+                            </div>
+                            <div class="informacion">
+                                <span class="icono">👥</span>
+                                <span>${junta.asistentes?.length || 0} asistentes</span>
+                            </div>
+                            <div class="informacion">
+                                <span class="icono">📄</span>
+                                <span>${junta.actas?.length || 0} acta(s)</span>
+                            </div>
+                        </div>
+                        <div class="tarjeta-pie">
+                            <button class="boton boton-ver" data-id="${junta.id}">
+                                Ver Detalles
+                            </button>
+                            <button class="boton boton-editar" data-id="${junta.id}">
+                                Editar
+                            </button>
+                            <button class="boton boton-eliminar" data-id="${junta.id}">
+                                Eliminar
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Configurar event listeners de las tarjetas
+                this.configurarEventListenersTarjetas();
+            }
+
+            configurarEventListenersTarjetas() {
+                // Botones de ver detalles
+                document.querySelectorAll('.boton-ver').forEach(boton => {
+                    boton.addEventListener('click', () => {
+                        const id = parseInt(boton.dataset.id);
+                        this.verJunta(id);
+                    });
+                });
+
+                // Botones de editar
+                document.querySelectorAll('.boton-editar').forEach(boton => {
+                    boton.addEventListener('click', () => {
+                        const id = parseInt(boton.dataset.id);
+                        this.editarJunta(id);
+                    });
+                });
+
+                // Botones de eliminar
+                document.querySelectorAll('.boton-eliminar').forEach(boton => {
+                    boton.addEventListener('click', async () => {
+                        const id = parseInt(boton.dataset.id);
+                        await this.eliminarJunta(id);
+                    });
+                });
+            }
+
+            configurarEventListeners() {
+                // Botón nueva junta
+                document.getElementById('btn-nueva-junta').addEventListener('click', () => {
+                    this.nuevaJunta();
+                });
+
+                // Filtros
+                document.getElementById('busqueda').addEventListener('input', (e) => {
+                    this.filtros.busqueda = e.target.value;
+                    this.renderizarJuntas();
+                });
+
+                document.getElementById('filtro-tipo').addEventListener('change', (e) => {
+                    this.filtros.tipo = e.target.value;
+                    this.renderizarJuntas();
+                });
+
+                document.getElementById('filtro-estado').addEventListener('change', (e) => {
+                    this.filtros.estado = e.target.value;
+                    this.renderizarJuntas();
+                });
+            }
+
+            nuevaJunta() {
+                window.location.href = 'junta-crear.html';
+            }
+
+            verJunta(id) {
+                window.location.href = `junta-detalle.html?id=${id}`;
+            }
+
+            editarJunta(id) {
+                window.location.href = `junta-crear.html?id=${id}`;
+            }
+
+            async eliminarJunta(id) {
+                const confirmacion = await FeedbackUtils.mostrarConfirmacion(
+                    '¿Estás seguro de que quieres eliminar esta junta? Se eliminarán todos los datos asociados.',
+                    {
+                        titulo: 'Eliminar Junta',
+                        textoConfirmar: 'Eliminar',
+                        textoCancelar: 'Cancelar'
+                    }
+                );
+
+                if (confirmacion) {
+                    try {
+                        const carga = FeedbackUtils.mostrarCarga('Eliminando junta...');
+                        
+                        await juntasService.eliminarJunta(id);
+                        
+                        carga.ocultar();
+                        
+                        FeedbackUtils.mostrarExito('Junta eliminada correctamente');
+                        await this.cargarJuntas();
+                    } catch (error) {
+                        console.error('Error al eliminar junta:', error);
+                        FeedbackUtils.mostrarError('Error al eliminar la junta');
+                    }
+                }
+            }
+
+            formatearTipo(tipo) {
+                const tipos = {
+                    'ordinaria': 'Junta Ordinaria',
+                    'extraordinaria': 'Junta Extraordinaria'
+                };
+                return tipos[tipo] || tipo;
+            }
+
+            formatearEstado(estado) {
+                const estados = {
+                    'pendiente': 'Pendiente',
+                    'en_curso': 'En curso',
+                    'finalizada': 'Finalizada'
+                };
+                return estados[estado] || estado;
+            }
+
+            formatearFecha(fecha) {
+                const fechaObj = new Date(fecha);
+                return fechaObj.toLocaleDateString('es-ES', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            }
+        }
+
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', () => {
+            new ListaJuntas();
+        });
+    </script>
+</body>
+</html>

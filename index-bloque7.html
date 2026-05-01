@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GestActas - Gestión Inteligente de Juntas (Bloque 7)</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#764ba2">
+    <meta name="description" content="Gestión de actas de juntas de propietarios con IA">
+    <style>
+        /* Estilos para el Bloque 7 - Conexión UI Real */
+        :root {
+            --primary: #764ba2;
+            --primary-dark: #5a2d7a;
+            --primary-light: #9b72cb;
+            --secondary: #667eea;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --dark: #1a1a1a;
+            --dark-lighter: #2d2d2d;
+            --text: #e5e5e5;
+            --text-muted: #a3a3a3;
+            --border: #404040;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--dark);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: background 0.3s;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            flex: 1;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            background: var(--dark-lighter);
+            border: none;
+            color: var(--text);
+            cursor: pointer;
+            border-radius: 0.5rem 0.5rem 0 0;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .tab:hover:not(.active) {
+            background: var(--border);
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--dark-lighter);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5568d3;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--error);
+            color: white;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--dark);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Tables */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table th {
+            background: var(--dark-lighter);
+            font-weight: 600;
+        }
+
+        /* Status Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .badge-error {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error);
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s;
+            max-width: 300px;
+        }
+
+        .toast-visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .toast-success {
+            background: var(--success);
+        }
+
+        .toast-error {
+            background: var(--error);
+        }
+
+        .toast-warning {
+            background: var(--warning);
+        }
+
+        .toast-info {
+            background: var(--primary);
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        /* Dialog */
+        .dialog {
+            background: var(--dark-lighter);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .dialog-header {
+            margin-bottom: 1rem;
+        }
+
+        .dialog-buttons {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: var(--dark);
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state h3 {
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark-lighter);
+            padding: 1rem 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab {
+                flex: 1;
+                min-width: 120px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="#" class="logo">📋 GestActas</a>
+            <nav class="nav-links">
+                <a href="#juntas">Juntas</a>
+                <a href="#actas">Actas</a>
+                <a href="#config">Configuración</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="tabs">
+            <button class="tab active" data-tab="juntas">Juntas</button>
+            <button class="tab" data-tab="actas">Actas</button>
+            <button class="tab" data-tab="grabaciones">Grabaciones</button>
+            <button class="tab" data-tab="transcripciones">Transcripciones</button>
+            <button class="tab" data-tab="exportaciones">Exportaciones</button>
+        </div>
+
+        <!-- Tab: Juntas -->
+        <section id="tab-juntas" class="content-section active">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Juntas de Propietarios</h2>
+                    <button id="btn-nueva-junta" class="btn btn-primary">+ Nueva Junta</button>
+                </div>
+                <div id="lista-juntas" class="juntas-list">
+                    <!-- Las juntas se cargarán dinámicamente aquí -->
+                </div>
+                <div id="juntas-empty" class="empty-state" style="display: none;">
+                    <h3>No hay juntas</h3>
+                    <p>Crea una nueva junta para comenzar</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab: Actas -->
+        <section id="tab-actas" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Actas Generadas</h2>
+                </div>
+                <div id="lista-actas" class="actas-list">
+                    <!-- Las actas se cargarán dinámicamente aquí -->
+                </div>
+                <div id="actas-empty" class="empty-state" style="display: none;">
+                    <h3>No hay actas</h3>
+                    <p>Genera un acta desde una junta existente</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab: Grabaciones -->
+        <section id="tab-grabaciones" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Grabaciones de Audio</h2>
+                </div>
+                <div id="lista-grabaciones" class="grabaciones-list">
+                    <!-- Las grabaciones se cargarán dinámicamente aquí -->
+                </div>
+                <div id="grabaciones-empty" class="empty-state" style="display: none;">
+                    <h3>No hay grabaciones</h3>
+                    <p>Graba el audio de una junta para comenzar</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab: Transcripciones -->
+        <section id="tab-transcripciones" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Transcripciones</h2>
+                </div>
+                <div id="lista-transcripciones" class="transcripciones-list">
+                    <!-- Las transcripciones se cargarán dinámicamente aquí -->
+                </div>
+                <div id="transcripciones-empty" class="empty-state" style="display: none;">
+                    <h3>No hay transcripciones</h3>
+                    <p>Transcribe una grabación para generar texto</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab: Exportaciones -->
+        <section id="tab-exportaciones" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Exportaciones a Word</h2>
+                </div>
+                <div id="lista-exportaciones" class="exportaciones-list">
+                    <!-- Las exportaciones se cargarán dinámicamente aquí -->
+                </div>
+                <div id="exportaciones-empty" class="empty-state" style="display: none;">
+                    <h3>No hay exportaciones</h3>
+                    <p>Exporta un acta a formato Word (.docx)</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>GestActas - Gestión Inteligente de Juntas (Bloque 7)</p>
+        <p>Conexión UI Real con Datos de la Aplicación</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script type="module">
+        // Importar servicios
+        import { indexedDBService } from './src/services/indexeddb.service.js';
+        import { juntasService } from './src/services/juntas.service.js';
+        import { grabacionService } from './src/services/grabacion.service.js';
+        import { transcripcionService } from './src/services/transcripcion.service.js';
+        import { actasService } from './src/services/actas.service.js';
+        import { FeedbackUtils } from './src/utilidades/feedback.js';
+        import { StorageUtils } from './src/utilidades/storage.js';
+        import { ValidationUtils } from './src/utilidades/validacion.js';
+
+        class GestActasApp {
+            constructor() {
+                this.juntas = [];
+                this.actas = [];
+                this.grabaciones = [];
+                this.transcripciones = [];
+                this.exportaciones = [];
+                
+                this.inicializar();
+            }
+
+            async inicializar() {
+                try {
+                    FeedbackUtils.mostrarInformacion('Inicializando GestActas...');
+                    
+                    // Inicializar IndexedDB
+                    await indexedDBService.init();
+                    
+                    // Configurar API keys si están guardadas
+                    const apiKeys = StorageUtils.obtenerAPIKeys();
+                    if (apiKeys.whisper) {
+                        await transcripcionService.init(apiKeys.whisper);
+                    }
+                    if (apiKeys.claude) {
+                        await actasService.init(apiKeys.claude);
+                    }
+                    
+                    // Cargar datos iniciales
+                    await this.cargarDatos();
+                    
+                    // Configurar navegación
+                    this.configurarNavegacion();
+                    
+                    FeedbackUtils.mostrarExito('GestActas inicializado correctamente');
+                } catch (error) {
+                    console.error('Error al inicializar GestActas:', error);
+                    FeedbackUtils.mostrarError('Error al inicializar la aplicación');
+                }
+            }
+
+            async cargarDatos() {
+                try {
+                    // Cargar juntas
+                    this.juntas = await juntasService.obtenerJuntas();
+                    this.renderizarJuntas();
+                    
+                    // Cargar actas
+                    this.actas = await indexedDBService.getAll('actas');
+                    this.renderizarActas();
+                    
+                    // Cargar grabaciones
+                    this.grabaciones = await indexedDBService.getAll('grabaciones');
+                    this.renderizarGrabaciones();
+                    
+                    // Cargar transcripciones
+                    this.transcripciones = await indexedDBService.getAll('transcripciones');
+                    this.renderizarTranscripciones();
+                    
+                    // Cargar exportaciones
+                    this.exportaciones = await indexedDBService.getAll('exportaciones');
+                    this.renderizarExportaciones();
+                } catch (error) {
+                    console.error('Error al cargar datos:', error);
+                }
+            }
+
+            configurarNavegacion() {
+                // Configurar tabs
+                const tabs = document.querySelectorAll('.tab');
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const tabName = tab.dataset.tab;
+                        this.cambiarTab(tabName);
+                    });
+                });
+
+                // Botón nueva junta
+                document.getElementById('btn-nueva-junta').addEventListener('click', () => {
+                    this.mostrarFormularioNuevaJunta();
+                });
+            }
+
+            cambiarTab(tabName) {
+                // Actualizar botones de tab
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.classList.remove('active');
+                    if (tab.dataset.tab === tabName) {
+                        tab.classList.add('active');
+                    }
+                });
+
+                // Actualizar contenido
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.remove('active');
+                    if (section.id === `tab-${tabName}`) {
+                        section.classList.add('active');
+                    }
+                });
+            }
+
+            renderizarJuntas() {
+                const contenedor = document.getElementById('lista-juntas');
+                const mensajeVacio = document.getElementById('juntas-empty');
+
+                if (this.juntas.length === 0) {
+                    contenedor.innerHTML = '';
+                    mensajeVacio.style.display = 'block';
+                    return;
+                }
+
+                mensajeVacio.style.display = 'none';
+
+                contenedor.innerHTML = this.juntas.map(junta => `
+                    <div class="card" style="margin-bottom: 1rem;">
+                        <div class="card-header">
+                            <h3 style="font-size: 1rem;">${this.formatearTipo(junta.tipo)}</h3>
+                            <span class="badge badge-${this.obtenerClaseEstado(junta.estado)}">${this.formatearEstado(junta.estado)}</span>
+                        </div>
+                        <div style="font-size: 0.875rem; color: var(--text-muted);">
+                            <div>📅 ${this.formatearFecha(junta.fecha)} a las ${junta.hora}</div>
+                            <div>📍 ${junta.lugar}</div>
+                        </div>
+                        <div style="margin-top: 0.5rem;">
+                            <button class="btn btn-secondary" onclick="window.location.href='src/ui/pantallas/grabacion.html?id=${junta.id}'">🎤 Grabar</button>
+                            <button class="btn btn-primary" onclick="app.generarActa(${junta.id})">📝 Generar Acta</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            renderizarActas() {
+                const contenedor = document.getElementById('lista-actas');
+                const mensajeVacio = document.getElementById('actas-empty');
+
+                if (this.actas.length === 0) {
+                    contenedor.innerHTML = '';
+                    mensajeVacio.style.display = 'block';
+                    return;
+                }
+
+                mensajeVacio.style.display = 'none';
+
+                contenedor.innerHTML = this.actas.map(acta => `
+                    <div class="card" style="margin-bottom: 1rem;">
+                        <div class="card-header">
+                            <h3 style="font-size: 1rem;">Acta #${acta.id}</h3>
+                            <span class="badge badge-${this.obtenerClaseEstado(acta.estado)}">${this.formatearEstado(acta.estado)}</span>
+                        </div>
+                        <div style="font-size: 0.875rem; color: var(--text-muted);">
+                            <div>📅 ${this.formatearFecha(acta.fecha)}</div>
+                            <div>🤖 Método: ${acta.metodo}</div>
+                        </div>
+                        <div style="margin-top: 0.5rem;">
+                            <button class="btn btn-secondary" onclick="app.verActa(${acta.id})">👁️ Ver</button>
+                            <button class="btn btn-primary" onclick="app.exportarActa(${acta.id})">📄 Exportar</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            renderizarGrabaciones() {
+                const contenedor = document.getElementById('lista-grabaciones');
+                const mensajeVacio = document.getElementById('grabaciones-empty');
+
+                if (this.grabaciones.length === 0) {
+                    contenedor.innerHTML = '';
+                    mensajeVacio.style.display = 'block';
+                    return;
+                }
+
+                mensajeVacio.style.display = 'none';
+
+                contenedor.innerHTML = this.grabaciones.map(grabacion => `
+                    <div class="card" style="margin-bottom: 1rem;">
+                        <div class="card-header">
+                            <h3 style="font-size: 1rem;">Grabación #${grabacion.id}</h3>
+                        </div>
+                        <div style="font-size: 0.875rem; color: var(--text-muted);">
+                            <div>📅 ${this.formatearFecha(grabacion.fecha)}</div>
+                            <div>⏱️ Duración: ${this.formatearDuracion(grabacion.duracion)}</div>
+                            <div>📏 Tamaño: ${this.formatearTamaño(grabacion.tamaño)}</div>
+                        </div>
+                        <div style="margin-top: 0.5rem;">
+                            <button class="btn btn-secondary" onclick="app.reproducirGrabacion(${grabacion.id})">▶️ Reproducir</button>
+                            <button class="btn btn-primary" onclick="app.transcribirGrabacion(${grabacion.id})">📝 Transcribir</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            renderizarTranscripciones() {
+                const contenedor = document.getElementById('lista-transcripciones');
+                const mensajeVacio = document.getElementById('transcripciones-empty');
+
+                if (this.transcripciones.length === 0) {
+                    contenedor.innerHTML = '';
+                    mensajeVacio.style.display = 'block';
+                    return;
+                }
+
+                mensajeVacio.style.display = 'none';
+
+                contenedor.innerHTML = this.transcripciones.map(transcripcion => `
+                    <div class="card" style="margin-bottom: 1rem;">
+                        <div class="card-header">
+                            <h3 style="font-size: 1rem;">Transcripción #${transcripcion.id}</h3>
+                        </div>
+                        <div style="font-size: 0.875rem; color: var(--text-muted);">
+                            <div>📅 ${this.formatearFecha(transcripcion.fecha)}</div>
+                            <div>🤖 Método: ${transcripcion.metodo}</div>
+                            <div>📊 Confianza: ${Math.round(transcripcion.confianza * 100)}%</div>
+                        </div>
+                        <div style="margin-top: 0.5rem;">
+                            <button class="btn btn-secondary" onclick="app.verTranscripcion(${transcripcion.id})">👁️ Ver</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            renderizarExportaciones() {
+                const contenedor = document.getElementById('lista-exportaciones');
+                const mensajeVacio = document.getElementById('exportaciones-empty');
+
+                if (this.exportaciones.length === 0) {
+                    contenedor.innerHTML = '';
+                    mensajeVacio.style.display = 'block';
+                    return;
+                }
+
+                mensajeVacio.style.display = 'none';
+
+                contenedor.innerHTML = this.exportaciones.map(exportacion => `
+                    <div class="card" style="margin-bottom: 1rem;">
+                        <div class="card-header">
+                            <h3 style="font-size: 1rem;">Exportación #${exportacion.id}</h3>
+                        </div>
+                        <div style="font-size: 0.875rem; color: var(--text-muted);">
+                            <div>📅 ${this.formatearFecha(exportacion.fecha)}</div>
+                            <div>📄 Formato: ${exportacion.formato || 'DOCX'}</div>
+                        </div>
+                        <div style="margin-top: 0.5rem;">
+                            <button class="btn btn-primary" onclick="app.descargarExportacion(${exportacion.id})">⬇️ Descargar</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            async mostrarFormularioNuevaJunta() {
+                const formulario = `
+                    <form id="form-nueva-junta">
+                        <div class="form-group">
+                            <label class="form-label">Tipo de Junta</label>
+                            <select class="form-input" name="tipo" required>
+                                <option value="ordinaria">Ordinaria</option>
+                                <option value="extraordinaria">Extraordinaria</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Fecha</label>
+                            <input type="date" class="form-input" name="fecha" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Hora</label>
+                            <input type="time" class="form-input" name="hora" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Lugar</label>
+                            <input type="text" class="form-input" name="lugar" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Orden del Día (separado por comas)</label>
+                            <input type="text" class="form-input" name="ordenDelDia" required>
+                        </div>
+                    </form>
+                `;
+
+                const resultado = await FeedbackUtils.mostrarModal(formulario, {
+                    titulo: 'Nueva Junta',
+                    botones: [
+                        { texto: 'Crear', valor: 'crear', clase: 'btn-primary' },
+                        { texto: 'Cancelar', valor: 'cancelar', clase: 'btn-secondary' }
+                    ]
+                });
+
+                if (resultado === 'crear') {
+                    await this.crearJunta();
+                }
+            }
+
+            async crearJunta() {
+                try {
+                    const form = document.getElementById('form-nueva-junta');
+                    const formData = new FormData(form);
+
+                    const datosJunta = {
+                        tipo: formData.get('tipo'),
+                        fecha: formData.get('fecha'),
+                        hora: formData.get('hora'),
+                        lugar: formData.get('lugar'),
+                        ordenDelDia: formData.get('ordenDelDia').split(',').map(item => item.trim()),
+                        quorumRequerido: 0.3,
+                        coeficienteTotal: 100
+                    };
+
+                    const carga = FeedbackUtils.mostrarCarga('Creando junta...');
+                    await juntasService.crearJunta(datosJunta);
+                    carga.ocultar();
+
+                    FeedbackUtils.mostrarExito('Junta creada correctamente');
+                    await this.cargarDatos();
+                } catch (error) {
+                    console.error('Error al crear junta:', error);
+                    FeedbackUtils.mostrarError('Error al crear la junta');
+                }
+            }
+
+            async generarActa(juntaId) {
+                try {
+                    const progreso = FeedbackUtils.mostrarProgreso('Generando acta con Claude...', 0);
+
+                    const acta = await actasService.generarActaConClaude(juntaId);
+
+                    const actualizarProgreso = setInterval(() => {
+                        const progresoActual = actasService.obtenerProgreso();
+                        progreso.actualizarProgreso(progresoActual.progreso, 'Generando acta...');
+
+                        if (progresoActual.progreso >= 100) {
+                            clearInterval(actualizarProgreso);
+                        }
+                    }, 500);
+
+                    setTimeout(() => {
+                        clearInterval(actualizarProgreso);
+                        progreso.ocultar();
+                        FeedbackUtils.mostrarExito('Acta generada correctamente');
+                        this.cargarDatos();
+                    }, 1000);
+                } catch (error) {
+                    console.error('Error al generar acta:', error);
+                    FeedbackUtils.mostrarError('Error al generar el acta. Verifica que la API Key de Claude esté configurada.');
+                }
+            }
+
+            async reproducirGrabacion(id) {
+                try {
+                    const grabacion = await grabacionService.obtenerGrabacion(id);
+                    grabacionService.reproducirGrabacion(grabacion);
+                } catch (error) {
+                    console.error('Error al reproducir grabación:', error);
+                    FeedbackUtils.mostrarError('Error al reproducir la grabación');
+                }
+            }
+
+            async transcribirGrabacion(id) {
+                try {
+                    const transcripcion = await transcripcionService.transcribirConWebSpeechAPI(id);
+                    FeedbackUtils.mostrarExito('Transcripción completada');
+                    await this.cargarDatos();
+                } catch (error) {
+                    console.error('Error al transcribir:', error);
+                    FeedbackUtils.mostrarError('Error al transcribir la grabación');
+                }
+            }
+
+            formatearTipo(tipo) {
+                return tipo === 'ordinaria' ? 'Junta Ordinaria' : 'Junta Extraordinaria';
+            }
+
+            formatearEstado(estado) {
+                const estados = {
+                    'pendiente': 'Pendiente',
+                    'en_curso': 'En curso',
+                    'finalizada': 'Finalizada',
+                    'borrador': 'Borrador',
+                    'revisado': 'Revisado',
+                    'finalizado': 'Finalizado'
+                };
+                return estados[estado] || estado;
+            }
+
+            obtenerClaseEstado(estado) {
+                const clases = {
+                    'pendiente': 'warning',
+                    'en_curso': 'info',
+                    'finalizada': 'success',
+                    'borrador': 'warning',
+                    'revisado': 'info',
+                    'finalizado': 'success'
+                };
+                return clases[estado] || 'info';
+            }
+
+            formatearFecha(fecha) {
+                const fechaObj = new Date(fecha);
+                return fechaObj.toLocaleDateString('es-ES', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+            }
+
+            formatearDuracion(segundos) {
+                if (!segundos) return '00:00';
+                const mins = Math.floor(segundos / 60);
+                const segs = segundos % 60;
+                return `${mins.toString().padStart(2, '0')}:${segs.toString().padStart(2, '0')}`;
+            }
+
+            formatearTamaño(bytes) {
+                if (bytes < 1024) return `${bytes} B`;
+                if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`;
+                return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+            }
+        }
+
+        // Inicializar la aplicación
+        const app = new GestActasApp();
+        window.app = app;
+    </script>
+</body>
+</html>
