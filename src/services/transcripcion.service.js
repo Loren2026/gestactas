@@ -86,10 +86,32 @@ class TranscripcionService {
             };
 
             const id = await indexedDBServiceGlobal.add('transcripciones', transcripcion);
+            const transcripcionLocal = { ...transcripcion, id };
+
+            try {
+                const { transcripcionesRepository } = await import('../modules/transcripciones/transcripciones.repository.js');
+
+                await transcripcionesRepository.save({
+                    junta_id: grabacion.juntaId || null,
+                    grabacion_id: grabacionId,
+                    tipo: 'consolidada',
+                    motor: 'whisper',
+                    idioma: opciones.idioma || 'es',
+                    texto: texto,
+                    texto_normalizado: texto,
+                    confidence_media: 0.95,
+                    started_at_segundo: 0,
+                    ended_at_segundo: grabacion.duracion || null,
+                    version: 1
+                });
+            } catch (error) {
+                console.error('Error al persistir transcripción en Supabase:', error);
+            }
+
             this.isTranscribing = false;
 
             console.log('Transcripción completada con ID:', id);
-            return { ...transcripcion, id };
+            return transcripcionLocal;
         } catch (error) {
             this.isTranscribing = false;
             console.error('Error al transcribir con Whisper:', error);
@@ -189,10 +211,32 @@ class TranscripcionService {
                     };
 
                     const id = await indexedDBServiceGlobal.add('transcripciones', transcripcion);
+                    const transcripcionLocal = { ...transcripcion, id };
+
+                    try {
+                        const { transcripcionesRepository } = await import('../modules/transcripciones/transcripciones.repository.js');
+
+                        await transcripcionesRepository.save({
+                            junta_id: grabacion.juntaId || null,
+                            grabacion_id: grabacionId,
+                            tipo: 'consolidada',
+                            motor: 'web_speech',
+                            idioma: opciones.idioma || 'es-ES',
+                            texto: textoCompleto.trim(),
+                            texto_normalizado: textoCompleto.trim(),
+                            confidence_media: 0.65,
+                            started_at_segundo: 0,
+                            ended_at_segundo: grabacion.duracion || null,
+                            version: 1
+                        });
+                    } catch (error) {
+                        console.error('Error al persistir transcripción en Supabase:', error);
+                    }
+
                     this.isTranscribing = false;
 
                     console.log('Transcripción completada con ID:', id);
-                    resolve({ ...transcripcion, id });
+                    resolve(transcripcionLocal);
                 };
 
                 // Reproducir audio para que el reconocimiento capture
