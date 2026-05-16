@@ -1,31 +1,89 @@
-import { STORES } from '../../db/schema.js';
+export const actasRepository = {
+  async listByJuntaId(juntaId) {
+    const { data, error } = await window.supabase
+      .from('actas')
+      .select('*')
+      .eq('junta_id', juntaId)
+      .order('updated_at', { ascending: false });
 
-function promisifyRequest(request) {
-  return new Promise((resolve, reject) => {
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-}
+    if (error) {
+      throw error;
+    }
 
-export function createActasRepository(db) {
-  return {
-    async listByJuntaId(juntaId) {
-      const transaction = db.transaction(STORES.actas, 'readonly');
-      const index = transaction.objectStore(STORES.actas).index('by_junta_id');
-      return promisifyRequest(index.getAll(juntaId));
-    },
-    async getById(id) {
-      const transaction = db.transaction(STORES.actas, 'readonly');
-      return promisifyRequest(transaction.objectStore(STORES.actas).get(id));
-    },
-    async save(acta) {
-      const transaction = db.transaction(STORES.actas, 'readwrite');
-      await promisifyRequest(transaction.objectStore(STORES.actas).put(acta));
-      return acta;
-    },
-    async count() {
-      const transaction = db.transaction(STORES.actas, 'readonly');
-      return promisifyRequest(transaction.objectStore(STORES.actas).count());
-    },
-  };
-}
+    return data;
+  },
+
+  async getById(id) {
+    const { data, error } = await window.supabase
+      .from('actas')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  },
+
+  async save(acta) {
+    const { data, error } = await window.supabase
+      .from('actas')
+      .insert(acta)
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  },
+
+  async update(acta) {
+    const { id, ...fields } = acta;
+
+    const { data, error } = await window.supabase
+      .from('actas')
+      .update(fields)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  },
+
+  async delete(id) {
+    const { error } = await window.supabase
+      .from('actas')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      throw error;
+    }
+
+    return { ok: true };
+  },
+
+  async getLatestByJuntaId(juntaId) {
+    const { data, error } = await window.supabase
+      .from('actas')
+      .select('*')
+      .eq('junta_id', juntaId)
+      .order('updated_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  },
+};

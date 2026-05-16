@@ -1,37 +1,70 @@
-import { STORES } from '../../db/schema.js';
+export const transcripcionesRepository = {
+  async listByJuntaId(juntaId) {
+    const { data, error } = await window.supabase
+      .from('transcripciones')
+      .select('*')
+      .eq('junta_id', juntaId)
+      .order('updated_at', { ascending: false });
 
-function promisifyRequest(request) {
-  return new Promise((resolve, reject) => {
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-}
+    if (error) {
+      throw error;
+    }
 
-export function createTranscripcionesRepository(db) {
-  return {
-    async listByJuntaId(juntaId) {
-      const transaction = db.transaction(STORES.transcripciones, 'readonly');
-      const index = transaction.objectStore(STORES.transcripciones).index('by_junta_id');
-      return promisifyRequest(index.getAll(juntaId));
-    },
-    async listByGrabacionId(grabacionId) {
-      const transaction = db.transaction(STORES.transcripciones, 'readonly');
-      const index = transaction.objectStore(STORES.transcripciones).index('by_grabacion_id');
-      return promisifyRequest(index.getAll(grabacionId));
-    },
-    async getById(id) {
-      const transaction = db.transaction(STORES.transcripciones, 'readonly');
-      return promisifyRequest(transaction.objectStore(STORES.transcripciones).get(id));
-    },
-    async save(transcripcion) {
-      const transaction = db.transaction(STORES.transcripciones, 'readwrite');
-      await promisifyRequest(transaction.objectStore(STORES.transcripciones).put(transcripcion));
-      return transcripcion;
-    },
-    async delete(id) {
-      const transaction = db.transaction(STORES.transcripciones, 'readwrite');
-      await promisifyRequest(transaction.objectStore(STORES.transcripciones).delete(id));
-      return true;
-    },
-  };
-}
+    return data;
+  },
+
+  async listByGrabacionId(grabacionId) {
+    const { data, error } = await window.supabase
+      .from('transcripciones')
+      .select('*')
+      .eq('grabacion_id', grabacionId)
+      .order('updated_at', { ascending: false });
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  },
+
+  async getById(id) {
+    const { data, error } = await window.supabase
+      .from('transcripciones')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  },
+
+  async save(transcripcion) {
+    const { data, error } = await window.supabase
+      .from('transcripciones')
+      .insert(transcripcion)
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  },
+
+  async delete(id) {
+    const { error } = await window.supabase
+      .from('transcripciones')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      throw error;
+    }
+
+    return { ok: true };
+  },
+};
