@@ -593,7 +593,29 @@ ${transcripcion}`;
         };
 
         const id = await indexedDBServiceGlobal.add('actas', actaParaGuardar);
-        return { ...actaParaGuardar, id };
+        const actaLocal = { ...actaParaGuardar, id };
+
+        try {
+            const { actasRepository } = await import('../modules/actas/actas.repository.js');
+
+            await actasRepository.save({
+                junta_id: acta.juntaId || null,
+                transcripcion_base_id: null,
+                version: 1,
+                estado: 'borrador',
+                titulo: acta.encabezado?.tipo || 'Acta generada',
+                contenido_markdown: null,
+                contenido_texto: JSON.stringify(acta),
+                resumen_acuerdos: acta.acuerdos_totales || null,
+                storage_path_docx: null,
+                generada_por: 'claude',
+                prompt_version: 'legacy_actas_service_v1'
+            });
+        } catch (error) {
+            console.error('Error al persistir acta en Supabase:', error);
+        }
+
+        return actaLocal;
     }
 
     /**
