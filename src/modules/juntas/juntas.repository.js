@@ -1,30 +1,86 @@
-import { STORES } from '../../db/schema.js';
+export const juntasRepository = {
+  async list() {
+    const { data, error } = await window.supabase
+      .from('juntas')
+      .select('*')
+      .order('fecha_celebracion', { ascending: false });
 
-function promisifyRequest(request) {
-  return new Promise((resolve, reject) => {
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-}
+    if (error) {
+      throw error;
+    }
 
-export function createJuntasRepository(db) {
-  return {
-    async list() {
-      const transaction = db.transaction(STORES.juntas, 'readonly');
-      return promisifyRequest(transaction.objectStore(STORES.juntas).getAll());
-    },
-    async getById(id) {
-      const transaction = db.transaction(STORES.juntas, 'readonly');
-      return promisifyRequest(transaction.objectStore(STORES.juntas).get(id));
-    },
-    async save(junta) {
-      const transaction = db.transaction(STORES.juntas, 'readwrite');
-      await promisifyRequest(transaction.objectStore(STORES.juntas).put(junta));
-      return junta;
-    },
-    async count() {
-      const transaction = db.transaction(STORES.juntas, 'readonly');
-      return promisifyRequest(transaction.objectStore(STORES.juntas).count());
-    },
-  };
-}
+    return data;
+  },
+
+  async listByComunidadId(comunidadId) {
+    const { data, error } = await window.supabase
+      .from('juntas')
+      .select('*')
+      .eq('comunidad_id', comunidadId)
+      .order('fecha_celebracion', { ascending: false });
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  },
+
+  async getById(id) {
+    const { data, error } = await window.supabase
+      .from('juntas')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  },
+
+  async save(junta) {
+    const { data, error } = await window.supabase
+      .from('juntas')
+      .insert(junta)
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  },
+
+  async update(junta) {
+    const { id, ...fields } = junta;
+
+    const { data, error } = await window.supabase
+      .from('juntas')
+      .update(fields)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  },
+
+  async delete(id) {
+    const { error } = await window.supabase
+      .from('juntas')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      throw error;
+    }
+
+    return { ok: true };
+  },
+};

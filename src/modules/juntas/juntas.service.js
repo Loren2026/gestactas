@@ -1,142 +1,148 @@
-import { createJuntaDraft } from '../../models/junta.js';
-import { nowIso } from '../../shared/utils.js';
+import { juntasRepository } from './juntas.repository.js';
 
-function parseOrdenDia(text) {
-  return text
-    .split('\n')
-    .map((item) => item.replace(/^\s*\d+[.)-]?\s*/, '').trim())
-    .filter(Boolean);
+const ESTADOS_VALIDOS = ['borrador', 'en_curso', 'transcribiendo', 'acta_generada', 'cerrada'];
+const TIPOS_VALIDOS = ['ordinaria', 'extraordinaria'];
+
+function normalizeOrdenDia(ordenDia) {
+  if (Array.isArray(ordenDia)) {
+    return ordenDia.filter(Boolean);
+  }
+
+  if (typeof ordenDia === 'string') {
+    return ordenDia
+      .split('\n')
+      .map((item) => item.replace(/^\s*\d+[.)-]?\s*/, '').trim())
+      .filter(Boolean);
+  }
+
+  return [];
 }
 
-function formatDateLong(dateString) {
-  if (!dateString) return '';
-  return new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${dateString}T12:00:00`));
-}
+export const juntasService = {
+  async list() {
+    return await juntasRepository.list();
+  },
 
-function calculateQuorum(propietarios, asistentes) {
-  const presentIds = new Set(asistentes.filter((item) => item.presente).map((item) => item.propietario_id));
-  const presentOwners = propietarios.filter((propietario) => presentIds.has(propietario.id));
-  const totalOwners = propietarios.length;
-  const presentCount = presentOwners.length;
-  const presentCoef = presentOwners.reduce((sum, propietario) => sum + Number(propietario.cuota_decimal || propietario.cuota || 0), 0);
+  async listByComunidadId(comunidadId) {
+    return await juntasRepository.listByComunidadId(comunidadId);
+  },
 
-  return {
-    presentCount,
-    totalOwners,
-    presentCoef: Number(presentCoef.toFixed(2)),
-    presentPercent: totalOwners ? Number(((presentCount / totalOwners) * 100).toFixed(2)) : 0,
-  };
-}
+  async getById(id) {
+    const junta = await juntasRepository.getById(id);
 
-export function createJuntasService({ repository, comunidadesService, propietariosService }) {
-  return {
-    async bootstrap() {
-      const count = await repository.count();
-      if (count > 0) return { seeded: false };
+    if (!junta) {
+      throw new Error(`Junta con ID ${id} no encontrada`);
+    }
 
-      const comunidadId = 'comunidad_astur';
-      const propietarios = await propietariosService.listByComunidadId(comunidadId);
-      const asistentes = propietarios.slice(0, 3).map((propietario) => ({ propietario_id: propietario.id, presente: true }));
-      const quorum = calculateQuorum(propietarios, asistentes);
-      const draft = createJuntaDraft({
-        id: 'junta_demo_astur_2026',
-        comunidad_id: comunidadId,
-        tipo: 'Ordinaria',
-        fecha: '2026-04-25',
-        hora_primera_convocatoria: '18:00',
-        hora_segunda_convocatoria: '18:30',
-        lugar: 'Portal del edificio, Lugones',
-        orden_dia: [
-          'Aprobación de cuentas del ejercicio 2025 y presupuesto 2026',
-          'Renovación de cargos de la Junta de Gobierno',
-          'Ruegos y preguntas',
-        ],
-        asistentes,
-        quorum_porcentaje: quorum.presentPercent,
-        quorum_coeficientes: quorum.presentCoef,
-      });
+    return junta;
+  },
 
-      await repository.save(draft);
-      return { seeded: true };
-    },
+  async create(datos) {
+    if (!datos.comunidadId) {
+      throw new Error(`Comunidad con ID ${datos.comunidadId} no encontrada`);
+    }
 
-    async listDetailed() {
-      const juntas = await repository.list();
-      const enriched = await Promise.all(juntas.map(async (junta) => {
-        const comunidad = await comunidadesService.getById(junta.comunidad_id);
-        const propietarios = await propietariosService.listByComunidadId(junta.comunidad_id);
-        const quorum = calculateQuorum(propietarios, junta.asistentes || []);
-        return {
-          ...junta,
-          comunidad,
-          propietarios,
-          quorum,
-          fecha_larga: formatDateLong(junta.fecha),
-        };
-      }));
+    if (!datos.fechaCelebracion) {
+      throw new Error('fechaCelebracion es obligatoria');
+    }
 
-      return enriched.sort((a, b) => (a.fecha < b.fecha ? 1 : -1));
-    },
+    if (!TIPOS_VALIDOS.includes(datos.tipo)) {
+      throw new Error(`Tipo inválido: ${datos.tipo}. Tipos válidos: ${TIPOS_VALIDOS.join(', ')}`);
+    }
 
-    async getDetailedById(id) {
-      const junta = await repository.getById(id);
-      if (!junta) return null;
+    const estado = datos.estado || 'borrador';
 
-      const comunidad = await comunidadesService.getById(junta.comunidad_id);
-      const propietarios = await propietariosService.listByComunidadId(junta.comunidad_id);
-      const quorum = calculateQuorum(propietarios, junta.asistentes || []);
+    if (!ESTADOS_VALIDOS.includes(estado)) {
+      throw new Error(`Estado inválido: ${estado}. Estados válidos: ${ESTADOS_VALIDOS.join(', ')}`);
+    }
 
-      return {
-        ...junta,
-        comunidad,
-        propietarios,
-        quorum,
-        fecha_larga: formatDateLong(junta.fecha),
-      };
-    },
+    const junta = {
+      comunidad_id: datos.comunidadId,
+      titulo: datos.titulo || '',
+      tipo: datos.tipo,
+      fecha_convocatoria: datos.fechaConvocatoria || null,
+      fecha_celebracion: datos.fechaCelebracion,
+      lugar: datos.lugar || '',
+      estado,
+      orden_dia: normalizeOrdenDia(datos.ordenDia),
+      observaciones: datos.observaciones || '',
+      quorum_resumen: datos.quorumResumen || '',
+    };
 
-    async createFromForm(payload) {
-      const timestamp = nowIso();
-      const propietarios = await propietariosService.listByComunidadId(payload.comunidad_id);
-      const asistentes = propietarios.map((propietario) => ({ propietario_id: propietario.id, presente: false }));
-      const junta = createJuntaDraft({
-        comunidad_id: payload.comunidad_id,
-        tipo: payload.tipo,
-        fecha: payload.fecha,
-        hora_primera_convocatoria: payload.hora_primera_convocatoria,
-        hora_segunda_convocatoria: payload.hora_segunda_convocatoria,
-        lugar: payload.lugar,
-        orden_dia: parseOrdenDia(payload.orden_dia),
-        asistentes,
-        created_at: timestamp,
-        updated_at: timestamp,
-      });
+    return await juntasRepository.save(junta);
+  },
 
-      await repository.save(junta);
-      return this.getDetailedById(junta.id);
-    },
+  async update(id, datos) {
+    const juntaActual = await juntasRepository.getById(id);
 
-    async updateAsistencia(juntaId, propietarioId, presente) {
-      const junta = await repository.getById(juntaId);
-      if (!junta) return null;
+    if (!juntaActual) {
+      throw new Error(`Junta con ID ${id} no encontrada`);
+    }
 
-      const asistentes = [...(junta.asistentes || [])];
-      const current = asistentes.find((item) => item.propietario_id === propietarioId);
-      if (current) current.presente = presente;
-      else asistentes.push({ propietario_id: propietarioId, presente });
+    const tipo = datos.tipo ?? juntaActual.tipo;
+    if (!TIPOS_VALIDOS.includes(tipo)) {
+      throw new Error(`Tipo inválido: ${tipo}. Tipos válidos: ${TIPOS_VALIDOS.join(', ')}`);
+    }
 
-      const propietarios = await propietariosService.listByComunidadId(junta.comunidad_id);
-      const quorum = calculateQuorum(propietarios, asistentes);
-      const updated = {
-        ...junta,
-        asistentes,
-        quorum_porcentaje: quorum.presentPercent,
-        quorum_coeficientes: quorum.presentCoef,
-        updated_at: nowIso(),
-      };
+    const estado = datos.estado ?? juntaActual.estado;
+    if (!ESTADOS_VALIDOS.includes(estado)) {
+      throw new Error(`Estado inválido: ${estado}. Estados válidos: ${ESTADOS_VALIDOS.join(', ')}`);
+    }
 
-      await repository.save(updated);
-      return this.getDetailedById(juntaId);
-    },
-  };
-}
+    const fechaCelebracion = datos.fechaCelebracion ?? juntaActual.fecha_celebracion;
+    if (!fechaCelebracion) {
+      throw new Error('fechaCelebracion es obligatoria');
+    }
+
+    const junta = {
+      id,
+      comunidad_id: datos.comunidadId ?? juntaActual.comunidad_id,
+      titulo: datos.titulo ?? juntaActual.titulo,
+      tipo,
+      fecha_convocatoria: datos.fechaConvocatoria ?? juntaActual.fecha_convocatoria,
+      fecha_celebracion: fechaCelebracion,
+      lugar: datos.lugar ?? juntaActual.lugar,
+      estado,
+      orden_dia: datos.ordenDia !== undefined
+        ? normalizeOrdenDia(datos.ordenDia)
+        : (juntaActual.orden_dia || []),
+      observaciones: datos.observaciones ?? juntaActual.observaciones,
+      quorum_resumen: datos.quorumResumen ?? juntaActual.quorum_resumen,
+      closed_at: estado === 'cerrada'
+        ? (juntaActual.closed_at || new Date().toISOString())
+        : null,
+    };
+
+    return await juntasRepository.update(junta);
+  },
+
+  async delete(id) {
+    const junta = await juntasRepository.getById(id);
+
+    if (!junta) {
+      throw new Error(`Junta con ID ${id} no encontrada`);
+    }
+
+    return await juntasRepository.delete(id);
+  },
+
+  async cambiarEstado(id, estado) {
+    const junta = await juntasRepository.getById(id);
+
+    if (!junta) {
+      throw new Error(`Junta con ID ${id} no encontrada`);
+    }
+
+    if (!ESTADOS_VALIDOS.includes(estado)) {
+      throw new Error(`Estado inválido: ${estado}. Estados válidos: ${ESTADOS_VALIDOS.join(', ')}`);
+    }
+
+    return await juntasRepository.update({
+      id,
+      estado,
+      closed_at: estado === 'cerrada'
+        ? (junta.closed_at || new Date().toISOString())
+        : null,
+    });
+  },
+};
