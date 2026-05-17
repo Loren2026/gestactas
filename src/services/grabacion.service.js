@@ -154,20 +154,47 @@ class GrabacionService {
             return new Promise((resolve, reject) => {
                 reader.onload = async () => {
                     const audioData = reader.result;
+                    const duracion = this.calcularDuracion();
+                    const fechaIso = new Date().toISOString();
+                    const formato = this.obtenerFormato(mimeType);
+                    const fileName = `grabacion_${new Date().toISOString().replace(/[:.]/g, '-')}.${formato}`;
 
                     const grabacion = {
                         juntaId: juntaId,
                         datosAudio: audioData,
                         mimeType: mimeType,
-                        duracion: this.calcularDuracion(),
-                        fecha: new Date().toISOString(),
+                        duracion: duracion,
+                        fecha: fechaIso,
                         tamaño: audioBlob.size,
-                        formato: this.obtenerFormato(mimeType)
+                        formato: formato
                     };
 
                     const id = await indexedDBServiceGlobal.add('grabaciones', grabacion);
+                    const grabacionLocal = { ...grabacion, id };
+
+                    try {
+                        const { grabacionesRepository } = await import('../modules/grabaciones/grabaciones.repository.js');
+
+                        await grabacionesRepository.save({
+                            junta_id: juntaId,
+                            storage_path: 'local_only',
+                            file_name: fileName,
+                            mime_type: mimeType,
+                            duracion_segundos: duracion,
+                            tamano_bytes: audioBlob.size,
+                            orden_segmento: 1,
+                            origen: 'media_recorder',
+                            estado: 'guardada',
+                            error_message: null,
+                            created_at: fechaIso,
+                            updated_at: fechaIso
+                        });
+                    } catch (error) {
+                        console.error('Error al persistir grabación en Supabase:', error);
+                    }
+
                     console.log('Grabación guardada con ID:', id);
-                    resolve({ ...grabacion, id });
+                    resolve(grabacionLocal);
                 };
 
                 reader.onerror = (error) => {
